@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Recepción Devoluciones Oriflame</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7f6;
+      color: #333;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #2f5e2a;
+    }
+
+    .app-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px 24px 28px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+      border: 1px solid #e5eadf;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      border: none;
+      background: transparent;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #555;
+      transition: all 0.15s ease;
+    }
+
+    .tab-button:hover {
+      background: #e9f2e7;
+    }
+
+    .tab-button.active {
+      background: #4b9144;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .tab-panel {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #444;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccd3c9;
+      font-size: 0.9rem;
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      font-family: monospace;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus {
+      outline: 2px solid #4b9144;
+      outline-offset: 1px;
+      border-color: #4b9144;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    .buttons-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    button.primary {
+      background: #4b9144;
+      border: none;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+    }
+
+    button.primary:hover {
+      background: #3b7536;
+    }
+
+    button.secondary {
+      background: #ffffff;
+      border: 1px solid #ccd3c9;
+      color: #444;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    button.secondary:hover {
+      background: #f2f5f1;
+    }
+
+    button.danger {
+      background: #b3261e;
+      border: none;
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    button.danger:hover {
+      background: #8f1e18;
+    }
+
+    button.small-danger {
+      background: #b3261e;
+      border: none;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    button.small-danger:hover {
+      background: #8f1e18;
+    }
+
+    .status-message {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .status-message.error {
+      color: #b3261e;
+    }
+
+    .status-message.success {
+      color: #2f5e2a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.85rem;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(90deg,#4b9144,#6aa35f);
+      color: #fff;
+      padding: 6px 8px;
+      border: 1px solid #dfe5db;
+      text-align: left;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      z-index: 1;
+    }
+
+    tbody td {
+      border: 1px solid #e0e4dd;
+      padding: 5px 7px;
+      background: #fff;
+      vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) td {
+      background: #f8faf7;
+    }
+
+    tbody tr.not-found td {
+      background: #ffe5e5 !important;
+    }
+
+    tbody tr.alert-found td {
+      background: #fff6cc !important;
+    }
+
+    .results-wrapper {
+      max-height: 420px;
+      overflow: auto;
+      border-radius: 8px;
+      border: 1px solid #e0e4dd;
+      margin-top: 12px;
+    }
+
+    .grid-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 16px;
+      margin-top: 10px;
+    }
+
+    .grid-form .full {
+      grid-column: 1 / -1;
+    }
+
+    .field-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: #fff6cc;
+      color: #8a6d00;
+      border: 1px solid #e7d37a;
+    }
+
+    .muted-box {
+      margin-top: 10px;
+      background: #f8faf7;
+      border: 1px solid #e0e4dd;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .loading-note {
+      font-size: 0.84rem;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 760px) {
+      .grid-form {
+        grid-template-columns: 1fr;
+      }
+
+      body {
+        padding: 10px;
+      }
+
+      .app-container {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1>Recepción de Devoluciones</h1>
+    <p style="font-size:0.9rem; color:#666; margin-top:-6px;">
+      Flujo: 1) Escanear guías → 2) Pegar data → 3) Procesar y copiar para el reporte → 4) Registrar avisos pendientes compartidos.
+    </p>
+
+    <div class="tabs">
+      <button class="tab-button active" data-tab="scan">1. Escanear guías</button>
+      <button class="tab-button" data-tab="data">2. Pegar data</button>
+      <button class="tab-button" data-tab="process">3. Procesar / Copiar</button>
+      <button class="tab-button" data-tab="alerts">4. Avisos / Pendientes</button>
+    </div>
+
+    <div id="tab-scan" class="tab-panel active">
+      <label for="guidesInput">Guías / Órdenes escaneadas</label>
+      <textarea id="guidesInput" placeholder="Una guía u orden por línea. El lector suele poner ENTER al final de cada lectura."></textarea>
+      <p class="helper-text">
+        Acepta tanto <strong>WAYBILL_NUMBER</strong> como <strong>INVO_NUMBER</strong>.
+      </p>
+      <div class="buttons-row">
+        <button id="clearGuidesButton" class="secondary">Limpiar guías</button>
+      </div>
+      <div id="guidesStatus" class="status-message"></div>
+    </div>
+
+    <div id="tab-data" class="tab-panel">
+      <label for="dataInput">Data de la hoja del sistema</label>
+      <textarea id="dataInput" placeholder="Copia desde Excel toda la tabla (incluyendo la fila de títulos) y pégala aquí."></textarea>
+      <p class="helper-text">
+        Deben existir las columnas: SERVICE_CENTRE, SERVICE_CENTRE_NAME, INVO_NUMBER, shipment_date,
+        COURIER, WAYBILL_NUMBER, SOCIO, NOMBRE_SOCIO, TELEFONO_SOCIO.
+      </p>
+      <div class="buttons-row">
+        <button id="clearDataButton" class="secondary">Limpiar data pegada</button>
+      </div>
+      <div id="dataStatus" class="status-message"></div>
+    </div>
+
+    <div id="tab-process" class="tab-panel">
+      <p style="font-size:0.9rem; color:#555;">
+        Aquí se arma la tabla final para pegar en tu reporte, sin fórmulas.
+      </p>
+      <div class="buttons-row">
+        <button id="processButton" class="primary">Procesar guías</button>
+        <button id="copyButton" class="secondary">Copiar tabla para Excel / reporte</button>
+      </div>
+      <div id="processStatus" class="status-message"></div>
+
+      <div class="muted-box">
+        Si una guía, orden, código o nombre coincide con un registro guardado en <strong>Avisos</strong>,
+        la fila se marcará y el comentario también saldrá en la exportación.
+      </div>
+
+      <div class="results-wrapper">
+        <table id="resultTable">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Guía</th>
+              <th>Orden</th>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Celular</th>
+              <th>Punto de envío</th>
+              <th>Courier</th>
+              <th>Fecha de despacho</th>
+              <th>Aviso</th>
+              <th>Comentario</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tab-alerts" class="tab-panel">
+      <p style="font-size:0.9rem; color:#555; margin-bottom:10px;">
+        Registra aquí pedidos pendientes, devoluciones esperadas o casos a monitorear. Esta pestaña ya queda compartida en línea.
+      </p>
+
+      <div class="grid-form">
+        <div class="field-box">
+          <label for="alertGuide">Guía</label>
+          <input type="text" id="alertGuide" placeholder="Ej: 812200944">
+        </div>
+
+        <div class="field-box">
+          <label for="alertOrder"># Orden</label>
+          <input type="text" id="alertOrder" placeholder="Ej: 1403961121">
+        </div>
+
+        <div class="field-box">
+          <label for="alertCode">Código</label>
+          <input type="text" id="alertCode" placeholder="Ej: 1782036">
+        </div>
+
+        <div class="field-box">
+          <label for="alertName">Nombre</label>
+          <input type="text" id="alertName" placeholder="Ej: ANA MAGALI BRICEÑO MULLO">
+        </div>
+
+        <div class="field-box full">
+          <label for="alertComment">Comentario</label>
+          <input type="text" id="alertComment" placeholder="Ej: esperar que llegue y anular / pedido duplicado / no tienen contacto">
+        </div>
+      </div>
+
+      <div class="buttons-row">
+        <button id="saveAlertButton" class="primary">Guardar aviso</button>
+        <button id="clearAlertFormButton" class="secondary">Limpiar formulario</button>
+      </div>
+
+      <div id="alertStatus" class="status-message"></div>
+      <div class="loading-note">Los avisos se actualizan en tiempo real entre ambas usuarias.</div>
+
+      <div class="results-wrapper">
+        <table id="alertsTable">
+          <thead>
+            <tr>
+              <th>Fecha registro</th>
+              <th>Guía</th>
+              <th>Orden</th>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Comentario</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      deleteDoc,
+      doc,
+      onSnapshot,
+      query,
+      orderBy,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    // Firebase
+    const firebaseConfig = {
+  apiKey: "AIzaSyBtDca1pcnrdKftrwlNPHESQl2ksi-SZAU",
+  authDomain: "oriflame-devoluciones.firebaseapp.com",
+  projectId: "oriflame-devoluciones",
+  storageBucket: "oriflame-devoluciones.firebasestorage.app",
+  messagingSenderId: "743381436224",
+  appId: "1:743381436224:web:9a9a8d92e375b34a005ca5"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const avisosCollection = collection(db, "avisos");
+
+    // Tabs
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const panels = {
+      scan: document.getElementById('tab-scan'),
+      data: document.getElementById('tab-data'),
+      process: document.getElementById('tab-process'),
+      alerts: document.getElementById('tab-alerts')
+    };
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        tabButtons.forEach(b => b.classList.remove('active'));
+        Object.values(panels).forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        panels[tab].classList.add('active');
+      });
+    });
+
+    // LocalStorage keys
+    const STORAGE_KEYS = {
+      guides: 'recepcion_devoluciones_guides',
+      data: 'recepcion_devoluciones_data'
+    };
+
+    // Elements
+    const guidesInput = document.getElementById('guidesInput');
+    const dataInput = document.getElementById('dataInput');
+
+    const guidesStatus = document.getElementById('guidesStatus');
+    const dataStatus = document.getElementById('dataStatus');
+    const processStatus = document.getElementById('processStatus');
+    const alertStatus = document.getElementById('alertStatus');
+
+    const processButton = document.getElementById('processButton');
+    const copyButton = document.getElementById('copyButton');
+    const clearGuidesButton = document.getElementById('clearGuidesButton');
+    const clearDataButton = document.getElementById('clearDataButton');
+
+    const resultTableBody = document.querySelector('#resultTable tbody');
+    const alertsTableBody = document.querySelector('#alertsTable tbody');
+
+    const alertGuide = document.getElementById('alertGuide');
+    const alertOrder = document.getElementById('alertOrder');
+    const alertCode = document.getElementById('alertCode');
+    const alertName = document.getElementById('alertName');
+    const alertComment = document.getElementById('alertComment');
+
+    const saveAlertButton = document.getElementById('saveAlertButton');
+    const clearAlertFormButton = document.getElementById('clearAlertFormButton');
+
+    let lastResultTSV = "";
+    let alertsList = [];
+
+    function setStatus(el, msg, type) {
+      el.textContent = msg || "";
+      el.classList.remove('error', 'success');
+      if (type) el.classList.add(type);
+    }
+
+    function normalizeText(value) {
+      return (value || "")
+        .toString()
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toUpperCase();
+    }
+
+    function normalizeNumericLike(value) {
+      const cleaned = (value || "").toString().trim();
+      if (!cleaned) return "";
+      if (/^\d+$/.test(cleaned)) return String(parseInt(cleaned, 10));
+      return cleaned.toUpperCase();
+    }
+
+    function todayES() {
+      return new Date().toLocaleDateString('es-ES');
+    }
+
+    function nowDateTimeES() {
+      return new Date().toLocaleString('es-ES');
+    }
+
+    function saveToStorage(key, value) {
+      localStorage.setItem(key, value);
+    }
+
+    function loadFromStorage(key) {
+      return localStorage.getItem(key) || "";
+    }
+
+    function detectDelimiter(row) {
+      if (row.indexOf('\t') !== -1) return '\t';
+      if (row.indexOf(';') !== -1) return ';';
+      return ',';
+    }
+
+    function parseDataText() {
+      const raw = dataInput.value.trim();
+      if (!raw) {
+        return { rows: [], error: "No hay data pegada en la pestaña 2." };
+      }
+
+      const lines = raw.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (lines.length < 2) {
+        return { rows: [], error: "La data parece incompleta. Falta la fila de datos." };
+      }
+
+      const delimiter = detectDelimiter(lines[0]);
+      const headers = lines[0].split(delimiter).map(h => h.trim());
+
+      const required = [
+        "SERVICE_CENTRE",
+        "SERVICE_CENTRE_NAME",
+        "INVO_NUMBER",
+        "shipment_date",
+        "COURIER",
+        "WAYBILL_NUMBER",
+        "SOCIO",
+        "NOMBRE_SOCIO",
+        "TELEFONO_SOCIO"
+      ];
+
+      const index = {};
+      for (const name of required) {
+        const idx = headers.indexOf(name);
+        if (idx === -1) {
+          return {
+            rows: [],
+            error: "No encuentro la columna '" + name + "'. Verifica que pegaste la hoja original incluyendo títulos."
+          };
+        }
+        index[name] = idx;
+      }
+
+      const rows = lines.slice(1).map(line => {
+        const cells = line.split(delimiter);
+        function get(field) {
+          return (cells[index[field]] || "").toString().trim();
+        }
+
+        return {
+          serviceCentre: get("SERVICE_CENTRE"),
+          serviceCentreName: get("SERVICE_CENTRE_NAME"),
+          invoNumber: get("INVO_NUMBER"),
+          shipmentDate: get("shipment_date"),
+          courier: get("COURIER"),
+          waybill: get("WAYBILL_NUMBER"),
+          socio: get("SOCIO"),
+          nombreSocio: get("NOMBRE_SOCIO"),
+          telefonoSocio: get("TELEFONO_SOCIO")
+        };
+      });
+
+      return { rows, error: null };
+    }
+
+    function clearAlertForm() {
+      alertGuide.value = "";
+      alertOrder.value = "";
+      alertCode.value = "";
+      alertName.value = "";
+      alertComment.value = "";
+    }
+
+    function formatFirestoreDate(fechaRegistro, createdAt) {
+      if (fechaRegistro) return fechaRegistro;
+      if (createdAt && typeof createdAt.toDate === 'function') {
+        return createdAt.toDate().toLocaleString('es-ES');
+      }
+      return "";
+    }
+
+    function renderAlertsTable() {
+      alertsTableBody.innerHTML = "";
+
+      if (!alertsList.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 7;
+        td.textContent = "No hay avisos registrados.";
+        td.style.textAlign = "center";
+        td.style.color = "#666";
+        tr.appendChild(td);
+        alertsTableBody.appendChild(tr);
+        return;
+      }
+
+      alertsList.forEach((item) => {
+        const tr = document.createElement('tr');
+
+        const values = [
+          formatFirestoreDate(item.fechaRegistro, item.createdAt),
+          item.guia || "",
+          item.orden || "",
+          item.codigo || "",
+          item.nombre || "",
+          item.comentario || ""
+        ];
+
+        values.forEach(val => {
+          const td = document.createElement('td');
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        const actionTd = document.createElement('td');
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'small-danger';
+        deleteBtn.textContent = 'Eliminar';
+        deleteBtn.addEventListener('click', async () => {
+          const ok = confirm("¿Eliminar este aviso compartido?");
+          if (!ok) return;
+
+          try {
+            await deleteDoc(doc(db, "avisos", item.id));
+            setStatus(alertStatus, "Aviso eliminado correctamente.", "success");
+          } catch (error) {
+            console.error(error);
+            setStatus(alertStatus, "No se pudo eliminar el aviso en Firebase.", "error");
+          }
+        });
+
+        actionTd.appendChild(deleteBtn);
+        tr.appendChild(actionTd);
+        alertsTableBody.appendChild(tr);
+      });
+    }
+
+    function findMatchingAlert(rowData) {
+      const resultGuide = normalizeNumericLike(rowData.guia);
+      const resultOrder = normalizeNumericLike(rowData.orden);
+      const resultCode = normalizeNumericLike(rowData.codigo);
+      const resultName = normalizeText(rowData.nombre);
+
+      for (const alert of alertsList) {
+        const alertGuideValue = normalizeNumericLike(alert.guia);
+        const alertOrderValue = normalizeNumericLike(alert.orden);
+        const alertCodeValue = normalizeNumericLike(alert.codigo);
+        const alertNameValue = normalizeText(alert.nombre);
+
+        if (alertGuideValue && resultGuide && alertGuideValue === resultGuide) {
+          return { alert, matchBy: 'Guía' };
+        }
+        if (alertOrderValue && resultOrder && alertOrderValue === resultOrder) {
+          return { alert, matchBy: 'Orden' };
+        }
+        if (alertCodeValue && resultCode && alertCodeValue === resultCode) {
+          return { alert, matchBy: 'Código' };
+        }
+        if (alertNameValue && resultName && alertNameValue === resultName) {
+          return { alert, matchBy: 'Nombre' };
+        }
+      }
+
+      return null;
+    }
+
+    function buildOutput() {
+      const guideLines = guidesInput.value
+        .split(/\r?\n/)
+        .map(x => x.trim())
+        .filter(x => x !== "");
+
+      if (guideLines.length === 0) {
+        setStatus(processStatus, "No hay guías escaneadas en la pestaña 1.", "error");
+        return;
+      }
+
+      const parsed = parseDataText();
+      if (parsed.error) {
+        setStatus(processStatus, parsed.error, "error");
+        return;
+      }
+
+      const dataRows = parsed.rows;
+      const byInvo = new Map();
+      const byWaybill = new Map();
+
+      dataRows.forEach(r => {
+        const invo = normalizeNumericLike(r.invoNumber);
+        const waybill = normalizeNumericLike(r.waybill);
+
+        if (invo) byInvo.set(invo, r);
+        if (waybill) byWaybill.set(waybill, r);
+      });
+
+      resultTableBody.innerHTML = "";
+      const outLines = [];
+
+      const headerOut = [
+        "Fecha",
+        "Guía",
+        "Orden",
+        "Código",
+        "Nombre",
+        "Celular",
+        "Punto de envío",
+        "Courier",
+        "Fecha de despacho",
+        "Aviso",
+        "Comentario"
+      ];
+
+      outLines.push(headerOut.join('\t'));
+
+      let foundAlertCount = 0;
+
+      guideLines.forEach(code => {
+        const scanned = code.trim();
+        const scannedNormalized = normalizeNumericLike(scanned);
+        let row = byWaybill.get(scannedNormalized) || byInvo.get(scannedNormalized);
+
+        if (!row && /^\d+$/.test(scannedNormalized)) {
+          const asInt = String(parseInt(scannedNormalized, 10));
+          row = byWaybill.get(asInt) || byInvo.get(asInt);
+        }
+
+        let outRow;
+        let cssClass = "";
+
+        if (!row) {
+          cssClass = "not-found";
+          const isOrder = /^140\d+/.test(scannedNormalized);
+
+          outRow = [
+            todayES(),
+            isOrder ? "" : scanned,
+            isOrder ? scanned : "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Revisar, no encontrado en la data"
+          ];
+        } else {
+          const puntoEnvio = (row.serviceCentre || "") +
+            (row.serviceCentreName ? " - " + row.serviceCentreName : "");
+
+          const guiaOut = (row.waybill || "").toString().trim();
+          const ordenOut = (row.invoNumber || "").toString().trim();
+
+          outRow = [
+            todayES(),
+            guiaOut,
+            ordenOut,
+            row.socio || "",
+            row.nombreSocio || "",
+            row.telefonoSocio || "",
+            puntoEnvio,
+            row.courier || "",
+            row.shipmentDate || "",
+            "",
+            ""
+          ];
+
+          const match = findMatchingAlert({
+            guia: guiaOut,
+            orden: ordenOut,
+            codigo: row.socio || "",
+            nombre: row.nombreSocio || ""
+          });
+
+          if (match) {
+            cssClass = "alert-found";
+            foundAlertCount++;
+
+            outRow[9] = "Ya llegó pedido registrado";
+            outRow[10] = [
+              "Coincidencia por " + match.matchBy,
+              formatFirestoreDate(match.alert.fechaRegistro, match.alert.createdAt) ? "Registrado: " + formatFirestoreDate(match.alert.fechaRegistro, match.alert.createdAt) : "",
+              match.alert.comentario ? "Comentario aviso: " + match.alert.comentario : ""
+            ].filter(Boolean).join(" | ");
+          }
+        }
+
+        const tr = document.createElement('tr');
+        if (cssClass) tr.classList.add(cssClass);
+
+        outRow.forEach((val, idx) => {
+          const td = document.createElement('td');
+          if (idx === 9 && val) {
+            const span = document.createElement('span');
+            span.className = 'badge';
+            span.textContent = val;
+            td.appendChild(span);
+          } else {
+            td.textContent = val;
+          }
+          tr.appendChild(td);
+        });
+
+        resultTableBody.appendChild(tr);
+        outLines.push(outRow.join('\t'));
+      });
+
+      lastResultTSV = outLines.join('\n');
+
+      let msg = "Listo. Filas generadas: " + guideLines.length + ".";
+      msg += foundAlertCount > 0
+        ? " Coincidencias con avisos: " + foundAlertCount + "."
+        : " No hubo coincidencias con avisos.";
+
+      setStatus(processStatus, msg, "success");
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert("Tabla copiada. Ahora puedes pegarla en Excel o en tu reporte.");
+    }
+
+    // Auto-save local
+    guidesInput.addEventListener('input', () => {
+      saveToStorage(STORAGE_KEYS.guides, guidesInput.value);
+      setStatus(guidesStatus, "Guías guardadas localmente.", "success");
+    });
+
+    dataInput.addEventListener('input', () => {
+      saveToStorage(STORAGE_KEYS.data, dataInput.value);
+      setStatus(dataStatus, "Data guardada localmente.", "success");
+    });
+
+    // Buttons
+    processButton.addEventListener('click', buildOutput);
+
+    copyButton.addEventListener('click', () => {
+      if (!lastResultTSV) {
+        alert("Todavía no hay nada que copiar. Primero pulsa 'Procesar guías'.");
+        return;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(lastResultTSV)
+          .then(() => alert("Tabla copiada. Pega con Ctrl+V en Excel o en tu reporte."))
+          .catch(() => fallbackCopy(lastResultTSV));
+      } else {
+        fallbackCopy(lastResultTSV);
+      }
+    });
+
+    clearGuidesButton.addEventListener('click', () => {
+      const ok = confirm("¿Seguro que deseas limpiar las guías escaneadas?");
+      if (!ok) return;
+
+      guidesInput.value = "";
+      localStorage.removeItem(STORAGE_KEYS.guides);
+      setStatus(guidesStatus, "Guías eliminadas del almacenamiento local.", "success");
+    });
+
+    clearDataButton.addEventListener('click', () => {
+      const ok = confirm("¿Seguro que deseas limpiar la data pegada?");
+      if (!ok) return;
+
+      dataInput.value = "";
+      localStorage.removeItem(STORAGE_KEYS.data);
+      setStatus(dataStatus, "Data eliminada del almacenamiento local.", "success");
+    });
+
+    saveAlertButton.addEventListener('click', async () => {
+      const payload = {
+        guia: alertGuide.value.trim(),
+        orden: alertOrder.value.trim(),
+        codigo: alertCode.value.trim(),
+        nombre: alertName.value.trim(),
+        comentario: alertComment.value.trim(),
+        fechaRegistro: nowDateTimeES(),
+        createdAt: serverTimestamp()
+      };
+
+      const hasAnyData = payload.guia || payload.orden || payload.codigo || payload.nombre || payload.comentario;
+      if (!hasAnyData) {
+        setStatus(alertStatus, "Debes ingresar al menos un dato para guardar el aviso.", "error");
+        return;
+      }
+
+      try {
+        await addDoc(avisosCollection, payload);
+        clearAlertForm();
+        setStatus(alertStatus, "Aviso guardado correctamente en Firebase.", "success");
+      } catch (error) {
+        console.error(error);
+        setStatus(alertStatus, "No se pudo guardar el aviso en Firebase.", "error");
+      }
+    });
+
+    clearAlertFormButton.addEventListener('click', () => {
+      clearAlertForm();
+      setStatus(alertStatus, "Formulario limpiado.", "success");
+    });
+
+    // Real-time alerts
+    const avisosQuery = query(avisosCollection, orderBy("createdAt", "desc"));
+    onSnapshot(avisosQuery, (snapshot) => {
+      alertsList = snapshot.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      }));
+      renderAlertsTable();
+    }, (error) => {
+      console.error(error);
+      setStatus(alertStatus, "Error al leer avisos compartidos desde Firebase.", "error");
+    });
+
+    // Initial load
+    function initialize() {
+      guidesInput.value = loadFromStorage(STORAGE_KEYS.guides);
+      dataInput.value = loadFromStorage(STORAGE_KEYS.data);
+
+      if (guidesInput.value) {
+        setStatus(guidesStatus, "Se recuperaron guías guardadas localmente.", "success");
+      }
+
+      if (dataInput.value) {
+        setStatus(dataStatus, "Se recuperó la data guardada localmente.", "success");
+      }
+    }
+
+    initialize();
+  </script>
+</body>
+</html>
