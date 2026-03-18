@@ -295,7 +295,7 @@
 </head>
 <body>
   <div class="app-container">
-    <h1>Recepción de Devoluciones</h1>
+    <h1>Recepción Devoluciones Oriflame</h1>
     <p style="font-size:0.9rem; color:#666; margin-top:-6px;">
       Flujo: 1) Escanear guías → 2) Pegar data → 3) Procesar y copiar para el reporte → 4) Registrar avisos pendientes compartidos.
     </p>
@@ -395,6 +395,11 @@
           <input type="text" id="alertName" placeholder="Ej: ANA MAGALI BRICEÑO MULLO">
         </div>
 
+        <div class="field-box">
+          <label for="alertResponsible">Responsable</label>
+          <input type="text" id="alertResponsible" placeholder="Ej: Kevin / Luisa / Evelyn">
+        </div>
+
         <div class="field-box full">
           <label for="alertComment">Comentario</label>
           <input type="text" id="alertComment" placeholder="Ej: esperar que llegue y anular / pedido duplicado / no tienen contacto">
@@ -418,6 +423,7 @@
               <th>Orden</th>
               <th>Código</th>
               <th>Nombre</th>
+              <th>Responsable</th>
               <th>Comentario</th>
               <th>Acción</th>
             </tr>
@@ -444,13 +450,13 @@
 
     // Firebase
     const firebaseConfig = {
-  apiKey: "AIzaSyBtDca1pcnrdKftrwlNPHESQl2ksi-SZAU",
-  authDomain: "oriflame-devoluciones.firebaseapp.com",
-  projectId: "oriflame-devoluciones",
-  storageBucket: "oriflame-devoluciones.firebasestorage.app",
-  messagingSenderId: "743381436224",
-  appId: "1:743381436224:web:9a9a8d92e375b34a005ca5"
-};
+      apiKey: "AIzaSyBtDca1pcnrdKftrwlNPHESQl2ksi-SZAU",
+      authDomain: "oriflame-devoluciones.firebaseapp.com",
+      projectId: "oriflame-devoluciones",
+      storageBucket: "oriflame-devoluciones.firebasestorage.app",
+      messagingSenderId: "743381436224",
+      appId: "1:743381436224:web:9a9a8d92e375b34a005ca5"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -502,6 +508,7 @@
     const alertOrder = document.getElementById('alertOrder');
     const alertCode = document.getElementById('alertCode');
     const alertName = document.getElementById('alertName');
+    const alertResponsible = document.getElementById('alertResponsible');
     const alertComment = document.getElementById('alertComment');
 
     const saveAlertButton = document.getElementById('saveAlertButton');
@@ -618,6 +625,7 @@
       alertOrder.value = "";
       alertCode.value = "";
       alertName.value = "";
+      alertResponsible.value = "";
       alertComment.value = "";
     }
 
@@ -635,7 +643,7 @@
       if (!alertsList.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 7;
+        td.colSpan = 8;
         td.textContent = "No hay avisos registrados.";
         td.style.textAlign = "center";
         td.style.color = "#666";
@@ -653,6 +661,7 @@
           item.orden || "",
           item.codigo || "",
           item.nombre || "",
+          item.responsable || "",
           item.comentario || ""
         ];
 
@@ -830,6 +839,7 @@
             outRow[10] = [
               "Coincidencia por " + match.matchBy,
               formatFirestoreDate(match.alert.fechaRegistro, match.alert.createdAt) ? "Registrado: " + formatFirestoreDate(match.alert.fechaRegistro, match.alert.createdAt) : "",
+              match.alert.responsable ? "Responsable: " + match.alert.responsable : "",
               match.alert.comentario ? "Comentario aviso: " + match.alert.comentario : ""
             ].filter(Boolean).join(" | ");
           }
@@ -928,12 +938,13 @@
         orden: alertOrder.value.trim(),
         codigo: alertCode.value.trim(),
         nombre: alertName.value.trim(),
+        responsable: alertResponsible.value.trim(),
         comentario: alertComment.value.trim(),
         fechaRegistro: nowDateTimeES(),
         createdAt: serverTimestamp()
       };
 
-      const hasAnyData = payload.guia || payload.orden || payload.codigo || payload.nombre || payload.comentario;
+      const hasAnyData = payload.guia || payload.orden || payload.codigo || payload.nombre || payload.responsable || payload.comentario;
       if (!hasAnyData) {
         setStatus(alertStatus, "Debes ingresar al menos un dato para guardar el aviso.", "error");
         return;
