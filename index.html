@@ -1,197 +1,405 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Recepción Devoluciones Oriflame</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oriflame Ops Hub - Devoluciones</title>
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --bg: #f4f7f3;
+      --card: #ffffff;
+      --line: #dfe8da;
+      --line-2: #e8eee4;
+      --text: #243127;
+      --muted: #6a766b;
+      --green: #4b9144;
+      --green-dark: #346d30;
+      --green-soft: #edf7eb;
+      --red: #d35656;
+      --red-soft: #fdeeee;
+      --amber: #e4b74d;
+      --amber-soft: #fff7df;
+      --blue-soft: #edf5ff;
+      --violet-soft: #f2ebff;
+      --shadow: 0 10px 24px rgba(22, 34, 19, .08);
+      --radius: 16px;
+    }
 
+    * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f5f7f6;
-      color: #333;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f8fbf7 0%, #f1f6ef 100%);
+      color: var(--text);
+      padding: 18px;
+    }
+
+   .app {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 12px;
+}
+
+    .topbar {
+      padding: 24px 24px 12px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
     }
 
     h1 {
-      margin-top: 0;
-      color: #2f5e2a;
+      margin: 0 0 6px;
+      color: #2c6730;
+      font-size: 2rem;
+      line-height: 1.1;
     }
 
-    .app-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 20px 24px 28px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-      border: 1px solid #e5eadf;
+    .subtitle {
+      color: var(--muted);
+      font-size: .98rem;
+      margin-bottom: 16px;
     }
 
     .tabs {
       display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: #49554c;
+      cursor: pointer;
+      font-size: .96rem;
+      transition: .15s ease;
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
+    }
+
+    .tab-btn:hover { background: #eef5eb; }
+    .tab-btn.active {
+      background: var(--green);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(75,145,68,.22);
+    }
+
+    .tab-badge {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .74rem;
+      font-weight: 800;
+      background: #e3342f;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .tab-btn.active .tab-badge { background: rgba(255,255,255,.2); }
+
+    .panel {
+      display: none;
+      padding: 20px 24px 28px;
+    }
+    .panel.active { display: block; }
+
+    .section-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
       margin-bottom: 16px;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 4px;
+      overflow: hidden;
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #fbfdfb;
+      border-bottom: 1px solid var(--line-2);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #355f34;
+      margin: 0;
+    }
+
+    .section-body { padding: 16px; }
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .tab-button {
-      border: none;
-      background: transparent;
-      padding: 8px 14px;
+    .info-tooltip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
       border-radius: 999px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: #555;
-      transition: all 0.15s ease;
+      border: 1px solid #cfe0cc;
+      background: #f4faf2;
+      color: #3f6a3d;
+      font-size: .78rem;
+      font-weight: 900;
+      cursor: help;
+      user-select: none;
+      flex: 0 0 auto;
     }
 
-    .tab-button:hover {
-      background: #e9f2e7;
-    }
-
-    .tab-button.active {
-      background: #4b9144;
+    .info-tooltip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 10px);
+      transform: translateX(-50%);
+      min-width: 240px;
+      max-width: 360px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #243427;
       color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-size: .8rem;
+      line-height: 1.35;
+      box-shadow: 0 12px 28px rgba(0,0,0,.18);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 30;
+      text-align: left;
     }
 
-    .tab-panel {
-      display: none;
-      margin-top: 10px;
+    .info-tooltip:hover::after,
+    .info-tooltip:focus::after {
+      opacity: 1;
+      visibility: visible;
     }
 
-    .tab-panel.active {
-      display: block;
+    .table-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: end;
+      justify-content: space-between;
+      margin-top: 12px;
+      margin-bottom: 12px;
     }
+
+    .table-tools .field {
+      min-width: 240px;
+      max-width: 360px;
+      flex: 1 1 280px;
+      margin: 0;
+    }
+
+    .table-tools .search-input {
+      min-width: 240px;
+    }
+
+
+    .grid-2, .grid-3, .grid-4, .grid-5 {
+      display: grid;
+      gap: 14px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .full { grid-column: 1 / -1; }
 
     label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #444;
       display: block;
       margin-bottom: 6px;
+      font-size: .88rem;
+      font-weight: 700;
+      color: #455148;
     }
 
-    textarea, input[type="text"] {
+    input[type="text"], input[type="date"], input[type="number"], select, textarea {
       width: 100%;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid #ccd3c9;
-      font-size: 0.9rem;
+      border: 1px solid #ccd7c7;
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: .92rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
     }
 
     textarea {
-      min-height: 220px;
+      min-height: 160px;
       resize: vertical;
-      font-family: monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
 
-    textarea:focus,
-    input[type="text"]:focus {
-      outline: 2px solid #4b9144;
-      outline-offset: 1px;
-      border-color: #4b9144;
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid rgba(75,145,68,.18);
+      border-color: var(--green);
     }
 
-    .helper-text {
-      font-size: 0.8rem;
-      color: #777;
-      margin-top: 4px;
+    .hint {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .82rem;
     }
 
-    .buttons-row {
+    .btn-row {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       align-items: center;
       margin-top: 12px;
-      flex-wrap: wrap;
     }
 
-    button.primary {
-      background: #4b9144;
+    button, .file-btn {
       border: none;
-      color: #fff;
-      padding: 8px 16px;
       border-radius: 999px;
-      font-size: 0.9rem;
+      padding: 9px 16px;
       cursor: pointer;
-      font-weight: 600;
+      font-size: .9rem;
+      font-weight: 700;
+      transition: .15s ease;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(75,145,68,.2);
+    }
+    .btn-primary:hover { background: var(--green-dark); }
+
+    .btn-secondary {
+      background: #fff;
+      color: #465149;
+      border: 1px solid #ced8c9;
+      box-shadow: 0 2px 6px rgba(37, 55, 42, .05);
+    }
+    .btn-secondary:hover { background: #f4f8f2; }
+
+    .btn-soft-green {
+      background: #eef7ed;
+      color: #345f33;
+      border: 1px solid #cfe0cc;
+      box-shadow: 0 2px 6px rgba(37, 55, 42, .05);
+    }
+    .btn-soft-green:hover { background: #e5f2e3; }
+
+    .btn-soft-violet {
+      background: #f3ecff;
+      color: #6d4aad;
+      border: 1px solid #dccdf8;
+      box-shadow: 0 2px 6px rgba(37, 55, 42, .05);
+    }
+    .btn-soft-violet:hover { background: #ecdefd; }
+
+    .btn-danger {
+      background: #b73939;
+      color: #fff;
+    }
+    .btn-danger:hover { background: #912c2c; }
+
+    .btn-ghost {
+      background: #eef5eb;
+      color: #355f34;
+      border: 1px solid #d6e4d1;
+    }
+    .btn-ghost:hover { background: #e7f0e4; }
+
+    .status {
+      margin-top: 10px;
+      font-size: .85rem;
+      color: var(--muted);
+      min-height: 18px;
+    }
+    .status.success { color: #2f6b33; }
+    .status.error { color: #b73939; }
+
+    .pill, .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
-    }
-
-    button.primary:hover {
-      background: #3b7536;
-    }
-
-    button.secondary {
-      background: #ffffff;
-      border: 1px solid #ccd3c9;
-      color: #444;
-      padding: 7px 14px;
+      padding: 4px 10px;
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: .76rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      line-height: 1.15;
+    }
+
+    .pill-green, .badge-green { background: #ebf7eb; color: #2d6a31; border-color: #cfe4cd; }
+    .pill-red, .badge-red { background: #fdeeee; color: #ad3535; border-color: #efcccc; }
+    .pill-amber, .badge-amber { background: #fff7df; color: #8c6820; border-color: #ebd8a2; }
+    .pill-gray, .badge-gray { background: #f1f3f1; color: #677067; border-color: #dfe3df; }
+    .pill-violet { background: #f3ecff; color: #7048b8; border-color: #dccdf8; }
+    .pill-blue { background: #edf5ff; color: #2b63a9; border-color: #cfe2fb; }
+
+    details.collapsible {
+      border: 1px dashed #d6e4d1;
+      border-radius: 14px;
+      background: #fbfdfb;
+      overflow: hidden;
+    }
+    details.collapsible > summary {
+      list-style: none;
       cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 800;
+      color: #3b5e39;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    details.collapsible > summary::-webkit-details-marker { display: none; }
+    details.collapsible[open] > summary { border-bottom: 1px solid var(--line-2); }
+    .collapsible-content { padding: 16px; }
+
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: auto;
+      overflow-x: auto;
+      overflow-y: auto;
+      background: #fff;
+      max-height: 520px;
+      scrollbar-width: auto;
     }
 
-    button.secondary:hover {
-      background: #f2f5f1;
+    .table-wrap::-webkit-scrollbar {
+      height: 12px;
+      width: 12px;
     }
-
-    button.danger {
-      background: #b3261e;
-      border: none;
-      color: #fff;
-      padding: 7px 14px;
+    .table-wrap::-webkit-scrollbar-thumb {
+      background: #bfd0ba;
       border-radius: 999px;
-      font-size: 0.85rem;
-      cursor: pointer;
+      border: 2px solid #f7faf7;
     }
-
-    button.danger:hover {
-      background: #8f1e18;
-    }
-
-    button.small-danger {
-      background: #b3261e;
-      border: none;
-      color: #fff;
-      padding: 5px 10px;
+    .table-wrap::-webkit-scrollbar-track {
+      background: #eef4ec;
       border-radius: 999px;
-      font-size: 0.78rem;
-      cursor: pointer;
-    }
-
-    button.small-danger:hover {
-      background: #8f1e18;
-    }
-
-    .status-message {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: #555;
-    }
-
-    .status-message.error {
-      color: #b3261e;
-    }
-
-    .status-message.success {
-      color: #2f5e2a;
     }
 
     table {
-      width: 100%;
+      width: max-content;
+      min-width: 1480px;
       border-collapse: collapse;
-      margin-top: 16px;
-      font-size: 0.85rem;
+      font-size: .86rem;
     }
 
     thead th {
@@ -199,241 +407,654 @@
       top: 0;
       background: linear-gradient(90deg,#4b9144,#6aa35f);
       color: #fff;
-      padding: 6px 8px;
-      border: 1px solid #dfe5db;
+      border: 1px solid #79ab72;
+      padding: 8px 8px;
       text-align: left;
-      font-size: 0.8rem;
+      font-size: .79rem;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-      z-index: 1;
+      letter-spacing: .03em;
+      z-index: 2;
     }
 
     tbody td {
-      border: 1px solid #e0e4dd;
-      padding: 5px 7px;
-      background: #fff;
+      border: 1px solid #e3e8e0;
+      padding: 6px 7px;
       vertical-align: top;
+      background: #fff;
     }
 
-    tbody tr:nth-child(even) td {
-      background: #f8faf7;
-    }
+    tbody tr:nth-child(even) td { background: #fbfcfb; }
+    tbody tr.alert-found td { background: #fff8e4 !important; }
+    tbody tr.not-found td { background: #ffe9e9 !important; }
 
-    tbody tr.not-found td {
-      background: #ffe5e5 !important;
-    }
+    .row-courier-servientrega td { background: #eff8ed; }
+    .row-courier-urbano td { background: #fdeeee; }
+    .row-courier-laar td { background: #fff8dc; }
+    .row-courier-galapagos td { background: #f4ecff; }
+    .row-courier-other td { background: #edf5ff; }
 
-    tbody tr.alert-found td {
-      background: #fff6cc !important;
-    }
-
-    .results-wrapper {
-      max-height: 420px;
-      overflow: auto;
+    .mini-input, .mini-select {
+      width: 100%;
+      min-width: 120px;
+      font-size: .83rem;
+      padding: 6px 8px;
       border-radius: 8px;
-      border: 1px solid #e0e4dd;
-      margin-top: 12px;
+      border: 1px solid #ccd7c7;
+      font-family: inherit;
+      background: rgba(255,255,255,.92);
     }
+    .mini-input { min-height: 34px; }
 
-    .grid-form {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px 16px;
-      margin-top: 10px;
-    }
-
-    .grid-form .full {
-      grid-column: 1 / -1;
-    }
-
-    .field-box {
+    .actions {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
+    .mini-btn {
+      padding: 6px 10px;
+      font-size: .78rem;
       border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      background: #fff6cc;
-      color: #8a6d00;
-      border: 1px solid #e7d37a;
+      font-weight: 800;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+
+    .toolbar .field {
+      min-width: 180px;
+      flex: 1 1 180px;
+    }
+
+    .toolbar .field.small {
+      max-width: 210px;
+      min-width: 170px;
+      flex: 0 0 210px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg,#ffffff 0%, #fafdf9 100%);
+      padding: 14px 16px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: .82rem;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #315f34;
+      line-height: 1;
     }
 
     .muted-box {
-      margin-top: 10px;
-      background: #f8faf7;
-      border: 1px solid #e0e4dd;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      color: #555;
+      background: #f7faf7;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #5f6b61;
+      font-size: .86rem;
     }
 
-    .loading-note {
-      font-size: 0.84rem;
-      color: #666;
-      margin-top: 8px;
+    .changed-point {
+      background: #fff4d9 !important;
+    }
+
+    .empty-cell {
+      text-align: center;
+      color: #758174;
+      padding: 16px !important;
+    }
+
+    .hidden-input { display: none; }
+
+    @media (max-width: 1100px) {
+      .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 760px) {
-      .grid-form {
-        grid-template-columns: 1fr;
-      }
-
-      body {
-        padding: 10px;
-      }
-
-      .app-container {
-        padding: 16px;
-      }
+      body { padding: 10px; }
+      .topbar, .panel { padding-left: 14px; padding-right: 14px; }
+      .metric-row { grid-template-columns: 1fr; }
+      .tab-btn { font-size: .88rem; }
     }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <h1>Recepción Devoluciones Oriflame</h1>
-    <p style="font-size:0.9rem; color:#666; margin-top:-6px;">
-      Flujo: 1) Escanear guías → 2) Pegar data → 3) Procesar y copiar para el reporte → 4) Registrar avisos pendientes compartidos.
-    </p>
-
-    <div class="tabs">
-      <button class="tab-button active" data-tab="scan">1. Escanear guías</button>
-      <button class="tab-button" data-tab="data">2. Pegar data</button>
-      <button class="tab-button" data-tab="process">3. Procesar / Copiar</button>
-      <button class="tab-button" data-tab="alerts">4. Avisos / Pendientes</button>
-    </div>
-
-    <div id="tab-scan" class="tab-panel active">
-      <label for="guidesInput">Guías / Órdenes escaneadas</label>
-      <textarea id="guidesInput" placeholder="Una guía u orden por línea. El lector suele poner ENTER al final de cada lectura."></textarea>
-      <p class="helper-text">
-        Acepta tanto <strong>WAYBILL_NUMBER</strong> como <strong>INVO_NUMBER</strong>.
-      </p>
-      <div class="buttons-row">
-        <button id="clearGuidesButton" class="secondary">Limpiar guías</button>
-      </div>
-      <div id="guidesStatus" class="status-message"></div>
-    </div>
-
-    <div id="tab-data" class="tab-panel">
-      <label for="dataInput">Data de la hoja del sistema</label>
-      <textarea id="dataInput" placeholder="Copia desde Excel toda la tabla (incluyendo la fila de títulos) y pégala aquí."></textarea>
-      <p class="helper-text">
-        Deben existir las columnas: SERVICE_CENTRE, SERVICE_CENTRE_NAME, INVO_NUMBER, shipment_date,
-        COURIER, WAYBILL_NUMBER, SOCIO, NOMBRE_SOCIO, TELEFONO_SOCIO.
-      </p>
-      <div class="buttons-row">
-        <button id="clearDataButton" class="secondary">Limpiar data pegada</button>
-      </div>
-      <div id="dataStatus" class="status-message"></div>
-    </div>
-
-    <div id="tab-process" class="tab-panel">
-      <p style="font-size:0.9rem; color:#555;">
-        Aquí se arma la tabla final para pegar en tu reporte, sin fórmulas.
-      </p>
-      <div class="buttons-row">
-        <button id="processButton" class="primary">Procesar guías</button>
-        <button id="copyButton" class="secondary">Copiar tabla para Excel / reporte</button>
-      </div>
-      <div id="processStatus" class="status-message"></div>
-
-      <div class="muted-box">
-        Si una guía, orden, código o nombre coincide con un registro guardado en <strong>Avisos</strong>,
-        la fila se marcará y el comentario también saldrá en la exportación.
-      </div>
-
-      <div class="results-wrapper">
-        <table id="resultTable">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Guía</th>
-              <th>Orden</th>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Celular</th>
-              <th>Punto de envío</th>
-              <th>Courier</th>
-              <th>Fecha de despacho</th>
-              <th>Aviso</th>
-              <th>Comentario</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+  <div class="app">
+    <div class="topbar">
+      <h1>Oriflame Ops Hub</h1>
+      <div class="subtitle">Recepción, clasificación y gestión colaborativa de devoluciones, reenvíos, anulaciones, reclamos y lista maestra de centros.</div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="gestion">Gestión diaria</button>
+        <button class="tab-btn" data-tab="canales">Canales de Ransa</button>
+        <button class="tab-btn" data-tab="reenvios">Reenvíos <span id="reenviosPendingBadge" class="tab-badge" style="display:none;">0</span></button>
+        <button class="tab-btn" data-tab="anulaciones">Anulaciones</button>
+        <button class="tab-btn" data-tab="reclamos">Reclamos Procesados</button>
+        <button class="tab-btn" data-tab="centros">Lista de Centros</button>
       </div>
     </div>
 
-    <div id="tab-alerts" class="tab-panel">
-      <p style="font-size:0.9rem; color:#555; margin-bottom:10px;">
-        Registra aquí pedidos pendientes, devoluciones esperadas o casos a monitorear. Esta pestaña ya queda compartida en línea.
-      </p>
+    <section class="panel active" id="panel-gestion">
+      <div class="metric-row">
+        <div class="metric"><div class="metric-label">Avisos activos</div><div class="metric-value" id="metricAvisos">0</div></div>
+        <div class="metric"><div class="metric-label">Canales</div><div class="metric-value" id="metricCanales">0</div></div>
+        <div class="metric"><div class="metric-label">Reenvíos pendientes</div><div class="metric-value" id="metricReenvios">0</div></div>
+        <div class="metric"><div class="metric-label">Anulaciones</div><div class="metric-value" id="metricAnulaciones">0</div></div>
+      </div>
 
-      <div class="grid-form">
-        <div class="field-box">
-          <label for="alertGuide">Guía</label>
-          <input type="text" id="alertGuide" placeholder="Ej: 812200944">
+      <div class="section-card">
+        <div class="section-head">
+          <h3 class="section-title">Gestión diaria</h3>
+          <span class="pill pill-green">Todo el flujo actual concentrado aquí</span>
         </div>
-
-        <div class="field-box">
-          <label for="alertOrder"># Orden</label>
-          <input type="text" id="alertOrder" placeholder="Ej: 1403961121">
-        </div>
-
-        <div class="field-box">
-          <label for="alertCode">Código</label>
-          <input type="text" id="alertCode" placeholder="Ej: 1782036">
-        </div>
-
-        <div class="field-box">
-          <label for="alertName">Nombre</label>
-          <input type="text" id="alertName" placeholder="Ej: ANA MAGALI BRICEÑO MULLO">
-        </div>
-
-        <div class="field-box">
-          <label for="alertResponsible">Responsable</label>
-          <input type="text" id="alertResponsible" placeholder="Ej: Kevin / Luisa / Evelyn">
-        </div>
-
-        <div class="field-box full">
-          <label for="alertComment">Comentario</label>
-          <input type="text" id="alertComment" placeholder="Ej: esperar que llegue y anular / pedido duplicado / no tienen contacto">
+        <div class="section-body">
+          <div class="grid-2">
+            <div>
+              <label for="guidesInput">Guías / Órdenes escaneadas</label>
+              <textarea id="guidesInput" placeholder="Una guía u orden por línea. El lector suele dejar ENTER al final de cada lectura."></textarea>
+              <div class="hint">Acepta WAYBILL_NUMBER o INVO_NUMBER.</div>
+              <div class="btn-row">
+                <button class="btn-secondary" id="clearGuidesBtn">Limpiar guías</button>
+              </div>
+              <div id="guidesStatus" class="status"></div>
+            </div>
+            <div>
+              <label for="dataInput">Data de la hoja del sistema</label>
+              <textarea id="dataInput" placeholder="Copia desde Excel toda la tabla (incluyendo la fila de títulos) y pégala aquí."></textarea>
+              <div class="hint">Columnas requeridas: SERVICE_CENTRE, SERVICE_CENTRE_NAME, INVO_NUMBER, shipment_date, COURIER, WAYBILL_NUMBER, SOCIO, NOMBRE_SOCIO, TELEFONO_SOCIO.</div>
+              <div class="btn-row">
+                <button class="btn-secondary" id="clearDataBtn">Limpiar data pegada</button>
+              </div>
+              <div id="dataStatus" class="status"></div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" id="processBtn">Procesar y enviar a Canales</button>
+            <button class="btn-secondary" id="copyProcessBtn">Copiar resultado</button>
+            <button class="btn-secondary" id="exportProcessBtn">Exportar Excel</button>
+          </div>
+          <div id="processStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="gestionSearch">Buscar en Gestión diaria</label>
+              <input type="text" id="gestionSearch" placeholder="Guía, orden, código, nombre, courier..." />
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="processTable">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Guía</th>
+                  <th>Orden</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Punto de envío</th>
+                  <th>Courier</th>
+                  <th>Fecha de despacho</th>
+                  <th>Aviso</th>
+                  <th>Comentario</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <div class="buttons-row">
-        <button id="saveAlertButton" class="primary">Guardar aviso</button>
-        <button id="clearAlertFormButton" class="secondary">Limpiar formulario</button>
+      <div class="section-card">
+        <div class="section-head">
+          <h3 class="section-title">Avisos / Pendientes compartidos</h3>
+          <span class="pill pill-amber">Sincronizado en tiempo real</span>
+        </div>
+        <div class="section-body">
+          <div class="grid-3">
+            <div>
+              <label for="alertGuide">Guía</label>
+              <input type="text" id="alertGuide" placeholder="Ej: 812200944" />
+            </div>
+            <div>
+              <label for="alertOrder">Orden</label>
+              <input type="text" id="alertOrder" placeholder="Ej: 1403961121" />
+            </div>
+            <div>
+              <label for="alertCode">Código</label>
+              <input type="text" id="alertCode" placeholder="Ej: 1782036" />
+            </div>
+            <div>
+              <label for="alertName">Nombre</label>
+              <input type="text" id="alertName" placeholder="Ej: ANA MAGALI BRICEÑO MULLO" />
+            </div>
+            <div>
+              <label for="alertResponsible">Responsable</label>
+              <input type="text" id="alertResponsible" placeholder="Ej: Kevin / Luisa / Evelyn" />
+            </div>
+            <div class="full">
+              <label for="alertComment">Comentario</label>
+              <input type="text" id="alertComment" placeholder="Ej: esperar que llegue y anular / pedido duplicado / no tienen contacto" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" id="saveAlertBtn">Guardar aviso</button>
+            <button class="btn-secondary" id="clearAlertFormBtn">Limpiar formulario</button>
+          </div>
+          <div id="alertStatus" class="status"></div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="alertsTable">
+              <thead>
+                <tr>
+                  <th>Fecha registro</th>
+                  <th>Guía</th>
+                  <th>Orden</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Responsable</th>
+                  <th>Comentario</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div id="alertStatus" class="status-message"></div>
-      <div class="loading-note">Los avisos se actualizan en tiempo real entre ambas usuarias.</div>
-
-      <div class="results-wrapper">
-        <table id="alertsTable">
-          <thead>
-            <tr>
-              <th>Fecha registro</th>
-              <th>Guía</th>
-              <th>Orden</th>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Responsable</th>
-              <th>Comentario</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <section class="panel" id="panel-canales">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title-row">
+            <h3 class="section-title">Canales de Ransa</h3>
+            <span class="info-tooltip" tabindex="0" data-tip="Colores pastel por courier: Servientrega verde, Urbano rojo, Laar amarillo, Galápagos lila y otros en azul suave. Los duplicados se marcan, no se eliminan.">i</span>
+          </div>
+          <span class="pill pill-blue">Clasificación operativa y derivación</span>
+        </div>
+        <div class="section-body">
+          <div class="toolbar">
+            <div class="field small">
+              <label for="bulkCanalSelect">Asignación masiva de canal</label>
+              <select id="bulkCanalSelect"></select>
+            </div>
+            <div class="field">
+              <label for="bulkCanalComment">Comentario masivo</label>
+              <input type="text" id="bulkCanalComment" placeholder="Comentario para seleccionados" />
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-ghost" id="applyCanalBulkBtn">Aplicar a seleccionados</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-soft-green" id="moveSelectedReenviosBtn">Mover a Reenvíos</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-soft-violet" id="moveSelectedAnulacionesBtn">Mover a Anulaciones</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="copyCanalesBtn">Copiar tabla</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="exportCanalesBtn">Exportar Excel</button>
+            </div>
+          </div>
+          <div id="canalesStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="canalesSearch">Buscar en Canales</label>
+              <input type="text" id="canalesSearch" placeholder="Guía, orden, código, nombre, courier, canal..." />
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="canalesTable">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAllCanales" /></th>
+                  <th>Fecha</th>
+                  <th>Guía</th>
+                  <th>Orden</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Punto de envío</th>
+                  <th>Courier</th>
+                  <th>Fecha de despacho</th>
+                  <th>Aviso</th>
+                  <th>Comentario</th>
+                  <th>Canales</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="panel" id="panel-reenvios">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title-row">
+            <h3 class="section-title">Reenvíos</h3>
+          </div>
+          <span class="pill pill-red">Pendientes y reenviados visibles para el equipo</span>
+        </div>
+        <div class="section-body">
+          <div class="btn-row">
+            <button class="btn-secondary" id="copyReenviosBtn">Copiar tabla</button>
+            <button class="btn-secondary" id="exportReenviosBtn">Exportar Excel</button>
+          </div>
+          <div id="reenviosStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="reenviosSearch">Buscar en Reenvíos</label>
+              <input type="text" id="reenviosSearch" placeholder="Guía, orden, nombre, estado, courier..." />
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="reenviosTable">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Guía</th>
+                  <th>Orden</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Punto de envío</th>
+                  <th>Courier</th>
+                  <th>Fecha de despacho</th>
+                  <th>Comentario</th>
+                  <th>Canales</th>
+                  <th>Guía nueva</th>
+                  <th>Fecha de envío</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-anulaciones">
+      <div class="section-card">
+        <div class="section-head">
+          <h3 class="section-title">Anulaciones</h3>
+          <span class="pill pill-violet">Control operativo con verificación por Total Control Order III</span>
+        </div>
+        <div class="section-body">
+          <details class="collapsible" id="tc3Details">
+            <summary>Panel de verificación TC III <span class="pill pill-gray">plegable</span></summary>
+            <div class="collapsible-content">
+              <label for="tc3Input">Pega aquí el Total Control Order III</label>
+              <textarea id="tc3Input" placeholder="Pega el reporte TC III. Se comparará la columna A (orden) contra las órdenes de anulaciones."></textarea>
+              <div class="btn-row">
+                <button class="btn-primary" id="verifyTc3Btn">Verificar anulaciones</button>
+                <button class="btn-secondary" id="clearTc3Btn">Limpiar TC III</button>
+              </div>
+              <div class="hint">Regla: si la orden ya no aparece en el TC III, queda verificada como <strong>Anulada</strong>. Si aún aparece, queda como <strong>No anulada</strong>.</div>
+            </div>
+          </details>
+
+          <div class="toolbar" style="margin-top:14px;">
+            <div class="field small">
+              <label for="bulkEstadoSelect">Estado masivo</label>
+              <input type="text" id="bulkEstadoSelect" list="estadoAnulacionList" placeholder="Ej: Pendiente de anular" />
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-ghost" id="applyEstadoBulkBtn">Aplicar a seleccionados</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="copyAnulacionesBtn">Copiar tabla</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="exportAnulacionesBtn">Exportar Excel</button>
+            </div>
+          </div>
+          <div id="anulacionesStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="anulacionesSearch">Buscar en Anulaciones</label>
+              <input type="text" id="anulacionesSearch" placeholder="Orden, código, nombre, estado, verificación..." />
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="anulacionesTable">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAllAnulaciones" /></th>
+                  <th>Orden</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Punto de envío</th>
+                  <th>Courier</th>
+                  <th>Fecha de despacho</th>
+                  <th>Cruce ampliación</th>
+                  <th>Canales</th>
+                  <th>Estado</th>
+                  <th>Fecha de anulación</th>
+                  <th>Verificación</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-reclamos">
+      <div class="section-card">
+        <div class="section-head">
+          <h3 class="section-title">Reclamos Procesados</h3>
+          <span class="pill pill-green">Registro manual en línea</span>
+        </div>
+        <div class="section-body">
+          <div class="grid-4">
+            <div>
+              <label for="claimDate">Fecha</label>
+              <input type="date" id="claimDate" />
+            </div>
+            <div>
+              <label for="claimSocio">Socio</label>
+              <input type="text" id="claimSocio" />
+            </div>
+            <div>
+              <label for="claimGuide">Guía</label>
+              <input type="text" id="claimGuide" />
+            </div>
+            <div>
+              <label for="claimProduct">Producto</label>
+              <input type="text" id="claimProduct" />
+            </div>
+            <div>
+              <label for="claimUnit">Unidad</label>
+              <input type="number" id="claimUnit" min="1" step="1" />
+            </div>
+            <div>
+              <label for="claimState">Estado</label>
+              <input type="text" id="claimState" list="estadoReclamosList" placeholder="Ej: DEVOLUCION EN BUEN ESTADO" />
+            </div>
+            <div class="full">
+              <label for="claimGestion">Gestión</label>
+              <input type="text" id="claimGestion" list="gestionReclamosList" placeholder="Ej: reclamo no procede devolver al remitente" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" id="saveClaimBtn">Guardar reclamo</button>
+            <button class="btn-secondary" id="clearClaimFormBtn">Limpiar formulario</button>
+            <button class="btn-secondary" id="copyClaimsBtn">Copiar tabla</button>
+            <button class="btn-secondary" id="exportClaimsBtn">Exportar Excel</button>
+          </div>
+          <div id="claimsStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="claimsSearch">Buscar en Reclamos</label>
+              <input type="text" id="claimsSearch" placeholder="Socio, guía, producto, estado, gestión..." />
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="claimsTable">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Socio</th>
+                  <th>Guía</th>
+                  <th>Producto</th>
+                  <th>Unidad</th>
+                  <th>Estado</th>
+                  <th>Gestión</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-centros">
+      <div class="section-card">
+        <div class="section-head">
+          <h3 class="section-title">Lista de Centros</h3>
+          <span class="pill pill-blue">Base compartida, reemplazable por Excel</span>
+        </div>
+        <div class="section-body">
+          <details class="collapsible">
+            <summary>Subir / reemplazar base de centros <span class="pill pill-gray">plegable</span></summary>
+            <div class="collapsible-content">
+              <div class="grid-3">
+                <div>
+                  <label for="centersFile">Archivo Excel</label>
+                  <input type="file" id="centersFile" accept=".xlsx,.xls" />
+                </div>
+                <div>
+                  <label for="centerSheetSelect">Hoja detectada</label>
+                  <select id="centerSheetSelect"></select>
+                </div>
+                <div>
+                  <label>&nbsp;</label>
+                  <button class="btn-primary" id="importCentersBtn">Importar hoja y reemplazar base</button>
+                </div>
+              </div>
+              <div class="hint">La importación reemplaza toda la base anterior para que todas consulten la misma versión vigente.</div>
+            </div>
+          </details>
+
+          <div class="toolbar" style="margin-top:14px;">
+            <div class="field small">
+              <label for="centerFilterField">Buscar por</label>
+              <select id="centerFilterField">
+                <option value="keyword">Palabra clave</option>
+                <option value="punto">Punto de envío</option>
+                <option value="oficina">Nombre de la oficina</option>
+                <option value="courier">Courier</option>
+                <option value="localidad">Localidad</option>
+                <option value="ciudad">Ciudad</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="centerSearch">Valor a buscar</label>
+              <input type="text" id="centerSearch" placeholder="Escribe para filtrar..." />
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="clearCenterFiltersBtn">Limpiar filtros</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="copyCentersBtn">Copiar tabla</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="exportCentersBtn">Exportar Excel</button>
+            </div>
+          </div>
+          <div id="centersStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="centersQuickSearch">Buscador rápido de Centros</label>
+              <input type="text" id="centersQuickSearch" placeholder="Punto, oficina, courier, localidad o palabra clave..." />
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table id="centersTable">
+              <thead>
+                <tr>
+                  <th>Punto</th>
+                  <th>Descripción del enlace</th>
+                  <th>Días de despacho</th>
+                  <th>Dirección</th>
+                  <th>Localidad</th>
+                  <th>Courier</th>
+                  <th>E-mail</th>
+                  <th>Números telefónicos</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
+  <datalist id="canalesList"></datalist>
+  <datalist id="estadoAnulacionList">
+    <option value="Pendiente de anular"></option>
+    <option value="Anulado"></option>
+    <option value="Anulado pendiente de sacar físicamente"></option>
+  </datalist>
+  <datalist id="estadoReclamosList">
+    <option value="DEVOLUCION EN BUEN ESTADO"></option>
+    <option value="DAÑADO"></option>
+    <option value="INCOMPLETO"></option>
+    <option value="MAL ESTADO"></option>
+    <option value="PRODUCTO EQUIVOCADO"></option>
+    <option value="OTRO"></option>
+  </datalist>
+  <datalist id="gestionReclamosList">
+    <option value="reclamo no procede devolver al remitente"></option>
+    <option value="PROCESADO PASA A RETORNO RANSA"></option>
+    <option value="PROCESADO"></option>
+    <option value="DEVOLVER AL REMITENTE"></option>
+    <option value="EN REVISIÓN"></option>
+    <option value="OTRO"></option>
+  </datalist>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
     import {
@@ -445,10 +1066,12 @@
       onSnapshot,
       query,
       orderBy,
-      serverTimestamp
+      serverTimestamp,
+      updateDoc,
+      writeBatch,
+      getDocs
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-    // Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBtDca1pcnrdKftrwlNPHESQl2ksi-SZAU",
       authDomain: "oriflame-devoluciones.firebaseapp.com",
@@ -460,536 +1083,1137 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const avisosCollection = collection(db, "avisos");
 
-    // Tabs
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const panels = {
-      scan: document.getElementById('tab-scan'),
-      data: document.getElementById('tab-data'),
-      process: document.getElementById('tab-process'),
-      alerts: document.getElementById('tab-alerts')
+    const refs = {
+      avisos: collection(db, 'avisos'),
+      canales: collection(db, 'canales_ransa'),
+      reenvios: collection(db, 'reenvios'),
+      anulaciones: collection(db, 'anulaciones'),
+      reclamos: collection(db, 'reclamos_procesados'),
+      centros: collection(db, 'lista_centros')
     };
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.getAttribute('data-tab');
-        tabButtons.forEach(b => b.classList.remove('active'));
-        Object.values(panels).forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        panels[tab].classList.add('active');
-      });
-    });
-
-    // LocalStorage keys
     const STORAGE_KEYS = {
-      guides: 'recepcion_devoluciones_guides',
-      data: 'recepcion_devoluciones_data'
+      guides: 'opshub_guides',
+      data: 'opshub_data',
+      tc3: 'opshub_tc3'
     };
 
-    // Elements
-    const guidesInput = document.getElementById('guidesInput');
-    const dataInput = document.getElementById('dataInput');
+    const CANAL_OPTIONS = ['Pallet 1', 'Pallet 2', 'Pallet 3', 'Canal 1', 'Canal 2', 'Canal 3', 'Canal 4', 'Canal 5', 'Otro'];
 
-    const guidesStatus = document.getElementById('guidesStatus');
-    const dataStatus = document.getElementById('dataStatus');
-    const processStatus = document.getElementById('processStatus');
-    const alertStatus = document.getElementById('alertStatus');
+    const state = {
+      alerts: [],
+      canales: [],
+      reenvios: [],
+      anulaciones: [],
+      reclamos: [],
+      centros: [],
+      processRows: [],
+      processTSV: '',
+      selectedCanales: new Set(),
+      selectedAnulaciones: new Set(),
+      centersWorkbook: null,
+      centersImportedAt: null
+    };
 
-    const processButton = document.getElementById('processButton');
-    const copyButton = document.getElementById('copyButton');
-    const clearGuidesButton = document.getElementById('clearGuidesButton');
-    const clearDataButton = document.getElementById('clearDataButton');
+    const el = {
+      tabs: document.querySelectorAll('.tab-btn'),
+      panels: {
+        gestion: document.getElementById('panel-gestion'),
+        canales: document.getElementById('panel-canales'),
+        reenvios: document.getElementById('panel-reenvios'),
+        anulaciones: document.getElementById('panel-anulaciones'),
+        reclamos: document.getElementById('panel-reclamos'),
+        centros: document.getElementById('panel-centros')
+      },
 
-    const resultTableBody = document.querySelector('#resultTable tbody');
-    const alertsTableBody = document.querySelector('#alertsTable tbody');
+      metricAvisos: document.getElementById('metricAvisos'),
+      metricCanales: document.getElementById('metricCanales'),
+      metricReenvios: document.getElementById('metricReenvios'),
+      metricAnulaciones: document.getElementById('metricAnulaciones'),
+      reenviosPendingBadge: document.getElementById('reenviosPendingBadge'),
 
-    const alertGuide = document.getElementById('alertGuide');
-    const alertOrder = document.getElementById('alertOrder');
-    const alertCode = document.getElementById('alertCode');
-    const alertName = document.getElementById('alertName');
-    const alertResponsible = document.getElementById('alertResponsible');
-    const alertComment = document.getElementById('alertComment');
+      guidesInput: document.getElementById('guidesInput'),
+      dataInput: document.getElementById('dataInput'),
+      processTableBody: document.querySelector('#processTable tbody'),
+      processStatus: document.getElementById('processStatus'),
+      gestionSearch: document.getElementById('gestionSearch'),
+      guidesStatus: document.getElementById('guidesStatus'),
+      dataStatus: document.getElementById('dataStatus'),
 
-    const saveAlertButton = document.getElementById('saveAlertButton');
-    const clearAlertFormButton = document.getElementById('clearAlertFormButton');
+      alertGuide: document.getElementById('alertGuide'),
+      alertOrder: document.getElementById('alertOrder'),
+      alertCode: document.getElementById('alertCode'),
+      alertName: document.getElementById('alertName'),
+      alertResponsible: document.getElementById('alertResponsible'),
+      alertComment: document.getElementById('alertComment'),
+      alertStatus: document.getElementById('alertStatus'),
+      alertsTableBody: document.querySelector('#alertsTable tbody'),
 
-    let lastResultTSV = "";
-    let alertsList = [];
+      canalesTableBody: document.querySelector('#canalesTable tbody'),
+      canalesStatus: document.getElementById('canalesStatus'),
+      canalesSearch: document.getElementById('canalesSearch'),
+      bulkCanalSelect: document.getElementById('bulkCanalSelect'),
+      bulkCanalComment: document.getElementById('bulkCanalComment'),
+      selectAllCanales: document.getElementById('selectAllCanales'),
 
-    function setStatus(el, msg, type) {
-      el.textContent = msg || "";
-      el.classList.remove('error', 'success');
-      if (type) el.classList.add(type);
+      reenviosTableBody: document.querySelector('#reenviosTable tbody'),
+      reenviosStatus: document.getElementById('reenviosStatus'),
+      reenviosSearch: document.getElementById('reenviosSearch'),
+
+      anulacionesTableBody: document.querySelector('#anulacionesTable tbody'),
+      anulacionesStatus: document.getElementById('anulacionesStatus'),
+      anulacionesSearch: document.getElementById('anulacionesSearch'),
+      selectAllAnulaciones: document.getElementById('selectAllAnulaciones'),
+      bulkEstadoSelect: document.getElementById('bulkEstadoSelect'),
+      tc3Input: document.getElementById('tc3Input'),
+
+      claimDate: document.getElementById('claimDate'),
+      claimSocio: document.getElementById('claimSocio'),
+      claimGuide: document.getElementById('claimGuide'),
+      claimProduct: document.getElementById('claimProduct'),
+      claimUnit: document.getElementById('claimUnit'),
+      claimState: document.getElementById('claimState'),
+      claimGestion: document.getElementById('claimGestion'),
+      claimsStatus: document.getElementById('claimsStatus'),
+      claimsSearch: document.getElementById('claimsSearch'),
+      claimsTableBody: document.querySelector('#claimsTable tbody'),
+
+      centersFile: document.getElementById('centersFile'),
+      centerSheetSelect: document.getElementById('centerSheetSelect'),
+      centerFilterField: document.getElementById('centerFilterField'),
+      centerSearch: document.getElementById('centerSearch'),
+      centersQuickSearch: document.getElementById('centersQuickSearch'),
+      centersStatus: document.getElementById('centersStatus'),
+      centersTableBody: document.querySelector('#centersTable tbody'),
+
+      canalesList: document.getElementById('canalesList')
+    };
+
+    function setStatus(node, msg = '', type = '') {
+      node.textContent = msg;
+      node.classList.remove('success', 'error');
+      if (type) node.classList.add(type);
     }
 
     function normalizeText(value) {
-      return (value || "")
-        .toString()
-        .trim()
-        .replace(/\s+/g, ' ')
-        .toUpperCase();
+      return (value || '').toString().trim().replace(/\s+/g, ' ').toUpperCase();
     }
 
     function normalizeNumericLike(value) {
-      const cleaned = (value || "").toString().trim();
-      if (!cleaned) return "";
+      const cleaned = (value || '').toString().trim();
+      if (!cleaned) return '';
       if (/^\d+$/.test(cleaned)) return String(parseInt(cleaned, 10));
       return cleaned.toUpperCase();
     }
 
-    function todayES() {
-      return new Date().toLocaleDateString('es-ES');
-    }
+    function todayES() { return new Date().toLocaleDateString('es-ES'); }
+    function nowES() { return new Date().toLocaleString('es-ES'); }
+    function isoToday() { return new Date().toISOString().slice(0, 10); }
 
-    function nowDateTimeES() {
-      return new Date().toLocaleString('es-ES');
-    }
-
-    function saveToStorage(key, value) {
-      localStorage.setItem(key, value);
-    }
-
-    function loadFromStorage(key) {
-      return localStorage.getItem(key) || "";
-    }
+    function saveLocal(key, value) { localStorage.setItem(key, value); }
+    function loadLocal(key) { return localStorage.getItem(key) || ''; }
 
     function detectDelimiter(row) {
-      if (row.indexOf('\t') !== -1) return '\t';
-      if (row.indexOf(';') !== -1) return ';';
+      if (row.includes('\t')) return '\t';
+      if (row.includes(';')) return ';';
       return ',';
     }
 
     function parseDataText() {
-      const raw = dataInput.value.trim();
-      if (!raw) {
-        return { rows: [], error: "No hay data pegada en la pestaña 2." };
-      }
-
-      const lines = raw.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (lines.length < 2) {
-        return { rows: [], error: "La data parece incompleta. Falta la fila de datos." };
-      }
-
+      const raw = el.dataInput.value.trim();
+      if (!raw) return { rows: [], error: 'No hay data pegada en Gestión diaria.' };
+      const lines = raw.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) return { rows: [], error: 'La data parece incompleta.' };
       const delimiter = detectDelimiter(lines[0]);
       const headers = lines[0].split(delimiter).map(h => h.trim());
-
-      const required = [
-        "SERVICE_CENTRE",
-        "SERVICE_CENTRE_NAME",
-        "INVO_NUMBER",
-        "shipment_date",
-        "COURIER",
-        "WAYBILL_NUMBER",
-        "SOCIO",
-        "NOMBRE_SOCIO",
-        "TELEFONO_SOCIO"
-      ];
-
-      const index = {};
+      const required = ['SERVICE_CENTRE', 'SERVICE_CENTRE_NAME', 'INVO_NUMBER', 'shipment_date', 'COURIER', 'WAYBILL_NUMBER', 'SOCIO', 'NOMBRE_SOCIO', 'TELEFONO_SOCIO'];
+      const idx = {};
       for (const name of required) {
-        const idx = headers.indexOf(name);
-        if (idx === -1) {
-          return {
-            rows: [],
-            error: "No encuentro la columna '" + name + "'. Verifica que pegaste la hoja original incluyendo títulos."
-          };
-        }
-        index[name] = idx;
+        const i = headers.indexOf(name);
+        if (i === -1) return { rows: [], error: `No encuentro la columna '${name}'.` };
+        idx[name] = i;
       }
-
       const rows = lines.slice(1).map(line => {
         const cells = line.split(delimiter);
-        function get(field) {
-          return (cells[index[field]] || "").toString().trim();
-        }
-
+        const get = key => (cells[idx[key]] || '').toString().trim();
         return {
-          serviceCentre: get("SERVICE_CENTRE"),
-          serviceCentreName: get("SERVICE_CENTRE_NAME"),
-          invoNumber: get("INVO_NUMBER"),
-          shipmentDate: get("shipment_date"),
-          courier: get("COURIER"),
-          waybill: get("WAYBILL_NUMBER"),
-          socio: get("SOCIO"),
-          nombreSocio: get("NOMBRE_SOCIO"),
-          telefonoSocio: get("TELEFONO_SOCIO")
+          serviceCentre: get('SERVICE_CENTRE'),
+          serviceCentreName: get('SERVICE_CENTRE_NAME'),
+          invoNumber: get('INVO_NUMBER'),
+          shipmentDate: get('shipment_date'),
+          courier: get('COURIER'),
+          waybill: get('WAYBILL_NUMBER'),
+          socio: get('SOCIO'),
+          nombreSocio: get('NOMBRE_SOCIO'),
+          telefonoSocio: get('TELEFONO_SOCIO')
         };
       });
-
       return { rows, error: null };
     }
 
-    function clearAlertForm() {
-      alertGuide.value = "";
-      alertOrder.value = "";
-      alertCode.value = "";
-      alertName.value = "";
-      alertResponsible.value = "";
-      alertComment.value = "";
+    function courierClass(courier) {
+      const value = normalizeText(courier);
+      if (value.includes('SERVIENTREGA')) return 'row-courier-servientrega';
+      if (value.includes('URBANO')) return 'row-courier-urbano';
+      if (value.includes('LAAR')) return 'row-courier-laar';
+      if (value.includes('GALAPAGOS') || value.includes('GALÁPAGOS')) return 'row-courier-galapagos';
+      return 'row-courier-other';
     }
 
-    function formatFirestoreDate(fechaRegistro, createdAt) {
-      if (fechaRegistro) return fechaRegistro;
-      if (createdAt && typeof createdAt.toDate === 'function') {
-        return createdAt.toDate().toLocaleString('es-ES');
-      }
-      return "";
+    function createCanalOptionsHtml(selected = '') {
+      return CANAL_OPTIONS.map(v => `<option value="${escapeHtml(v)}" ${v === selected ? 'selected' : ''}>${escapeHtml(v)}</option>`).join('');
     }
 
-    function renderAlertsTable() {
-      alertsTableBody.innerHTML = "";
-
-      if (!alertsList.length) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = 8;
-        td.textContent = "No hay avisos registrados.";
-        td.style.textAlign = "center";
-        td.style.color = "#666";
-        tr.appendChild(td);
-        alertsTableBody.appendChild(tr);
-        return;
-      }
-
-      alertsList.forEach((item) => {
-        const tr = document.createElement('tr');
-
-        const values = [
-          formatFirestoreDate(item.fechaRegistro, item.createdAt),
-          item.guia || "",
-          item.orden || "",
-          item.codigo || "",
-          item.nombre || "",
-          item.responsable || "",
-          item.comentario || ""
-        ];
-
-        values.forEach(val => {
-          const td = document.createElement('td');
-          td.textContent = val;
-          tr.appendChild(td);
-        });
-
-        const actionTd = document.createElement('td');
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'small-danger';
-        deleteBtn.textContent = 'Eliminar';
-        deleteBtn.addEventListener('click', async () => {
-          const ok = confirm("¿Eliminar este aviso compartido?");
-          if (!ok) return;
-
-          try {
-            await deleteDoc(doc(db, "avisos", item.id));
-            setStatus(alertStatus, "Aviso eliminado correctamente.", "success");
-          } catch (error) {
-            console.error(error);
-            setStatus(alertStatus, "No se pudo eliminar el aviso en Firebase.", "error");
-          }
-        });
-
-        actionTd.appendChild(deleteBtn);
-        tr.appendChild(actionTd);
-        alertsTableBody.appendChild(tr);
-      });
+    function setCanalOptionLists() {
+      el.bulkCanalSelect.innerHTML = '<option value="">Seleccionar...</option>' + CANAL_OPTIONS.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      el.canalesList.innerHTML = CANAL_OPTIONS.map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
     }
 
-    function findMatchingAlert(rowData) {
-      const resultGuide = normalizeNumericLike(rowData.guia);
-      const resultOrder = normalizeNumericLike(rowData.orden);
-      const resultCode = normalizeNumericLike(rowData.codigo);
-      const resultName = normalizeText(rowData.nombre);
-
-      for (const alert of alertsList) {
-        const alertGuideValue = normalizeNumericLike(alert.guia);
-        const alertOrderValue = normalizeNumericLike(alert.orden);
-        const alertCodeValue = normalizeNumericLike(alert.codigo);
-        const alertNameValue = normalizeText(alert.nombre);
-
-        if (alertGuideValue && resultGuide && alertGuideValue === resultGuide) {
-          return { alert, matchBy: 'Guía' };
-        }
-        if (alertOrderValue && resultOrder && alertOrderValue === resultOrder) {
-          return { alert, matchBy: 'Orden' };
-        }
-        if (alertCodeValue && resultCode && alertCodeValue === resultCode) {
-          return { alert, matchBy: 'Código' };
-        }
-        if (alertNameValue && resultName && alertNameValue === resultName) {
-          return { alert, matchBy: 'Nombre' };
-        }
-      }
-
-      return null;
+    function escapeHtml(value) {
+      return (value || '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
-    function buildOutput() {
-      const guideLines = guidesInput.value
-        .split(/\r?\n/)
-        .map(x => x.trim())
-        .filter(x => x !== "");
-
-      if (guideLines.length === 0) {
-        setStatus(processStatus, "No hay guías escaneadas en la pestaña 1.", "error");
-        return;
+    function copyText(text, successMsg = 'Tabla copiada.') {
+      if (!text) return alert('No hay datos para copiar.');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => alert(successMsg)).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
       }
-
-      const parsed = parseDataText();
-      if (parsed.error) {
-        setStatus(processStatus, parsed.error, "error");
-        return;
-      }
-
-      const dataRows = parsed.rows;
-      const byInvo = new Map();
-      const byWaybill = new Map();
-
-      dataRows.forEach(r => {
-        const invo = normalizeNumericLike(r.invoNumber);
-        const waybill = normalizeNumericLike(r.waybill);
-
-        if (invo) byInvo.set(invo, r);
-        if (waybill) byWaybill.set(waybill, r);
-      });
-
-      resultTableBody.innerHTML = "";
-      const outLines = [];
-
-      const headerOut = [
-        "Fecha",
-        "Guía",
-        "Orden",
-        "Código",
-        "Nombre",
-        "Celular",
-        "Punto de envío",
-        "Courier",
-        "Fecha de despacho",
-        "Aviso",
-        "Comentario"
-      ];
-
-      outLines.push(headerOut.join('\t'));
-
-      let foundAlertCount = 0;
-
-      guideLines.forEach(code => {
-        const scanned = code.trim();
-        const scannedNormalized = normalizeNumericLike(scanned);
-        let row = byWaybill.get(scannedNormalized) || byInvo.get(scannedNormalized);
-
-        if (!row && /^\d+$/.test(scannedNormalized)) {
-          const asInt = String(parseInt(scannedNormalized, 10));
-          row = byWaybill.get(asInt) || byInvo.get(asInt);
-        }
-
-        let outRow;
-        let cssClass = "";
-
-        if (!row) {
-          cssClass = "not-found";
-          const isOrder = /^140\d+/.test(scannedNormalized);
-
-          outRow = [
-            todayES(),
-            isOrder ? "" : scanned,
-            isOrder ? scanned : "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "Revisar, no encontrado en la data"
-          ];
-        } else {
-          const puntoEnvio = (row.serviceCentre || "") +
-            (row.serviceCentreName ? " - " + row.serviceCentreName : "");
-
-          const guiaOut = (row.waybill || "").toString().trim();
-          const ordenOut = (row.invoNumber || "").toString().trim();
-
-          outRow = [
-            todayES(),
-            guiaOut,
-            ordenOut,
-            row.socio || "",
-            row.nombreSocio || "",
-            row.telefonoSocio || "",
-            puntoEnvio,
-            row.courier || "",
-            row.shipmentDate || "",
-            "",
-            ""
-          ];
-
-          const match = findMatchingAlert({
-            guia: guiaOut,
-            orden: ordenOut,
-            codigo: row.socio || "",
-            nombre: row.nombreSocio || ""
-          });
-
-          if (match) {
-            cssClass = "alert-found";
-            foundAlertCount++;
-
-            outRow[9] = "Ya llegó pedido registrado";
-            outRow[10] = [
-              "Coincidencia por " + match.matchBy,
-              formatFirestoreDate(match.alert.fechaRegistro, match.alert.createdAt) ? "Registrado: " + formatFirestoreDate(match.alert.fechaRegistro, match.alert.createdAt) : "",
-              match.alert.responsable ? "Responsable: " + match.alert.responsable : "",
-              match.alert.comentario ? "Comentario aviso: " + match.alert.comentario : ""
-            ].filter(Boolean).join(" | ");
-          }
-        }
-
-        const tr = document.createElement('tr');
-        if (cssClass) tr.classList.add(cssClass);
-
-        outRow.forEach((val, idx) => {
-          const td = document.createElement('td');
-          if (idx === 9 && val) {
-            const span = document.createElement('span');
-            span.className = 'badge';
-            span.textContent = val;
-            td.appendChild(span);
-          } else {
-            td.textContent = val;
-          }
-          tr.appendChild(td);
-        });
-
-        resultTableBody.appendChild(tr);
-        outLines.push(outRow.join('\t'));
-      });
-
-      lastResultTSV = outLines.join('\n');
-
-      let msg = "Listo. Filas generadas: " + guideLines.length + ".";
-      msg += foundAlertCount > 0
-        ? " Coincidencias con avisos: " + foundAlertCount + "."
-        : " No hubo coincidencias con avisos.";
-
-      setStatus(processStatus, msg, "success");
     }
 
-    function fallbackCopy(text) {
+    function fallbackCopy(text, successMsg) {
       const ta = document.createElement('textarea');
       ta.value = text;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand('copy');
       document.body.removeChild(ta);
-      alert("Tabla copiada. Ahora puedes pegarla en Excel o en tu reporte.");
+      alert(successMsg);
     }
 
-    // Auto-save local
-    guidesInput.addEventListener('input', () => {
-      saveToStorage(STORAGE_KEYS.guides, guidesInput.value);
-      setStatus(guidesStatus, "Guías guardadas localmente.", "success");
-    });
+    function tableToTSV(table) {
+      const rows = [...table.querySelectorAll('tr')];
+      return rows.map(tr => {
+        const cells = [...tr.querySelectorAll('th,td')];
+        return cells.map(cell => {
+          const input = cell.querySelector('input, select, textarea');
+          if (input) return (input.value || '').replace(/\n/g, ' ');
+          return (cell.innerText || '').replace(/\n/g, ' ').trim();
+        }).join('\t');
+      }).join('\n');
+    }
 
-    dataInput.addEventListener('input', () => {
-      saveToStorage(STORAGE_KEYS.data, dataInput.value);
-      setStatus(dataStatus, "Data guardada localmente.", "success");
-    });
+    function exportTableToExcel(tableId, sheetName, filename) {
+      const table = document.getElementById(tableId);
+      const clone = table.cloneNode(true);
+      clone.querySelectorAll('input, textarea, select, button').forEach(node => {
+        const td = node.closest('td') || node.closest('th');
+        if (!td) return;
+        if (node.tagName === 'BUTTON') node.remove();
+        else {
+          const span = document.createElement('span');
+          span.textContent = node.value || '';
+          node.replaceWith(span);
+        }
+      });
+      const wb = XLSX.utils.table_to_book(clone, { sheet: sheetName });
+      XLSX.writeFile(wb, filename);
+    }
 
-    // Buttons
-    processButton.addEventListener('click', buildOutput);
-
-    copyButton.addEventListener('click', () => {
-      if (!lastResultTSV) {
-        alert("Todavía no hay nada que copiar. Primero pulsa 'Procesar guías'.");
-        return;
-      }
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(lastResultTSV)
-          .then(() => alert("Tabla copiada. Pega con Ctrl+V en Excel o en tu reporte."))
-          .catch(() => fallbackCopy(lastResultTSV));
+    function updateMetrics() {
+      el.metricAvisos.textContent = state.alerts.length;
+      el.metricCanales.textContent = state.canales.length;
+      const rePending = state.reenvios.filter(r => !normalizeText(r.guiaNueva)).length;
+      el.metricReenvios.textContent = rePending;
+      el.metricAnulaciones.textContent = state.anulaciones.length;
+      if (rePending > 0) {
+        el.reenviosPendingBadge.style.display = 'inline-flex';
+        el.reenviosPendingBadge.textContent = rePending;
       } else {
-        fallbackCopy(lastResultTSV);
+        el.reenviosPendingBadge.style.display = 'none';
       }
-    });
+    }
 
-    clearGuidesButton.addEventListener('click', () => {
-      const ok = confirm("¿Seguro que deseas limpiar las guías escaneadas?");
-      if (!ok) return;
+    function processMatchAlert(rowData) {
+      const resultGuide = normalizeNumericLike(rowData.guia);
+      const resultOrder = normalizeNumericLike(rowData.orden);
+      const resultCode = normalizeNumericLike(rowData.codigo);
+      const resultName = normalizeText(rowData.nombre);
+      for (const alert of state.alerts) {
+        if (alert.guia && normalizeNumericLike(alert.guia) === resultGuide && resultGuide) return { alert, matchBy: 'Guía' };
+        if (alert.orden && normalizeNumericLike(alert.orden) === resultOrder && resultOrder) return { alert, matchBy: 'Orden' };
+        if (alert.codigo && normalizeNumericLike(alert.codigo) === resultCode && resultCode) return { alert, matchBy: 'Código' };
+        if (alert.nombre && normalizeText(alert.nombre) === resultName && resultName) return { alert, matchBy: 'Nombre' };
+      }
+      return null;
+    }
 
-      guidesInput.value = "";
-      localStorage.removeItem(STORAGE_KEYS.guides);
-      setStatus(guidesStatus, "Guías eliminadas del almacenamiento local.", "success");
-    });
+    function formatFsDate(fechaRegistro, createdAt) {
+      if (fechaRegistro) return fechaRegistro;
+      if (createdAt && typeof createdAt.toDate === 'function') return createdAt.toDate().toLocaleString('es-ES');
+      return '';
+    }
 
-    clearDataButton.addEventListener('click', () => {
-      const ok = confirm("¿Seguro que deseas limpiar la data pegada?");
-      if (!ok) return;
+    function canalKey(item) {
+      return `${normalizeNumericLike(item.guia)}|${normalizeNumericLike(item.orden)}|${normalizeNumericLike(item.codigo)}`;
+    }
 
-      dataInput.value = "";
-      localStorage.removeItem(STORAGE_KEYS.data);
-      setStatus(dataStatus, "Data eliminada del almacenamiento local.", "success");
-    });
-
-    saveAlertButton.addEventListener('click', async () => {
-      const payload = {
-        guia: alertGuide.value.trim(),
-        orden: alertOrder.value.trim(),
-        codigo: alertCode.value.trim(),
-        nombre: alertName.value.trim(),
-        responsable: alertResponsible.value.trim(),
-        comentario: alertComment.value.trim(),
-        fechaRegistro: nowDateTimeES(),
-        createdAt: serverTimestamp()
-      };
-
-      const hasAnyData = payload.guia || payload.orden || payload.codigo || payload.nombre || payload.responsable || payload.comentario;
-      if (!hasAnyData) {
-        setStatus(alertStatus, "Debes ingresar al menos un dato para guardar el aviso.", "error");
+    async function processDailyFlow() {
+      const guides = el.guidesInput.value.split(/\r?\n/).map(v => v.trim()).filter(Boolean);
+      if (!guides.length) {
+        setStatus(el.processStatus, 'No hay guías escaneadas.', 'error');
+        return;
+      }
+      const parsed = parseDataText();
+      if (parsed.error) {
+        setStatus(el.processStatus, parsed.error, 'error');
         return;
       }
 
-      try {
-        await addDoc(avisosCollection, payload);
-        clearAlertForm();
-        setStatus(alertStatus, "Aviso guardado correctamente en Firebase.", "success");
-      } catch (error) {
-        console.error(error);
-        setStatus(alertStatus, "No se pudo guardar el aviso en Firebase.", "error");
+      const byInvo = new Map();
+      const byWaybill = new Map();
+      parsed.rows.forEach(r => {
+        const invo = normalizeNumericLike(r.invoNumber);
+        const way = normalizeNumericLike(r.waybill);
+        if (invo) byInvo.set(invo, r);
+        if (way) byWaybill.set(way, r);
+      });
+
+      state.processRows = [];
+      el.processTableBody.innerHTML = '';
+      let foundAlerts = 0;
+      let insertedCanales = 0;
+      let duplicateCanales = 0;
+
+      const existingKeys = new Set(state.canales.map(canalKey));
+
+      for (const rawCode of guides) {
+        const scanned = normalizeNumericLike(rawCode);
+        let row = byWaybill.get(scanned) || byInvo.get(scanned);
+        let result;
+
+        if (!row) {
+          const isOrder = /^140\d+/.test(scanned);
+          result = {
+            fecha: todayES(), guia: isOrder ? '' : rawCode, orden: isOrder ? rawCode : '', codigo: '', nombre: '', celular: '', puntoEnvio: '', courier: '', fechaDespacho: '', aviso: '', comentario: 'Revisar, no encontrado en la data', notFound: true
+          };
+        } else {
+          const puntoEnvio = `${row.serviceCentre || ''}${row.serviceCentreName ? ' - ' + row.serviceCentreName : ''}`;
+          result = {
+            fecha: todayES(),
+            guia: (row.waybill || '').trim(),
+            orden: (row.invoNumber || '').trim(),
+            codigo: row.socio || '',
+            nombre: row.nombreSocio || '',
+            celular: row.telefonoSocio || '',
+            puntoEnvio,
+            courier: row.courier || '',
+            fechaDespacho: row.shipmentDate || '',
+            aviso: '',
+            comentario: ''
+          };
+          const match = processMatchAlert({ guia: result.guia, orden: result.orden, codigo: result.codigo, nombre: result.nombre });
+          if (match) {
+            foundAlerts++;
+            result.aviso = 'Ya llegó pedido registrado';
+            result.comentario = [
+              `Coincidencia por ${match.matchBy}`,
+              formatFsDate(match.alert.fechaRegistro, match.alert.createdAt) ? `Registrado: ${formatFsDate(match.alert.fechaRegistro, match.alert.createdAt)}` : '',
+              match.alert.responsable ? `Responsable: ${match.alert.responsable}` : '',
+              match.alert.comentario ? `Comentario aviso: ${match.alert.comentario}` : ''
+            ].filter(Boolean).join(' | ');
+          }
+
+          const duplicate = existingKeys.has(canalKey(result));
+          const payload = {
+            fecha: result.fecha,
+            guia: result.guia,
+            orden: result.orden,
+            codigo: result.codigo,
+            nombre: result.nombre,
+            celular: result.celular,
+            puntoEnvio: result.puntoEnvio,
+            courier: result.courier,
+            fechaDespacho: result.fechaDespacho,
+            aviso: result.aviso,
+            comentario: result.comentario,
+            canal: '',
+            duplicate,
+            createdAt: serverTimestamp(),
+            source: 'gestion-diaria'
+          };
+          try {
+            await addDoc(refs.canales, payload);
+            insertedCanales++;
+            if (duplicate) duplicateCanales++;
+            existingKeys.add(canalKey(result));
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
+        state.processRows.push(result);
       }
-    });
 
-    clearAlertFormButton.addEventListener('click', () => {
-      clearAlertForm();
-      setStatus(alertStatus, "Formulario limpiado.", "success");
-    });
+      renderProcessTable();
+      const tsv = [
+        ['Fecha','Guía','Orden','Código','Nombre','Celular','Punto de envío','Courier','Fecha de despacho','Aviso','Comentario'].join('\t'),
+        ...state.processRows.map(r => [r.fecha, r.guia, r.orden, r.codigo, r.nombre, r.celular, r.puntoEnvio, r.courier, r.fechaDespacho, r.aviso, r.comentario].join('\t'))
+      ].join('\n');
+      state.processTSV = tsv;
+      let msg = `Listo. Filas generadas: ${guides.length}. Enviadas a Canales: ${insertedCanales}.`;
+      if (foundAlerts) msg += ` Coincidencias con avisos: ${foundAlerts}.`;
+      if (duplicateCanales) msg += ` Duplicados detectados en Canales: ${duplicateCanales}.`;
+      setStatus(el.processStatus, msg, 'success');
+    }
 
-    // Real-time alerts
-    const avisosQuery = query(avisosCollection, orderBy("createdAt", "desc"));
-    onSnapshot(avisosQuery, (snapshot) => {
-      alertsList = snapshot.docs.map(docSnap => ({
-        id: docSnap.id,
-        ...docSnap.data()
-      }));
-      renderAlertsTable();
-    }, (error) => {
-      console.error(error);
-      setStatus(alertStatus, "Error al leer avisos compartidos desde Firebase.", "error");
-    });
+    function renderProcessTable() {
+      el.processTableBody.innerHTML = '';
+      if (!state.processRows.length) {
+        el.processTableBody.innerHTML = `<tr><td colspan="11" class="empty-cell">No hay resultados todavía.</td></tr>`;
+        return;
+      }
+      state.processRows.forEach(r => {
+        const tr = document.createElement('tr');
+        if (r.notFound) tr.classList.add('not-found');
+        if (r.aviso) tr.classList.add('alert-found');
+        [r.fecha, r.guia, r.orden, r.codigo, r.nombre, r.celular, r.puntoEnvio, r.courier, r.fechaDespacho, r.aviso, r.comentario].forEach((val, idx) => {
+          const td = document.createElement('td');
+          if (idx === 9 && val) td.innerHTML = `<span class="badge badge-amber">${escapeHtml(val)}</span>`;
+          else td.textContent = val || '';
+          tr.appendChild(td);
+        });
+        el.processTableBody.appendChild(tr);
+      });
+    }
 
-    // Initial load
+    async function updateAlertField(id, field, value) {
+      await updateDoc(doc(db, 'avisos', id), { [field]: value });
+    }
+
+
+    function rowMatchesSearch(textParts, searchNode) {
+      const term = normalizeText(searchNode?.value || '');
+      if (!term) return true;
+      return normalizeText(textParts.filter(Boolean).join(' ')).includes(term);
+    }
+
+    function renderAlertsTable() {
+      el.alertsTableBody.innerHTML = '';
+      if (!state.alerts.length) {
+        el.alertsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay avisos registrados.</td></tr>`;
+        updateMetrics();
+        return;
+      }
+      state.alerts.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(formatFsDate(item.fechaRegistro, item.createdAt))}</td>
+          <td>${escapeHtml(item.guia || '')}</td>
+          <td>${escapeHtml(item.orden || '')}</td>
+          <td>${escapeHtml(item.codigo || '')}</td>
+          <td>${escapeHtml(item.nombre || '')}</td>
+          <td>${escapeHtml(item.responsable || '')}</td>
+          <td>${escapeHtml(item.comentario || '')}</td>
+          <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}">Eliminar</button></td>
+        `;
+        el.alertsTableBody.appendChild(tr);
+      });
+      updateMetrics();
+    }
+
+    function renderCanalesTable() {
+      el.canalesTableBody.innerHTML = '';
+      if (!state.canales.length) {
+        el.canalesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay registros en Canales.</td></tr>`;
+        updateMetrics();
+        return;
+      }
+      state.canales.forEach(item => {
+        if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.aviso, item.comentario, item.canal], el.canalesSearch)) return;
+        const tr = document.createElement('tr');
+        tr.className = courierClass(item.courier);
+        tr.innerHTML = `
+          <td><input type="checkbox" class="canal-check" data-id="${item.id}" ${state.selectedCanales.has(item.id) ? 'checked' : ''}></td>
+          <td>${escapeHtml(item.fecha || '')}</td>
+          <td>${escapeHtml(item.guia || '')}</td>
+          <td>${escapeHtml(item.orden || '')}</td>
+          <td>${escapeHtml(item.codigo || '')}</td>
+          <td>${escapeHtml(item.nombre || '')}</td>
+          <td>${escapeHtml(item.celular || '')}</td>
+          <td>${escapeHtml(item.puntoEnvio || '')}</td>
+          <td>${escapeHtml(item.courier || '')}</td>
+          <td>${escapeHtml(item.fechaDespacho || '')}</td>
+          <td>${item.aviso ? `<span class="badge badge-amber">${escapeHtml(item.aviso)}</span>` : ''}</td>
+          <td>
+            ${item.duplicate ? '<div style="margin-bottom:6px;"><span class="badge badge-red">Duplicado detectado</span></div>' : ''}
+            <input class="mini-input canal-comment" data-id="${item.id}" value="${escapeHtml(item.comentario || '')}">
+          </td>
+          <td>
+            <select class="mini-select canal-select" data-id="${item.id}">
+              <option value="">Seleccionar...</option>
+              ${createCanalOptionsHtml(item.canal || '')}
+            </select>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="btn-soft-green mini-btn move-reenvio" data-id="${item.id}">Reenvío</button>
+              <button class="btn-soft-violet mini-btn move-anulacion" data-id="${item.id}">Anulación</button>
+              <button class="btn-danger mini-btn delete-canal" data-id="${item.id}">Eliminar</button>
+            </div>
+          </td>
+        `;
+        el.canalesTableBody.appendChild(tr);
+      });
+      if (!el.canalesTableBody.children.length) {
+        el.canalesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay registros en Canales para esa búsqueda.</td></tr>`;
+      }
+      updateMetrics();
+    }
+
+    function reenvioState(item) {
+      return normalizeText(item.guiaNueva) ? 'Reenviado' : 'Pendiente';
+    }
+
+    function renderReenviosTable() {
+      el.reenviosTableBody.innerHTML = '';
+      if (!state.reenvios.length) {
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos registrados.</td></tr>`;
+        updateMetrics();
+        return;
+      }
+      state.reenvios.forEach(item => {
+        const estado = reenvioState(item);
+        if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvioActual, item.courier, item.fechaDespacho, item.comentario, item.canal, item.guiaNueva, item.fechaEnvio, estado], el.reenviosSearch)) return;
+        const changed = normalizeText(item.puntoEnvioOriginal) && normalizeText(item.puntoEnvioActual) !== normalizeText(item.puntoEnvioOriginal);
+        const tr = document.createElement('tr');
+        tr.className = courierClass(item.courier);
+        tr.innerHTML = `
+          <td>${escapeHtml(item.fecha || '')}</td>
+          <td>${escapeHtml(item.guia || '')}</td>
+          <td>${escapeHtml(item.orden || '')}</td>
+          <td>${escapeHtml(item.codigo || '')}</td>
+          <td>${escapeHtml(item.nombre || '')}</td>
+          <td><input class="mini-input reenvio-celular" data-id="${item.id}" value="${escapeHtml(item.celular || '')}"></td>
+          <td class="${changed ? 'changed-point' : ''}">
+            ${changed ? '<div style="margin-bottom:6px;"><span class="badge badge-amber">Punto modificado</span></div>' : ''}
+            <input class="mini-input reenvio-punto" data-id="${item.id}" value="${escapeHtml(item.puntoEnvioActual || '')}">
+          </td>
+          <td>${escapeHtml(item.courier || '')}</td>
+          <td>${escapeHtml(item.fechaDespacho || '')}</td>
+          <td><input class="mini-input reenvio-comment" data-id="${item.id}" value="${escapeHtml(item.comentario || '')}"></td>
+          <td>${escapeHtml(item.canal || '')}</td>
+          <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" value="${escapeHtml(item.guiaNueva || '')}"></td>
+          <td>${escapeHtml(item.fechaEnvio || '')}</td>
+          <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
+          <td><button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}">Eliminar</button></td>
+        `;
+        el.reenviosTableBody.appendChild(tr);
+      });
+      if (!el.reenviosTableBody.children.length) {
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
+      }
+      updateMetrics();
+    }
+
+    function verificacionBadge(value) {
+      const norm = normalizeText(value);
+      if (norm === 'ANULADA') return '<span class="badge badge-green">Anulada</span>';
+      if (norm === 'NO ANULADA') return '<span class="badge badge-red">No anulada</span>';
+      return '<span class="badge badge-gray">Sin verificar</span>';
+    }
+
+    function renderAnulacionesTable() {
+      el.anulacionesTableBody.innerHTML = '';
+      if (!state.anulaciones.length) {
+        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
+        updateMetrics();
+        return;
+      }
+      state.anulaciones.forEach(item => {
+        if (!rowMatchesSearch([item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.cruceAmpliacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion], el.anulacionesSearch)) return;
+        const tr = document.createElement('tr');
+        tr.className = courierClass(item.courier);
+        tr.innerHTML = `
+          <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
+          <td>${escapeHtml(item.orden || '')}</td>
+          <td>${escapeHtml(item.codigo || '')}</td>
+          <td>${escapeHtml(item.nombre || '')}</td>
+          <td>${escapeHtml(item.celular || '')}</td>
+          <td>${escapeHtml(item.puntoEnvio || '')}</td>
+          <td>${escapeHtml(item.courier || '')}</td>
+          <td>${escapeHtml(item.fechaDespacho || '')}</td>
+          <td><input class="mini-input anulacion-cruce" data-id="${item.id}" value="${escapeHtml(item.cruceAmpliacion || '')}"></td>
+          <td>${escapeHtml(item.canal || '')}</td>
+          <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" value="${escapeHtml(item.estado || '')}"></td>
+          <td>${escapeHtml(item.fechaAnulacion || '')}</td>
+          <td>${verificacionBadge(item.verificacion || '')}</td>
+          <td><button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}">Eliminar</button></td>
+        `;
+        el.anulacionesTableBody.appendChild(tr);
+      });
+      if (!el.anulacionesTableBody.children.length) {
+        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones para esa búsqueda.</td></tr>`;
+      }
+      updateMetrics();
+    }
+
+    function renderClaimsTable() {
+      el.claimsTableBody.innerHTML = '';
+      if (!state.reclamos.length) {
+        el.claimsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay reclamos cargados.</td></tr>`;
+        return;
+      }
+      state.reclamos.forEach(item => {
+        if (!rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.gestion], el.claimsSearch)) return;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(item.fecha || '')}</td>
+          <td><input class="mini-input claim-socio" data-id="${item.id}" value="${escapeHtml(item.socio || '')}"></td>
+          <td><input class="mini-input claim-guia" data-id="${item.id}" value="${escapeHtml(item.guia || '')}"></td>
+          <td><input class="mini-input claim-producto" data-id="${item.id}" value="${escapeHtml(item.producto || '')}"></td>
+          <td><input class="mini-input claim-unidad" data-id="${item.id}" value="${escapeHtml(item.unidad || '')}"></td>
+          <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" value="${escapeHtml(item.estado || '')}"></td>
+          <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" value="${escapeHtml(item.gestion || '')}"></td>
+          <td><button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></td>
+        `;
+        el.claimsTableBody.appendChild(tr);
+      });
+      if (!el.claimsTableBody.children.length) {
+        el.claimsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay reclamos para esa búsqueda.</td></tr>`;
+      }
+    }
+
+    function getCenterFieldValue(item, field) {
+      const punto = item.punto || '';
+      const oficina = item.descripcion || '';
+      const courier = item.courier || '';
+      const localidad = item.localidad || '';
+      const direccion = item.direccion || '';
+      const ciudad = `${localidad} ${direccion} ${oficina}`;
+      const keyword = [punto, oficina, courier, localidad, direccion, item.email || '', item.telefonos || '', item.diasDespacho || ''].join(' ');
+      if (field === 'punto') return punto;
+      if (field === 'oficina') return oficina;
+      if (field === 'courier') return courier;
+      if (field === 'localidad') return localidad;
+      if (field === 'ciudad') return ciudad;
+      return keyword;
+    }
+
+    function renderCentersTable() {
+      el.centersTableBody.innerHTML = '';
+      const field = el.centerFilterField.value;
+      const term = normalizeText(el.centerSearch.value);
+      const quickTerm = normalizeText(el.centersQuickSearch.value);
+      const filtered = state.centros.filter(item => {
+        const matchesField = !term || normalizeText(getCenterFieldValue(item, field)).includes(term);
+        const matchesQuick = !quickTerm || normalizeText([
+          item.punto, item.descripcion, item.diasDespacho, item.direccion, item.localidad, item.courier, item.email, item.telefonos
+        ].join(' ')).includes(quickTerm);
+        return matchesField && matchesQuick;
+      });
+      if (!filtered.length) {
+        el.centersTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay centros para mostrar con esos filtros.</td></tr>`;
+        return;
+      }
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(item.punto || '')}</td>
+          <td>${escapeHtml(item.descripcion || '')}</td>
+          <td>${escapeHtml(item.diasDespacho || '')}</td>
+          <td>${escapeHtml(item.direccion || '')}</td>
+          <td>${escapeHtml(item.localidad || '')}</td>
+          <td>${escapeHtml(item.courier || '')}</td>
+          <td>${escapeHtml(item.email || '')}</td>
+          <td>${escapeHtml(item.telefonos || '')}</td>
+        `;
+        el.centersTableBody.appendChild(tr);
+      });
+      setStatus(el.centersStatus, `Resultados encontrados: ${filtered.length}.`, 'success');
+    }
+
+    function mapCenterRow(row) {
+      const entries = Object.entries(row || {});
+      const getByIncludes = (...patterns) => {
+        for (const [key, value] of entries) {
+          const normalized = normalizeText(key)
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          if (patterns.some(p => normalized.includes(p))) return value || '';
+        }
+        return '';
+      };
+      return {
+        punto: getByIncludes('PUNTO'),
+        descripcion: getByIncludes('DESCRIPCION DEL ENLACE', 'DESCRIPCION', 'NOMBRE OFICINA'),
+        diasDespacho: getByIncludes('DIAS DE DESPA', 'DIAS DE DESPACHO'),
+        direccion: getByIncludes('DIRECCION'),
+        localidad: getByIncludes('LOCALIDAD', 'CIUDAD'),
+        courier: getByIncludes('COURIER'),
+        email: getByIncludes('E-MAIL', 'EMAIL'),
+        telefonos: getByIncludes('NUMEROS TELEFONICOS', 'TELEFONOS', 'TELEFONO')
+      };
+    }
+
+    async function replaceCentersBase(records) {
+      const existingSnapshot = await getDocs(refs.centros);
+      let batch = writeBatch(db);
+      let count = 0;
+      for (const d of existingSnapshot.docs) {
+        batch.delete(d.ref);
+        count++;
+        if (count === 400) {
+          await batch.commit();
+          batch = writeBatch(db);
+          count = 0;
+        }
+      }
+      if (count > 0) await batch.commit();
+
+      batch = writeBatch(db);
+      count = 0;
+      for (const record of records) {
+        const ref = doc(refs.centros);
+        batch.set(ref, { ...record, createdAt: serverTimestamp() });
+        count++;
+        if (count === 400) {
+          await batch.commit();
+          batch = writeBatch(db);
+          count = 0;
+        }
+      }
+      if (count > 0) await batch.commit();
+    }
+
+    async function moveCanalesToTarget(ids, target) {
+      if (!ids.length) return;
+      const collectionName = target === 'reenvios' ? 'reenvios' : 'anulaciones';
+      const writes = [];
+      for (const id of ids) {
+        const item = state.canales.find(x => x.id === id);
+        if (!item) continue;
+        if (target === 'reenvios') {
+          writes.push(addDoc(refs.reenvios, {
+            fecha: item.fecha || '',
+            guia: item.guia || '',
+            orden: item.orden || '',
+            codigo: item.codigo || '',
+            nombre: item.nombre || '',
+            celular: item.celular || '',
+            puntoEnvioOriginal: item.puntoEnvio || '',
+            puntoEnvioActual: item.puntoEnvio || '',
+            courier: item.courier || '',
+            fechaDespacho: item.fechaDespacho || '',
+            comentario: item.comentario || '',
+            canal: item.canal || '',
+            guiaNueva: '',
+            fechaEnvio: '',
+            createdAt: serverTimestamp()
+          }));
+        } else {
+          writes.push(addDoc(refs.anulaciones, {
+            orden: item.orden || '',
+            codigo: item.codigo || '',
+            nombre: item.nombre || '',
+            celular: item.celular || '',
+            puntoEnvio: item.puntoEnvio || '',
+            courier: item.courier || '',
+            fechaDespacho: item.fechaDespacho || '',
+            cruceAmpliacion: '',
+            canal: item.canal || '',
+            estado: '',
+            fechaAnulacion: '',
+            verificacion: '',
+            createdAt: serverTimestamp()
+          }));
+        }
+        writes.push(deleteDoc(doc(db, 'canales_ransa', id)));
+      }
+      await Promise.all(writes);
+      state.selectedCanales.clear();
+      setStatus(el.canalesStatus, `${ids.length} registro(s) movidos a ${collectionName}.`, 'success');
+    }
+
+    function parseTc3Orders(text) {
+      const lines = (text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const orders = new Set();
+      for (const line of lines) {
+        const delimiter = detectDelimiter(line);
+        const cells = line.split(delimiter).map(c => c.trim()).filter(Boolean);
+        if (!cells.length) continue;
+        const order = normalizeNumericLike(cells[0]);
+        if (/^\d+$/.test(order)) orders.add(order);
+      }
+      return orders;
+    }
+
+    async function verifyAnulacionesWithTc3() {
+      const ordersSet = parseTc3Orders(el.tc3Input.value);
+      if (!ordersSet.size) {
+        setStatus(el.anulacionesStatus, 'No se detectaron órdenes válidas en el TC III pegado.', 'error');
+        return;
+      }
+      saveLocal(STORAGE_KEYS.tc3, el.tc3Input.value);
+      const updates = state.anulaciones.map(item => {
+        const order = normalizeNumericLike(item.orden);
+        const verificacion = !order ? 'Sin verificar' : ordersSet.has(order) ? 'No anulada' : 'Anulada';
+        return updateDoc(doc(db, 'anulaciones', item.id), { verificacion });
+      });
+      await Promise.all(updates);
+      setStatus(el.anulacionesStatus, `Verificación ejecutada sobre ${state.anulaciones.length} registro(s).`, 'success');
+    }
+
+    function initTabs() {
+      el.tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.tab;
+          el.tabs.forEach(b => b.classList.remove('active'));
+          Object.values(el.panels).forEach(panel => panel.classList.remove('active'));
+          btn.classList.add('active');
+          el.panels[target].classList.add('active');
+        });
+      });
+    }
+
+    function bindStaticEvents() {
+      el.guidesInput.addEventListener('input', () => { saveLocal(STORAGE_KEYS.guides, el.guidesInput.value); setStatus(el.guidesStatus, 'Guías guardadas localmente.', 'success'); });
+      el.dataInput.addEventListener('input', () => { saveLocal(STORAGE_KEYS.data, el.dataInput.value); setStatus(el.dataStatus, 'Data guardada localmente.', 'success'); });
+
+      document.getElementById('clearGuidesBtn').addEventListener('click', () => {
+        if (!confirm('¿Seguro que deseas limpiar las guías escaneadas?')) return;
+        el.guidesInput.value = '';
+        localStorage.removeItem(STORAGE_KEYS.guides);
+        setStatus(el.guidesStatus, 'Guías eliminadas.', 'success');
+      });
+
+      document.getElementById('clearDataBtn').addEventListener('click', () => {
+        if (!confirm('¿Seguro que deseas limpiar la data pegada?')) return;
+        el.dataInput.value = '';
+        localStorage.removeItem(STORAGE_KEYS.data);
+        setStatus(el.dataStatus, 'Data eliminada.', 'success');
+      });
+
+      document.getElementById('processBtn').addEventListener('click', processDailyFlow);
+      document.getElementById('copyProcessBtn').addEventListener('click', () => copyText(state.processTSV, 'Resultado copiado para Excel.'));
+      document.getElementById('exportProcessBtn').addEventListener('click', () => exportTableToExcel('processTable', 'Gestion diaria', 'gestion_diaria.xlsx'));
+
+      document.getElementById('saveAlertBtn').addEventListener('click', async () => {
+        const payload = {
+          guia: el.alertGuide.value.trim(),
+          orden: el.alertOrder.value.trim(),
+          codigo: el.alertCode.value.trim(),
+          nombre: el.alertName.value.trim(),
+          responsable: el.alertResponsible.value.trim(),
+          comentario: el.alertComment.value.trim(),
+          fechaRegistro: nowES(),
+          createdAt: serverTimestamp()
+        };
+        if (!(payload.guia || payload.orden || payload.codigo || payload.nombre || payload.responsable || payload.comentario)) {
+          setStatus(el.alertStatus, 'Debes llenar al menos un dato.', 'error');
+          return;
+        }
+        await addDoc(refs.avisos, payload);
+        [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertResponsible, el.alertComment].forEach(i => i.value = '');
+        setStatus(el.alertStatus, 'Aviso guardado correctamente.', 'success');
+      });
+
+      document.getElementById('clearAlertFormBtn').addEventListener('click', () => {
+        [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertResponsible, el.alertComment].forEach(i => i.value = '');
+        setStatus(el.alertStatus, 'Formulario limpiado.', 'success');
+      });
+
+      el.alertsTableBody.addEventListener('click', async e => {
+        const btn = e.target.closest('[data-delete-alert]');
+        if (!btn) return;
+        if (!confirm('¿Eliminar este aviso?')) return;
+        await deleteDoc(doc(db, 'avisos', btn.dataset.deleteAlert));
+      });
+
+      document.getElementById('applyCanalBulkBtn').addEventListener('click', async () => {
+        const ids = [...state.selectedCanales];
+        if (!ids.length) return alert('Selecciona al menos una fila.');
+        const canal = el.bulkCanalSelect.value;
+        const comment = el.bulkCanalComment.value.trim();
+        const updates = ids.map(id => updateDoc(doc(db, 'canales_ransa', id), {
+          ...(canal ? { canal } : {}),
+          ...(comment ? { comentario: comment } : {})
+        }));
+        await Promise.all(updates);
+        setStatus(el.canalesStatus, `Actualización masiva aplicada a ${ids.length} fila(s).`, 'success');
+      });
+
+      document.getElementById('moveSelectedReenviosBtn').addEventListener('click', async () => {
+        const ids = [...state.selectedCanales];
+        if (!ids.length) return alert('Selecciona al menos una fila.');
+        if (!confirm(`¿Mover ${ids.length} fila(s) a Reenvíos?`)) return;
+        await moveCanalesToTarget(ids, 'reenvios');
+      });
+
+      document.getElementById('moveSelectedAnulacionesBtn').addEventListener('click', async () => {
+        const ids = [...state.selectedCanales];
+        if (!ids.length) return alert('Selecciona al menos una fila.');
+        if (!confirm(`¿Mover ${ids.length} fila(s) a Anulaciones?`)) return;
+        await moveCanalesToTarget(ids, 'anulaciones');
+      });
+
+      document.getElementById('copyCanalesBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('canalesTable')), 'Canales copiado.'));
+      document.getElementById('exportCanalesBtn').addEventListener('click', () => exportTableToExcel('canalesTable', 'Canales', 'canales_ransa.xlsx'));
+
+      el.selectAllCanales.addEventListener('change', e => {
+        if (e.target.checked) state.canales.forEach(item => state.selectedCanales.add(item.id));
+        else state.selectedCanales.clear();
+        renderCanalesTable();
+      });
+
+      el.canalesTableBody.addEventListener('change', async e => {
+        const check = e.target.closest('.canal-check');
+        if (check) {
+          if (check.checked) state.selectedCanales.add(check.dataset.id);
+          else state.selectedCanales.delete(check.dataset.id);
+          return;
+        }
+        const comment = e.target.closest('.canal-comment');
+        if (comment) { await updateDoc(doc(db, 'canales_ransa', comment.dataset.id), { comentario: comment.value }); return; }
+        const select = e.target.closest('.canal-select');
+        if (select) { await updateDoc(doc(db, 'canales_ransa', select.dataset.id), { canal: select.value }); return; }
+      });
+
+      el.canalesTableBody.addEventListener('click', async e => {
+        const re = e.target.closest('.move-reenvio');
+        if (re) return await moveCanalesToTarget([re.dataset.id], 'reenvios');
+        const an = e.target.closest('.move-anulacion');
+        if (an) return await moveCanalesToTarget([an.dataset.id], 'anulaciones');
+        const del = e.target.closest('.delete-canal');
+        if (del) {
+          if (!confirm('¿Eliminar este registro de Canales?')) return;
+          await deleteDoc(doc(db, 'canales_ransa', del.dataset.id));
+        }
+      });
+
+      document.getElementById('copyReenviosBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('reenviosTable')), 'Reenvíos copiado.'));
+      document.getElementById('exportReenviosBtn').addEventListener('click', () => exportTableToExcel('reenviosTable', 'Reenvios', 'reenvios.xlsx'));
+
+      el.reenviosTableBody.addEventListener('change', async e => {
+        const id = e.target.dataset.id;
+        if (!id) return;
+        if (e.target.classList.contains('reenvio-celular')) {
+          await updateDoc(doc(db, 'reenvios', id), { celular: e.target.value });
+          return;
+        }
+        if (e.target.classList.contains('reenvio-punto')) {
+          await updateDoc(doc(db, 'reenvios', id), { puntoEnvioActual: e.target.value });
+          return;
+        }
+        if (e.target.classList.contains('reenvio-comment')) {
+          await updateDoc(doc(db, 'reenvios', id), { comentario: e.target.value });
+          return;
+        }
+        if (e.target.classList.contains('reenvio-guianueva')) {
+          const value = e.target.value.trim();
+          await updateDoc(doc(db, 'reenvios', id), { guiaNueva: value, fechaEnvio: value ? todayES() : '' });
+          return;
+        }
+      });
+
+      el.reenviosTableBody.addEventListener('click', async e => {
+        const del = e.target.closest('.delete-reenvio');
+        if (!del) return;
+        if (!confirm('¿Eliminar este reenvío?')) return;
+        await deleteDoc(doc(db, 'reenvios', del.dataset.id));
+      });
+
+      document.getElementById('verifyTc3Btn').addEventListener('click', verifyAnulacionesWithTc3);
+      document.getElementById('clearTc3Btn').addEventListener('click', () => {
+        el.tc3Input.value = '';
+        localStorage.removeItem(STORAGE_KEYS.tc3);
+        setStatus(el.anulacionesStatus, 'TC III limpiado localmente.', 'success');
+      });
+      el.tc3Input.addEventListener('input', () => saveLocal(STORAGE_KEYS.tc3, el.tc3Input.value));
+
+      document.getElementById('applyEstadoBulkBtn').addEventListener('click', async () => {
+        const ids = [...state.selectedAnulaciones];
+        if (!ids.length) return alert('Selecciona al menos una fila.');
+        const estado = el.bulkEstadoSelect.value.trim();
+        if (!estado) return alert('Escribe o selecciona un estado.');
+        await Promise.all(ids.map(id => updateDoc(doc(db, 'anulaciones', id), { estado, fechaAnulacion: todayES() })));
+        setStatus(el.anulacionesStatus, `Estado aplicado a ${ids.length} fila(s).`, 'success');
+      });
+
+      document.getElementById('copyAnulacionesBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('anulacionesTable')), 'Anulaciones copiado.'));
+      document.getElementById('exportAnulacionesBtn').addEventListener('click', () => exportTableToExcel('anulacionesTable', 'Anulaciones', 'anulaciones.xlsx'));
+
+      el.selectAllAnulaciones.addEventListener('change', e => {
+        if (e.target.checked) state.anulaciones.forEach(item => state.selectedAnulaciones.add(item.id));
+        else state.selectedAnulaciones.clear();
+        renderAnulacionesTable();
+      });
+
+      el.anulacionesTableBody.addEventListener('change', async e => {
+        const check = e.target.closest('.anulacion-check');
+        if (check) {
+          if (check.checked) state.selectedAnulaciones.add(check.dataset.id);
+          else state.selectedAnulaciones.delete(check.dataset.id);
+          return;
+        }
+        const cruce = e.target.closest('.anulacion-cruce');
+        if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), { cruceAmpliacion: cruce.value }); return; }
+        const estado = e.target.closest('.anulacion-estado');
+        if (estado) {
+          const value = estado.value.trim();
+          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), { estado: value, fechaAnulacion: value ? todayES() : '' });
+          return;
+        }
+      });
+
+      el.anulacionesTableBody.addEventListener('click', async e => {
+        const del = e.target.closest('.delete-anulacion');
+        if (!del) return;
+        if (!confirm('¿Eliminar este registro de Anulaciones?')) return;
+        await deleteDoc(doc(db, 'anulaciones', del.dataset.id));
+      });
+
+      document.getElementById('saveClaimBtn').addEventListener('click', async () => {
+        const payload = {
+          fecha: el.claimDate.value || isoToday(),
+          socio: el.claimSocio.value.trim(),
+          guia: el.claimGuide.value.trim(),
+          producto: el.claimProduct.value.trim(),
+          unidad: el.claimUnit.value.trim(),
+          estado: el.claimState.value.trim(),
+          gestion: el.claimGestion.value.trim(),
+          createdAt: serverTimestamp()
+        };
+        if (!(payload.socio || payload.guia || payload.producto || payload.unidad || payload.estado || payload.gestion)) {
+          setStatus(el.claimsStatus, 'Debes llenar al menos un campo operativo.', 'error');
+          return;
+        }
+        await addDoc(refs.reclamos, payload);
+        [el.claimSocio, el.claimGuide, el.claimProduct, el.claimUnit, el.claimState, el.claimGestion].forEach(i => i.value = '');
+        el.claimDate.value = isoToday();
+        setStatus(el.claimsStatus, 'Reclamo guardado correctamente.', 'success');
+      });
+
+      document.getElementById('clearClaimFormBtn').addEventListener('click', () => {
+        [el.claimSocio, el.claimGuide, el.claimProduct, el.claimUnit, el.claimState, el.claimGestion].forEach(i => i.value = '');
+        el.claimDate.value = isoToday();
+      });
+
+      document.getElementById('copyClaimsBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('claimsTable')), 'Reclamos copiado.'));
+      document.getElementById('exportClaimsBtn').addEventListener('click', () => exportTableToExcel('claimsTable', 'Reclamos', 'reclamos_procesados.xlsx'));
+
+      el.claimsTableBody.addEventListener('change', async e => {
+        const id = e.target.dataset.id;
+        if (!id) return;
+        let field = '';
+        if (e.target.classList.contains('claim-socio')) field = 'socio';
+        if (e.target.classList.contains('claim-guia')) field = 'guia';
+        if (e.target.classList.contains('claim-producto')) field = 'producto';
+        if (e.target.classList.contains('claim-unidad')) field = 'unidad';
+        if (e.target.classList.contains('claim-estado')) field = 'estado';
+        if (e.target.classList.contains('claim-gestion')) field = 'gestion';
+        if (!field) return;
+        await updateDoc(doc(db, 'reclamos_procesados', id), { [field]: e.target.value });
+      });
+
+      el.claimsTableBody.addEventListener('click', async e => {
+        const del = e.target.closest('.delete-claim');
+        if (!del) return;
+        if (!confirm('¿Eliminar este reclamo?')) return;
+        await deleteDoc(doc(db, 'reclamos_procesados', del.dataset.id));
+      });
+
+      el.centersFile.addEventListener('change', async e => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        state.centersWorkbook = workbook;
+        el.centerSheetSelect.innerHTML = workbook.SheetNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+        setStatus(el.centersStatus, `Archivo cargado. Hojas detectadas: ${workbook.SheetNames.join(', ')}.`, 'success');
+      });
+
+      document.getElementById('importCentersBtn').addEventListener('click', async () => {
+        if (!state.centersWorkbook) return alert('Primero carga un archivo Excel.');
+        const sheetName = el.centerSheetSelect.value;
+        if (!sheetName) return alert('Selecciona una hoja.');
+        const sheet = state.centersWorkbook.Sheets[sheetName];
+        const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        const mapped = rawRows.map(mapCenterRow).filter(r => r.punto || r.descripcion || r.direccion || r.localidad || r.courier);
+        if (!mapped.length) return alert('No se detectaron registros útiles para importar.');
+        setStatus(el.centersStatus, 'Importando y reemplazando base compartida, espera un momento...', 'success');
+        await replaceCentersBase(mapped);
+        setStatus(el.centersStatus, `Base de centros reemplazada correctamente con ${mapped.length} registros.`, 'success');
+      });
+
+      el.centerFilterField.addEventListener('change', renderCentersTable);
+      el.gestionSearch.addEventListener('input', renderProcessTable);
+    el.canalesSearch.addEventListener('input', renderCanalesTable);
+    el.reenviosSearch.addEventListener('input', renderReenviosTable);
+    el.anulacionesSearch.addEventListener('input', renderAnulacionesTable);
+    el.claimsSearch.addEventListener('input', renderClaimsTable);
+    el.centersQuickSearch.addEventListener('input', renderCentersTable);
+    el.centerSearch.addEventListener('input', renderCentersTable);
+      document.getElementById('clearCenterFiltersBtn').addEventListener('click', () => {
+        el.centerFilterField.value = 'keyword';
+        el.centerSearch.value = '';
+        renderCentersTable();
+      });
+      document.getElementById('copyCentersBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('centersTable')), 'Centros copiado.'));
+      document.getElementById('exportCentersBtn').addEventListener('click', () => exportTableToExcel('centersTable', 'Centros', 'lista_centros.xlsx'));
+    }
+
+    function attachSnapshots() {
+      onSnapshot(query(refs.avisos, orderBy('createdAt', 'desc')), snapshot => {
+        state.alerts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAlertsTable();
+      });
+
+      onSnapshot(query(refs.canales, orderBy('createdAt', 'desc')), snapshot => {
+        state.canales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderCanalesTable();
+      });
+
+      onSnapshot(query(refs.reenvios, orderBy('createdAt', 'desc')), snapshot => {
+        state.reenvios = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderReenviosTable();
+      });
+
+      onSnapshot(query(refs.anulaciones, orderBy('createdAt', 'desc')), snapshot => {
+        state.anulaciones = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAnulacionesTable();
+      });
+
+      onSnapshot(query(refs.reclamos, orderBy('createdAt', 'desc')), snapshot => {
+        state.reclamos = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderClaimsTable();
+      });
+
+      onSnapshot(query(refs.centros, orderBy('createdAt', 'desc')), snapshot => {
+        state.centros = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderCentersTable();
+      });
+    }
+
     function initialize() {
-      guidesInput.value = loadFromStorage(STORAGE_KEYS.guides);
-      dataInput.value = loadFromStorage(STORAGE_KEYS.data);
-
-      if (guidesInput.value) {
-        setStatus(guidesStatus, "Se recuperaron guías guardadas localmente.", "success");
-      }
-
-      if (dataInput.value) {
-        setStatus(dataStatus, "Se recuperó la data guardada localmente.", "success");
-      }
+      setCanalOptionLists();
+      initTabs();
+      bindStaticEvents();
+      attachSnapshots();
+      el.guidesInput.value = loadLocal(STORAGE_KEYS.guides);
+      el.dataInput.value = loadLocal(STORAGE_KEYS.data);
+      el.tc3Input.value = loadLocal(STORAGE_KEYS.tc3);
+      el.claimDate.value = isoToday();
+      if (el.guidesInput.value) setStatus(el.guidesStatus, 'Se recuperaron guías guardadas localmente.', 'success');
+      if (el.dataInput.value) setStatus(el.dataStatus, 'Se recuperó la data guardada localmente.', 'success');
+      renderProcessTable();
+      renderCentersTable();
     }
 
     initialize();
