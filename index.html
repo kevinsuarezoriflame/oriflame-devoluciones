@@ -1709,12 +1709,12 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             </select>
           </td>
           <td>
-            <div class="actions">
-              <button class="btn-soft-green mini-btn move-reenvio" data-id="${item.id}">Reenvío</button>
-              <button class="btn-soft-violet mini-btn move-anulacion" data-id="${item.id}">Anulación</button>
-              <button class="btn-danger mini-btn delete-canal" data-id="${item.id}">Eliminar</button>
-            </div>
-          </td>
+  <div class="actions actions-canales">
+    <button class="btn-soft-green mini-btn move-reenvio" data-id="${item.id}" title="Mover a Reenvíos">Reenv.</button>
+    <button class="btn-soft-violet mini-btn move-anulacion" data-id="${item.id}" title="Mover a Anulaciones">Anul.</button>
+    <button class="btn-danger mini-btn delete-canal" data-id="${item.id}" title="Eliminar registro">Del</button>
+  </div>
+</td>
         `;
         el.canalesTableBody.appendChild(tr);
       });
