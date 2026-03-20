@@ -632,7 +632,8 @@
             </div>
           </div>
           <div class="btn-row">
-            <button class="btn-primary" id="processBtn">Procesar y enviar a Canales</button>
+            <button class="btn-primary" id="processBtn">Procesar</button>
+<button class="btn-soft-green" id="sendToCanalesBtn">Enviar a Canales</button>
             <button class="btn-secondary" id="copyProcessBtn">Copiar resultado</button>
             <button class="btn-secondary" id="exportProcessBtn">Exportar Excel</button>
           </div>
@@ -643,28 +644,26 @@
               <input type="text" id="gestionSearch" placeholder="Guía, orden, código, nombre, courier..." />
             </div>
           </div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <table id="processTable">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Guía</th>
-                  <th>Orden</th>
-                  <th>Código</th>
-                  <th>Nombre</th>
-                  <th>Celular</th>
-                  <th>Punto de envío</th>
-                  <th>Courier</th>
-                  <th>Fecha de despacho</th>
-                  <th>Aviso</th>
-                  <th>Comentario</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+         <div class="table-wrap" style="margin-top:12px;">
+  <table id="processTable">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Guía</th>
+        <th>Orden</th>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Celular</th>
+        <th>Punto de envío</th>
+        <th>Courier</th>
+        <th>Fecha de despacho</th>
+        <th>Aviso</th>
+        <th>Comentario</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
       <div class="section-card">
         <div class="section-head">
@@ -1180,10 +1179,11 @@
       guidesInput: document.getElementById('guidesInput'),
       dataInput: document.getElementById('dataInput'),
       processTableBody: document.querySelector('#processTable tbody'),
-      processStatus: document.getElementById('processStatus'),
-      gestionSearch: document.getElementById('gestionSearch'),
-      guidesStatus: document.getElementById('guidesStatus'),
-      dataStatus: document.getElementById('dataStatus'),
+processStatus: document.getElementById('processStatus'),
+gestionSearch: document.getElementById('gestionSearch'),
+guidesStatus: document.getElementById('guidesStatus'),
+dataStatus: document.getElementById('dataStatus'),
+sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
       alertGuide: document.getElementById('alertGuide'),
       alertOrder: document.getElementById('alertOrder'),
@@ -1433,8 +1433,7 @@
       state.processRows = [];
       el.processTableBody.innerHTML = '';
       let foundAlerts = 0;
-      let insertedCanales = 0;
-      let duplicateCanales = 0;
+            let duplicateCanales = 0;
 
       const existingKeys = new Set(state.canales.map(canalKey));
 
@@ -1475,32 +1474,9 @@
             ].filter(Boolean).join(' | ');
           }
 
-          const duplicate = existingKeys.has(canalKey(result));
-          const payload = {
-            fecha: result.fecha,
-            guia: result.guia,
-            orden: result.orden,
-            codigo: result.codigo,
-            nombre: result.nombre,
-            celular: result.celular,
-            puntoEnvio: result.puntoEnvio,
-            courier: result.courier,
-            fechaDespacho: result.fechaDespacho,
-            aviso: result.aviso,
-            comentario: result.comentario,
-            canal: '',
-            duplicate,
-            createdAt: serverTimestamp(),
-            source: 'gestion-diaria'
-          };
-          try {
-            await addDoc(refs.canales, payload);
-            insertedCanales++;
-            if (duplicate) duplicateCanales++;
-            existingKeys.add(canalKey(result));
-          } catch (error) {
-            console.error(error);
-          }
+                    const duplicate = existingKeys.has(canalKey(result));
+          result.duplicate = duplicate;
+          if (duplicate) duplicateCanales++;
         }
 
         state.processRows.push(result);
@@ -1512,32 +1488,93 @@
         ...state.processRows.map(r => [r.fecha, r.guia, r.orden, r.codigo, r.nombre, r.celular, r.puntoEnvio, r.courier, r.fechaDespacho, r.aviso, r.comentario].join('\t'))
       ].join('\n');
       state.processTSV = tsv;
-      let msg = `Listo. Filas generadas: ${guides.length}. Enviadas a Canales: ${insertedCanales}.`;
+            let msg = `Listo. Filas generadas: ${guides.length}. Revisa y completa la información antes de enviar a Canales.`;
       if (foundAlerts) msg += ` Coincidencias con avisos: ${foundAlerts}.`;
       if (duplicateCanales) msg += ` Duplicados detectados en Canales: ${duplicateCanales}.`;
       setStatus(el.processStatus, msg, 'success');
     }
 
-    function renderProcessTable() {
+        function renderProcessTable() {
       el.processTableBody.innerHTML = '';
       if (!state.processRows.length) {
         el.processTableBody.innerHTML = `<tr><td colspan="11" class="empty-cell">No hay resultados todavía.</td></tr>`;
         return;
       }
-      state.processRows.forEach(r => {
+
+      state.processRows.forEach((r, index) => {
         const tr = document.createElement('tr');
         if (r.notFound) tr.classList.add('not-found');
         if (r.aviso) tr.classList.add('alert-found');
-        [r.fecha, r.guia, r.orden, r.codigo, r.nombre, r.celular, r.puntoEnvio, r.courier, r.fechaDespacho, r.aviso, r.comentario].forEach((val, idx) => {
-          const td = document.createElement('td');
-          if (idx === 9 && val) td.innerHTML = `<span class="badge badge-amber">${escapeHtml(val)}</span>`;
-          else td.textContent = val || '';
-          tr.appendChild(td);
-        });
+
+        tr.innerHTML = `
+          <td>${escapeHtml(r.fecha || '')}</td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="guia" value="${escapeHtml(r.guia || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="orden" value="${escapeHtml(r.orden || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="codigo" value="${escapeHtml(r.codigo || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="nombre" value="${escapeHtml(r.nombre || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="celular" value="${escapeHtml(r.celular || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="puntoEnvio" value="${escapeHtml(r.puntoEnvio || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="courier" value="${escapeHtml(r.courier || '')}"></td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="fechaDespacho" value="${escapeHtml(r.fechaDespacho || '')}"></td>
+          <td>${r.aviso ? `<span class="badge badge-amber">${escapeHtml(r.aviso)}</span>` : ''}</td>
+          <td><input class="mini-input process-edit" data-index="${index}" data-field="comentario" value="${escapeHtml(r.comentario || '')}"></td>
+        `;
         el.processTableBody.appendChild(tr);
       });
     }
+    async function sendProcessedRowsToCanales() {
+      if (!state.processRows.length) {
+        setStatus(el.processStatus, 'Primero debes procesar registros.', 'error');
+        return;
+      }
 
+      const existingKeys = new Set(state.canales.map(canalKey));
+      let inserted = 0;
+      let duplicates = 0;
+
+      for (const row of state.processRows) {
+        const hasOperationalData =
+          normalizeText(row.guia) ||
+          normalizeText(row.orden) ||
+          normalizeText(row.codigo) ||
+          normalizeText(row.nombre);
+
+        if (!hasOperationalData) continue;
+
+        const duplicate = existingKeys.has(canalKey(row));
+        const payload = {
+          fecha: row.fecha || todayES(),
+          guia: row.guia || '',
+          orden: row.orden || '',
+          codigo: row.codigo || '',
+          nombre: row.nombre || '',
+          celular: row.celular || '',
+          puntoEnvio: row.puntoEnvio || '',
+          courier: row.courier || '',
+          fechaDespacho: row.fechaDespacho || '',
+          aviso: row.aviso || '',
+          comentario: row.comentario || '',
+          canal: '',
+          duplicate,
+          createdAt: serverTimestamp(),
+          source: 'gestion-diaria'
+        };
+
+        try {
+          await addDoc(refs.canales, payload);
+          inserted++;
+          if (duplicate) duplicates++;
+          existingKeys.add(canalKey(row));
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      let msg = `Envío completado. Registros enviados a Canales: ${inserted}.`;
+      if (duplicates) msg += ` Duplicados detectados: ${duplicates}.`;
+      setStatus(el.processStatus, msg, 'success');
+    }
+    
     async function updateAlertField(id, field, value) {
       await updateDoc(doc(db, 'avisos', id), { [field]: value });
     }
@@ -1944,7 +1981,8 @@
         setStatus(el.dataStatus, 'Data eliminada.', 'success');
       });
 
-      document.getElementById('processBtn').addEventListener('click', processDailyFlow);
+            document.getElementById('processBtn').addEventListener('click', processDailyFlow);
+      el.sendToCanalesBtn.addEventListener('click', sendProcessedRowsToCanales);
       document.getElementById('copyProcessBtn').addEventListener('click', () => copyText(state.processTSV, 'Resultado copiado para Excel.'));
       document.getElementById('exportProcessBtn').addEventListener('click', () => exportTableToExcel('processTable', 'Gestion diaria', 'gestion_diaria.xlsx'));
 
@@ -2198,6 +2236,14 @@
 
       el.centerFilterField.addEventListener('change', renderCentersTable);
       el.gestionSearch.addEventListener('input', renderProcessTable);
+            el.processTableBody.addEventListener('change', e => {
+        const input = e.target.closest('.process-edit');
+        if (!input) return;
+        const index = Number(input.dataset.index);
+        const field = input.dataset.field;
+        if (Number.isNaN(index) || !state.processRows[index]) return;
+        state.processRows[index][field] = input.value;
+      });
     el.canalesSearch.addEventListener('input', renderCanalesTable);
     el.reenviosSearch.addEventListener('input', renderReenviosTable);
     el.anulacionesSearch.addEventListener('input', renderAnulacionesTable);
