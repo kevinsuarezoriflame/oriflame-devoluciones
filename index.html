@@ -381,16 +381,16 @@
     details.collapsible[open] > summary { border-bottom: 1px solid var(--line-2); }
     .collapsible-content { padding: 16px; }
 
-    .table-wrap {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      overflow: auto;
-      overflow-x: auto;
-      overflow-y: auto;
-      background: #fff;
-      max-height: 520px;
-      scrollbar-width: auto;
-    }
+    ..table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
+  background: #fff;
+  max-height: 560px;
+  scrollbar-width: auto;
+}
 
     .table-wrap::-webkit-scrollbar {
       height: 12px;
@@ -406,15 +406,19 @@
       border-radius: 999px;
     }
 
- table {
+table {
   width: 100%;
   table-layout: fixed;
-}
   border-collapse: collapse;
-  font-size: .86rem;
+  font-size: .8rem;
 }
 
-    #processTable td {
+   #processTable td,
+#canalesTable td,
+#reenviosTable td,
+#anulacionesTable td,
+#claimsTable td,
+#centersTable td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -441,25 +445,27 @@
 } /* Nombre */
     
     thead th {
-      position: sticky;
-      top: 0;
-      background: linear-gradient(90deg,#4b9144,#6aa35f);
-      color: #fff;
-      border: 1px solid #79ab72;
-      padding: 8px 8px;
-      text-align: left;
-      font-size: .79rem;
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      z-index: 2;
-    }
+  position: sticky;
+  top: 0;
+  background: linear-gradient(90deg,#4b9144,#6aa35f);
+  color: #fff;
+  border: 1px solid #79ab72;
+  padding: 5px 6px;
+  text-align: left;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  z-index: 2;
+  white-space: nowrap;
+}
 
     tbody td {
-      border: 1px solid #e3e8e0;
-      padding: 6px 7px;
-      vertical-align: top;
-      background: #fff;
-    }
+  border: 1px solid #e3e8e0;
+  padding: 4px 6px;
+  vertical-align: middle;
+  background: #fff;
+  white-space: nowrap;
+}
 
     tbody tr:nth-child(even) td { background: #fbfcfb; }
     tbody tr.alert-found td { background: #fff8e4 !important; }
@@ -471,17 +477,17 @@
 .row-courier-galapagos td { background: #eee3ff !important; }
 .row-courier-other td { background: #e2efff !important; }
 
-    .mini-input, .mini-select {
+   .mini-input, .mini-select {
   width: 100%;
   min-width: 0;
-      font-size: .83rem;
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid #ccd7c7;
-      font-family: inherit;
-      background: rgba(255,255,255,.92);
-    }
-    .mini-input { min-height: 34px; }
+  font-size: .76rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #ccd7c7;
+  font-family: inherit;
+  background: rgba(255,255,255,.92);
+}
+.mini-input { min-height: 28px; }
 
     .actions {
       display: flex;
@@ -490,11 +496,11 @@
     }
 
     .mini-btn {
-      padding: 6px 10px;
-      font-size: .78rem;
-      border-radius: 999px;
-      font-weight: 800;
-    }
+  padding: 4px 8px;
+  font-size: .72rem;
+  border-radius: 999px;
+  font-weight: 800;
+}
 
     .toolbar {
       display: flex;
