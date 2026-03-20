@@ -1151,8 +1151,10 @@
       anulaciones: [],
       reclamos: [],
       centros: [],
-      processRows: [],
-      processTSV: '',
+processRows: [],
+processTSV: '',
+processAlreadySent: false,
+      
       selectedCanales: new Set(),
       selectedAnulaciones: new Set(),
       centersWorkbook: null,
@@ -1430,8 +1432,11 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         if (way) byWaybill.set(way, r);
       });
 
-      state.processRows = [];
+            state.processRows = [];
+      state.processAlreadySent = false;
       el.processTableBody.innerHTML = '';
+      el.sendToCanalesBtn.disabled = false;
+      el.sendToCanalesBtn.textContent = 'Enviar a Canales';
       let foundAlerts = 0;
             let duplicateCanales = 0;
 
@@ -1522,63 +1527,73 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         el.processTableBody.appendChild(tr);
       });
     }
-    async function sendProcessedRowsToCanales() {
+        async function sendProcessedRowsToCanales() {
       if (!state.processRows.length) {
         setStatus(el.processStatus, 'Primero debes procesar registros.', 'error');
         return;
       }
 
+      if (state.processAlreadySent) {
+        setStatus(el.processStatus, 'Estos registros ya fueron enviados a Canales. Procesa nuevos datos antes de reenviar.', 'error');
+        return;
+      }
+
+      el.sendToCanalesBtn.disabled = true;
+      el.sendToCanalesBtn.textContent = 'Enviando...';
+
       const existingKeys = new Set(state.canales.map(canalKey));
       let inserted = 0;
       let duplicates = 0;
 
-      for (const row of state.processRows) {
-        const hasOperationalData =
-          normalizeText(row.guia) ||
-          normalizeText(row.orden) ||
-          normalizeText(row.codigo) ||
-          normalizeText(row.nombre);
+      try {
+        for (const row of state.processRows) {
+          const hasOperationalData =
+            normalizeText(row.guia) ||
+            normalizeText(row.orden) ||
+            normalizeText(row.codigo) ||
+            normalizeText(row.nombre);
 
-        if (!hasOperationalData) continue;
+          if (!hasOperationalData) continue;
 
-        const duplicate = existingKeys.has(canalKey(row));
-        const payload = {
-          fecha: row.fecha || todayES(),
-          guia: row.guia || '',
-          orden: row.orden || '',
-          codigo: row.codigo || '',
-          nombre: row.nombre || '',
-          celular: row.celular || '',
-          puntoEnvio: row.puntoEnvio || '',
-          courier: row.courier || '',
-          fechaDespacho: row.fechaDespacho || '',
-          aviso: row.aviso || '',
-          comentario: row.comentario || '',
-          canal: '',
-          duplicate,
-          createdAt: serverTimestamp(),
-          source: 'gestion-diaria'
-        };
+          const duplicate = existingKeys.has(canalKey(row));
+          const payload = {
+            fecha: row.fecha || todayES(),
+            guia: row.guia || '',
+            orden: row.orden || '',
+            codigo: row.codigo || '',
+            nombre: row.nombre || '',
+            celular: row.celular || '',
+            puntoEnvio: row.puntoEnvio || '',
+            courier: row.courier || '',
+            fechaDespacho: row.fechaDespacho || '',
+            aviso: row.aviso || '',
+            comentario: row.comentario || '',
+            canal: '',
+            duplicate,
+            createdAt: serverTimestamp(),
+            source: 'gestion-diaria'
+          };
 
-        try {
           await addDoc(refs.canales, payload);
           inserted++;
           if (duplicate) duplicates++;
           existingKeys.add(canalKey(row));
-        } catch (error) {
-          console.error(error);
         }
+
+        state.processAlreadySent = true;
+        el.sendToCanalesBtn.textContent = 'Ya enviado';
+        el.sendToCanalesBtn.disabled = true;
+
+        let msg = `✅ Envío completado. Registros enviados a Canales: ${inserted}.`;
+        if (duplicates) msg += ` Duplicados detectados: ${duplicates}.`;
+        setStatus(el.processStatus, msg, 'success');
+      } catch (error) {
+        console.error(error);
+        el.sendToCanalesBtn.disabled = false;
+        el.sendToCanalesBtn.textContent = 'Enviar a Canales';
+        setStatus(el.processStatus, 'Ocurrió un error al enviar a Canales.', 'error');
       }
-
-      let msg = `Envío completado. Registros enviados a Canales: ${inserted}.`;
-      if (duplicates) msg += ` Duplicados detectados: ${duplicates}.`;
-      setStatus(el.processStatus, msg, 'success');
     }
-    
-    async function updateAlertField(id, field, value) {
-      await updateDoc(doc(db, 'avisos', id), { [field]: value });
-    }
-
 
     function rowMatchesSearch(textParts, searchNode) {
       const term = normalizeText(searchNode?.value || '');
