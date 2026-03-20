@@ -42,10 +42,21 @@
 }
 
     .topbar {
-      padding: 24px 24px 12px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
-    }
+  padding: 24px 24px 12px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+}
+
+.topbar-main.collapsed {
+  display: none;
+}
+
+.header-toggle-wrap {
+  padding: 10px 24px 0;
+  display: flex;
+  justify-content: flex-end;
+  background: #fff;
+}
 
     h1 {
       margin: 0 0 6px;
@@ -611,18 +622,24 @@
 </head>
 <body>
   <div class="app">
-    <div class="topbar">
-      <h1>Gestión de Incidencias Ransa / Oriflame</h1>
-      <div class="subtitle">Recepción, clasificación y gestión colaborativa de devoluciones, reenvíos, anulaciones, reclamos y lista maestra de centros.</div>
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="gestion">Gestión diaria</button>
-        <button class="tab-btn" data-tab="canales">Canales de Ransa</button>
-        <button class="tab-btn" data-tab="reenvios">Reenvíos <span id="reenviosPendingBadge" class="tab-badge" style="display:none;">0</span></button>
-        <button class="tab-btn" data-tab="anulaciones">Anulaciones</button>
-        <button class="tab-btn" data-tab="reclamos">Reclamos Procesados</button>
-        <button class="tab-btn" data-tab="centros">Lista de Centros</button>
-      </div>
+  <div class="header-toggle-wrap">
+    <button id="toggleHeaderBtn" class="btn-secondary">Ocultar encabezado</button>
+  </div>
+
+  <div class="topbar" id="mainTopbar">
+  <div class="topbar-main" id="topbarMain">
+    <h1>Gestión de Incidencias Ransa / Oriflame</h1>
+    <div class="subtitle">Recepción, clasificación y gestión colaborativa de devoluciones, reenvíos, anulaciones, reclamos y lista maestra de centros.</div>
+  </div>
+  <div class="tabs">
+      <button class="tab-btn active" data-tab="gestion">Gestión diaria</button>
+      <button class="tab-btn" data-tab="canales">Canales de Ransa</button>
+      <button class="tab-btn" data-tab="reenvios">Reenvíos <span id="reenviosPendingBadge" class="tab-badge" style="display:none;">0</span></button>
+      <button class="tab-btn" data-tab="anulaciones">Anulaciones</button>
+      <button class="tab-btn" data-tab="reclamos">Reclamos Procesados</button>
+      <button class="tab-btn" data-tab="centros">Lista de Centros</button>
     </div>
+  </div>
 
     <section class="panel active" id="panel-gestion">
       <div class="metric-row">
@@ -2348,6 +2365,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       renderCentersTable();
     }
 
+    const toggleHeaderBtn = document.getElementById('toggleHeaderBtn');
+const mainTopbar = document.getElementById('topbarMain');
+
+toggleHeaderBtn.addEventListener('click', () => {
+  mainTopbar.classList.toggle('collapsed');
+
+  if (mainTopbar.classList.contains('collapsed')) {
+    toggleHeaderBtn.textContent = 'Mostrar encabezado';
+  } else {
+    toggleHeaderBtn.textContent = 'Ocultar encabezado';
+  }
+});
     initialize();
   </script>
 </body>
