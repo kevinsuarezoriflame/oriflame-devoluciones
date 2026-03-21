@@ -429,6 +429,78 @@ table {
   max-width: 220px; 
 } /* Punto de envío */
 
+  /* AJUSTE FINO SOLO PARA CANALES */
+#canalesTable th:nth-child(1),
+#canalesTable td:nth-child(1) {
+  width: 34px;
+  max-width: 34px;
+  min-width: 34px;
+  text-align: center;
+} /* checkbox */
+
+#canalesTable th:nth-child(2),
+#canalesTable td:nth-child(2) {
+  width: 82px;
+  max-width: 82px;
+  min-width: 82px;
+} /* Fecha */
+
+#canalesTable th:nth-child(3),
+#canalesTable td:nth-child(3) {
+  width: 108px;
+  max-width: 108px;
+  min-width: 108px;
+} /* Guía */
+
+#canalesTable th:nth-child(4),
+#canalesTable td:nth-child(4) {
+  width: 108px;
+  max-width: 108px;
+  min-width: 108px;
+} /* Orden */
+
+#canalesTable th:nth-child(5),
+#canalesTable td:nth-child(5) {
+  width: 82px;
+  max-width: 82px;
+  min-width: 82px;
+} /* Código */
+
+#canalesTable th:nth-child(7),
+#canalesTable td:nth-child(7) {
+  width: 98px;
+  max-width: 98px;
+  min-width: 98px;
+} /* Celular */
+
+#canalesTable th:nth-child(6),
+#canalesTable td:nth-child(6) {
+  width: 210px;
+  max-width: 210px;
+  min-width: 210px;
+} /* Nombre */
+
+#canalesTable th:nth-child(8),
+#canalesTable td:nth-child(8) {
+  width: 240px;
+  max-width: 240px;
+  min-width: 240px;
+} /* Punto de envío */
+
+#canalesTable th:nth-child(10),
+#canalesTable td:nth-child(10) {
+  width: 110px;
+  max-width: 110px;
+  min-width: 110px;
+} /* F. Despacho */
+
+#canalesTable th:nth-child(14),
+#canalesTable td:nth-child(14) {
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
+} /* Acciones */  
+
 #processTable th:nth-child(10),
 #processTable td:nth-child(10) { 
   max-width: 160px; 
@@ -495,11 +567,20 @@ table {
       gap: 6px;
     }
 
-    .mini-btn {
-  padding: 4px 8px;
-  font-size: .72rem;
+    .actions-canales {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+ .mini-btn {
+  padding: 3px 6px;
+  font-size: .66rem;
   border-radius: 999px;
   font-weight: 800;
+  line-height: 1.05;
+  white-space: nowrap;
 }
 
     .toolbar {
@@ -706,7 +787,7 @@ table {
         <th>Celular</th>
         <th>Punto de envío</th>
         <th>Courier</th>
-        <th>Fecha de despacho</th>
+        <th>F.Despacho</th>
         <th>Aviso</th>
         <th>Comentario</th>
       </tr>
