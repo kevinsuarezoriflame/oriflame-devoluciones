@@ -694,6 +694,81 @@ table {
   width: 100%;
   min-width: 100%;
 }
+
+    /* AJUSTE FINO TABLA AVISOS */
+#alertsTable {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#alertsTable th,
+#alertsTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#alertsTable th:nth-child(1),
+#alertsTable td:nth-child(1) {
+  width: 160px;
+  max-width: 160px;
+  min-width: 160px;
+} /* Fecha registro */
+
+#alertsTable th:nth-child(2),
+#alertsTable td:nth-child(2) {
+  width: 110px;
+  max-width: 110px;
+  min-width: 110px;
+} /* Guía */
+
+#alertsTable th:nth-child(3),
+#alertsTable td:nth-child(3) {
+  width: 110px;
+  max-width: 110px;
+  min-width: 110px;
+} /* Orden */
+
+#alertsTable th:nth-child(4),
+#alertsTable td:nth-child(4) {
+  width: 90px;
+  max-width: 90px;
+  min-width: 90px;
+} /* Código */
+
+#alertsTable th:nth-child(5),
+#alertsTable td:nth-child(5) {
+  width: 170px;
+  max-width: 170px;
+  min-width: 170px;
+} /* Nombre */
+
+#alertsTable th:nth-child(6),
+#alertsTable td:nth-child(6) {
+  width: 140px;
+  max-width: 140px;
+  min-width: 140px;
+} /* Responsable */
+
+#alertsTable th:nth-child(7),
+#alertsTable td:nth-child(7) {
+  width: 300px;
+  max-width: 300px;
+  min-width: 300px;
+} /* Comentario */
+
+#alertsTable th:nth-child(8),
+#alertsTable td:nth-child(8) {
+  width: 90px;
+  max-width: 90px;
+  min-width: 90px;
+  text-align: center;
+} /* Acción */
+
+#alertsTable td:nth-child(8) .mini-btn {
+  display: inline-block;
+  min-width: 48px;
+}
     @media (max-width: 1100px) {
       .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
