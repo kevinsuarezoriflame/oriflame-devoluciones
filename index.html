@@ -381,7 +381,7 @@
     details.collapsible[open] > summary { border-bottom: 1px solid var(--line-2); }
     .collapsible-content { padding: 16px; }
 
-    ..table-wrap {
+    .table-wrap {
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: auto;
@@ -834,7 +834,7 @@ table {
           </div>
           <div id="alertStatus" class="status"></div>
           <div class="table-wrap" style="margin-top:12px;">
-            <table id="alertsTable">
+            <table id="alertsTable" class="alerts-table">
               <thead>
                 <tr>
                   <th>Fecha registro</th>
@@ -914,7 +914,7 @@ table {
                   <th>Celular</th>
                   <th>Punto de envío</th>
                   <th>Courier</th>
-                  <th>Fecha de despacho</th>
+                  <th>F. Despacho</th>
                   <th>Aviso</th>
                   <th>Comentario</th>
                   <th>Canales</th>
@@ -1748,8 +1748,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td>${escapeHtml(item.codigo || '')}</td>
           <td>${escapeHtml(item.nombre || '')}</td>
           <td>${escapeHtml(item.responsable || '')}</td>
-          <td>${escapeHtml(item.comentario || '')}</td>
-          <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}">Eliminar</button></td>
+          <td title="${escapeHtml(item.comentario || '')}">${escapeHtml(item.comentario || '')}</td>
+          <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}" title="Eliminar aviso">Del</button></td>
         `;
         el.alertsTableBody.appendChild(tr);
       });
