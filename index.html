@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -381,7 +383,7 @@
     details.collapsible[open] > summary { border-bottom: 1px solid var(--line-2); }
     .collapsible-content { padding: 16px; }
 
-    .table-wrap {
+    ..table-wrap {
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: auto;
@@ -694,81 +696,6 @@ table {
   width: 100%;
   min-width: 100%;
 }
-
-    /* AJUSTE FINO TABLA AVISOS */
-#alertsTable {
-  width: 100%;
-  table-layout: fixed;
-}
-
-#alertsTable th,
-#alertsTable td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#alertsTable th:nth-child(1),
-#alertsTable td:nth-child(1) {
-  width: 160px;
-  max-width: 160px;
-  min-width: 160px;
-} /* Fecha registro */
-
-#alertsTable th:nth-child(2),
-#alertsTable td:nth-child(2) {
-  width: 110px;
-  max-width: 110px;
-  min-width: 110px;
-} /* Guía */
-
-#alertsTable th:nth-child(3),
-#alertsTable td:nth-child(3) {
-  width: 110px;
-  max-width: 110px;
-  min-width: 110px;
-} /* Orden */
-
-#alertsTable th:nth-child(4),
-#alertsTable td:nth-child(4) {
-  width: 90px;
-  max-width: 90px;
-  min-width: 90px;
-} /* Código */
-
-#alertsTable th:nth-child(5),
-#alertsTable td:nth-child(5) {
-  width: 170px;
-  max-width: 170px;
-  min-width: 170px;
-} /* Nombre */
-
-#alertsTable th:nth-child(6),
-#alertsTable td:nth-child(6) {
-  width: 140px;
-  max-width: 140px;
-  min-width: 140px;
-} /* Responsable */
-
-#alertsTable th:nth-child(7),
-#alertsTable td:nth-child(7) {
-  width: 300px;
-  max-width: 300px;
-  min-width: 300px;
-} /* Comentario */
-
-#alertsTable th:nth-child(8),
-#alertsTable td:nth-child(8) {
-  width: 90px;
-  max-width: 90px;
-  min-width: 90px;
-  text-align: center;
-} /* Acción */
-
-#alertsTable td:nth-child(8) .mini-btn {
-  display: inline-block;
-  min-width: 48px;
-}
     @media (max-width: 1100px) {
       .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
@@ -989,7 +916,7 @@ table {
                   <th>Celular</th>
                   <th>Punto de envío</th>
                   <th>Courier</th>
-                  <th>F. Despacho</th>
+                  <th>Fecha de despacho</th>
                   <th>Aviso</th>
                   <th>Comentario</th>
                   <th>Canales</th>
@@ -1823,8 +1750,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td>${escapeHtml(item.codigo || '')}</td>
           <td>${escapeHtml(item.nombre || '')}</td>
           <td>${escapeHtml(item.responsable || '')}</td>
-          <td title="${escapeHtml(item.comentario || '')}">${escapeHtml(item.comentario || '')}</td>
-          <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}" title="Eliminar aviso">Del</button></td>
+          <td>${escapeHtml(item.comentario || '')}</td>
+          <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}">Eliminar</button></td>
         `;
         el.alertsTableBody.appendChild(tr);
       });
@@ -1915,12 +1842,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" value="${escapeHtml(item.guiaNueva || '')}"></td>
           <td>${escapeHtml(item.fechaEnvio || '')}</td>
           <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
-          <td>
-  <div class="actions">
-    <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-    <button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}" title="Eliminar">Del</button>
-  </div>
-</td>
+          <td><button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}">Eliminar</button></td>
         `;
         el.reenviosTableBody.appendChild(tr);
       });
@@ -1962,12 +1884,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" value="${escapeHtml(item.estado || '')}"></td>
           <td>${escapeHtml(item.fechaAnulacion || '')}</td>
           <td>${verificacionBadge(item.verificacion || '')}</td>
-          <td>
-  <div class="actions">
-    <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-    <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}" title="Eliminar">Del</button>
-  </div>
-</td>
+          <td><button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}">Eliminar</button></td>
         `;
         el.anulacionesTableBody.appendChild(tr);
       });
@@ -2104,95 +2021,65 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       if (count > 0) await batch.commit();
     }
 
-   async function moveBackToCanales(id, source) {
-  const collectionName = source === 'reenvios' ? 'reenvios' : 'anulaciones';
 
-  const item = source === 'reenvios'
-    ? state.reenvios.find(x => x.id === id)
-    : state.anulaciones.find(x => x.id === id);
+    async function moveBackToCanales(id, source) {
+      const collectionName = source === 'reenvios' ? 'reenvios' : 'anulaciones';
 
-  if (!item) return;
+      const item = source === 'reenvios'
+        ? state.reenvios.find(x => x.id === id)
+        : state.anulaciones.find(x => x.id === id);
 
-  let payload = {};
+      if (!item) return;
 
-  if (source === 'reenvios') {
-    payload = {
-      fecha: item.fecha || todayES(),
-      guia: item.guia || '',
-      orden: item.orden || '',
-      codigo: item.codigo || '',
-      nombre: item.nombre || '',
-      celular: item.celular || '',
-      puntoEnvio: item.puntoEnvioActual || item.puntoEnvioOriginal || '',
-      courier: item.courier || '',
-      fechaDespacho: item.fechaDespacho || '',
-      aviso: '',
-      comentario: item.comentario || '',
-      canal: item.canal || '',
-      duplicate: false,
-      createdAt: serverTimestamp(),
-      source: 'back-from-reenvios'
-    };
-  }
+      let payload = {};
 
-  if (source === 'anulaciones') {
-    payload = {
-      fecha: todayES(),
-      guia: '',
-      orden: item.orden || '',
-      codigo: item.codigo || '',
-      nombre: item.nombre || '',
-      celular: item.celular || '',
-      puntoEnvio: item.puntoEnvio || '',
-      courier: item.courier || '',
-      fechaDespacho: item.fechaDespacho || '',
-      aviso: '',
-      comentario: item.comentario
-        ? item.comentario
-        : `Regresado desde Anulaciones | Estado: ${item.estado || ''} | Cruce: ${item.cruceAmpliacion || ''}`,
-      canal: item.canal || '',
-      duplicate: false,
-      createdAt: serverTimestamp(),
-      source: 'back-from-anulaciones'
-    };
-  }
+      if (source === 'reenvios') {
+        payload = {
+          fecha: item.fecha || todayES(),
+          guia: item.guia || '',
+          orden: item.orden || '',
+          codigo: item.codigo || '',
+          nombre: item.nombre || '',
+          celular: item.celular || '',
+          puntoEnvio: item.puntoEnvioActual || item.puntoEnvioOriginal || '',
+          courier: item.courier || '',
+          fechaDespacho: item.fechaDespacho || '',
+          aviso: '',
+          comentario: item.comentario || 'Regresado desde Reenvíos',
+          canal: item.canal || '',
+          duplicate: false,
+          createdAt: serverTimestamp(),
+          source: 'back-from-reenvios'
+        };
+      }
 
-  await addDoc(refs.canales, payload);
-  await deleteDoc(doc(db, collectionName, id));
-}
+      if (source === 'anulaciones') {
+        payload = {
+          fecha: todayES(),
+          guia: '',
+          orden: item.orden || '',
+          codigo: item.codigo || '',
+          nombre: item.nombre || '',
+          celular: item.celular || '',
+          puntoEnvio: item.puntoEnvio || '',
+          courier: item.courier || '',
+          fechaDespacho: item.fechaDespacho || '',
+          aviso: '',
+          comentario: item.comentario
+            ? item.comentario
+            : `Regresado desde Anulaciones | Estado: ${item.estado || ''} | Cruce: ${item.cruceAmpliacion || ''}`,
+          canal: item.canal || '',
+          duplicate: false,
+          createdAt: serverTimestamp(),
+          source: 'back-from-anulaciones'
+        };
+      }
 
-async function moveCanalesToTarget(ids, target) {
-  if (!ids.length) return;
-  const collectionName = target === 'reenvios' ? 'reenvios' : 'anulaciones';
-  const writes = [];
-  ...
-}
+      await addDoc(refs.canales, payload);
+      await deleteDoc(doc(db, collectionName, id));
+    }
 
-  if (source === 'anulaciones') {
-    payload = {
-      fecha: todayES(),
-      guia: '',
-      orden: item.orden || '',
-      codigo: item.codigo || '',
-      nombre: item.nombre || '',
-      celular: item.celular || '',
-      puntoEnvio: item.puntoEnvio || '',
-      courier: item.courier || '',
-      fechaDespacho: item.fechaDespacho || '',
-      aviso: '',
-      comentario: item.comentario
-        ? item.comentario
-        : `Regresado desde Anulaciones | Estado: ${item.estado || ''} | Cruce: ${item.cruceAmpliacion || ''}`,
-      canal: item.canal || '',
-      duplicate: false,
-      createdAt: serverTimestamp(),
-      source: 'back-from-anulaciones'
-    };
-  }
-
-  await addDoc(refs.canales, payload);
-  await deleteDoc(doc(db, collectionName, id));
-}
+    async function moveCanalesToTarget(ids, target) {
       if (!ids.length) return;
       const collectionName = target === 'reenvios' ? 'reenvios' : 'anulaciones';
       const writes = [];
@@ -2424,18 +2311,18 @@ async function moveCanalesToTarget(ids, target) {
       });
 
       el.reenviosTableBody.addEventListener('click', async e => {
-  const back = e.target.closest('.back-canales');
-  if (back) {
-    if (!confirm('¿Regresar este registro a Canales?')) return;
-    await moveBackToCanales(back.dataset.id, 'reenvios');
-    return;
-  }
+        const back = e.target.closest('.back-canales');
+        if (back) {
+          if (!confirm('¿Regresar este registro a Canales?')) return;
+          await moveBackToCanales(back.dataset.id, 'reenvios');
+          return;
+        }
 
-  const del = e.target.closest('.delete-reenvio');
-  if (!del) return;
-  if (!confirm('¿Eliminar este reenvío?')) return;
-  await deleteDoc(doc(db, 'reenvios', del.dataset.id));
-});
+        const del = e.target.closest('.delete-reenvio');
+        if (!del) return;
+        if (!confirm('¿Eliminar este reenvío?')) return;
+        await deleteDoc(doc(db, 'reenvios', del.dataset.id));
+      });
 
       document.getElementById('verifyTc3Btn').addEventListener('click', verifyAnulacionesWithTc3);
       document.getElementById('clearTc3Btn').addEventListener('click', () => {
@@ -2481,18 +2368,18 @@ async function moveCanalesToTarget(ids, target) {
       });
 
       el.anulacionesTableBody.addEventListener('click', async e => {
-  const back = e.target.closest('.back-canales');
-  if (back) {
-    if (!confirm('¿Regresar este registro a Canales?')) return;
-    await moveBackToCanales(back.dataset.id, 'anulaciones');
-    return;
-  }
+        const back = e.target.closest('.back-canales');
+        if (back) {
+          if (!confirm('¿Regresar este registro a Canales?')) return;
+          await moveBackToCanales(back.dataset.id, 'anulaciones');
+          return;
+        }
 
-  const del = e.target.closest('.delete-anulacion');
-  if (!del) return;
-  if (!confirm('¿Eliminar este registro de Anulaciones?')) return;
-  await deleteDoc(doc(db, 'anulaciones', del.dataset.id));
-});
+        const del = e.target.closest('.delete-anulacion');
+        if (!del) return;
+        if (!confirm('¿Eliminar este registro de Anulaciones?')) return;
+        await deleteDoc(doc(db, 'anulaciones', del.dataset.id));
+      });
 
       document.getElementById('saveClaimBtn').addEventListener('click', async () => {
         const payload = {
