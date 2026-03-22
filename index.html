@@ -1915,7 +1915,12 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" value="${escapeHtml(item.guiaNueva || '')}"></td>
           <td>${escapeHtml(item.fechaEnvio || '')}</td>
           <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
-          <td><button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}">Eliminar</button></td>
+          <td>
+  <div class="actions">
+    <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
+    <button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}" title="Eliminar">Del</button>
+  </div>
+</td>
         `;
         el.reenviosTableBody.appendChild(tr);
       });
@@ -1957,7 +1962,12 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" value="${escapeHtml(item.estado || '')}"></td>
           <td>${escapeHtml(item.fechaAnulacion || '')}</td>
           <td>${verificacionBadge(item.verificacion || '')}</td>
-          <td><button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}">Eliminar</button></td>
+          <td>
+  <div class="actions">
+    <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
+    <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}" title="Eliminar">Del</button>
+  </div>
+</td>
         `;
         el.anulacionesTableBody.appendChild(tr);
       });
@@ -2095,6 +2105,62 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     async function moveCanalesToTarget(ids, target) {
+      async function moveBackToCanales(id, source) {
+  const collectionName = source === 'reenvios' ? 'reenvios' : 'anulaciones';
+
+  const item = source === 'reenvios'
+    ? state.reenvios.find(x => x.id === id)
+    : state.anulaciones.find(x => x.id === id);
+
+  if (!item) return;
+
+  let payload = {};
+
+  if (source === 'reenvios') {
+    payload = {
+      fecha: item.fecha || todayES(),
+      guia: item.guia || '',
+      orden: item.orden || '',
+      codigo: item.codigo || '',
+      nombre: item.nombre || '',
+      celular: item.celular || '',
+      puntoEnvio: item.puntoEnvioActual || item.puntoEnvioOriginal || '',
+      courier: item.courier || '',
+      fechaDespacho: item.fechaDespacho || '',
+      aviso: '',
+      comentario: item.comentario || '',
+      canal: item.canal || '',
+      duplicate: false,
+      createdAt: serverTimestamp(),
+      source: 'back-from-reenvios'
+    };
+  }
+
+  if (source === 'anulaciones') {
+    payload = {
+      fecha: todayES(),
+      guia: '',
+      orden: item.orden || '',
+      codigo: item.codigo || '',
+      nombre: item.nombre || '',
+      celular: item.celular || '',
+      puntoEnvio: item.puntoEnvio || '',
+      courier: item.courier || '',
+      fechaDespacho: item.fechaDespacho || '',
+      aviso: '',
+      comentario: item.comentario
+        ? item.comentario
+        : `Regresado desde Anulaciones | Estado: ${item.estado || ''} | Cruce: ${item.cruceAmpliacion || ''}`,
+      canal: item.canal || '',
+      duplicate: false,
+      createdAt: serverTimestamp(),
+      source: 'back-from-anulaciones'
+    };
+  }
+
+  await addDoc(refs.canales, payload);
+  await deleteDoc(doc(db, collectionName, id));
+}
       if (!ids.length) return;
       const collectionName = target === 'reenvios' ? 'reenvios' : 'anulaciones';
       const writes = [];
@@ -2326,11 +2392,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       });
 
       el.reenviosTableBody.addEventListener('click', async e => {
-        const del = e.target.closest('.delete-reenvio');
-        if (!del) return;
-        if (!confirm('¿Eliminar este reenvío?')) return;
-        await deleteDoc(doc(db, 'reenvios', del.dataset.id));
-      });
+  const back = e.target.closest('.back-canales');
+  if (back) {
+    if (!confirm('¿Regresar este registro a Canales?')) return;
+    await moveBackToCanales(back.dataset.id, 'reenvios');
+    return;
+  }
+
+  const del = e.target.closest('.delete-reenvio');
+  if (!del) return;
+  if (!confirm('¿Eliminar este reenvío?')) return;
+  await deleteDoc(doc(db, 'reenvios', del.dataset.id));
+});
 
       document.getElementById('verifyTc3Btn').addEventListener('click', verifyAnulacionesWithTc3);
       document.getElementById('clearTc3Btn').addEventListener('click', () => {
@@ -2376,11 +2449,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       });
 
       el.anulacionesTableBody.addEventListener('click', async e => {
-        const del = e.target.closest('.delete-anulacion');
-        if (!del) return;
-        if (!confirm('¿Eliminar este registro de Anulaciones?')) return;
-        await deleteDoc(doc(db, 'anulaciones', del.dataset.id));
-      });
+  const back = e.target.closest('.back-canales');
+  if (back) {
+    if (!confirm('¿Regresar este registro a Canales?')) return;
+    await moveBackToCanales(back.dataset.id, 'anulaciones');
+    return;
+  }
+
+  const del = e.target.closest('.delete-anulacion');
+  if (!del) return;
+  if (!confirm('¿Eliminar este registro de Anulaciones?')) return;
+  await deleteDoc(doc(db, 'anulaciones', del.dataset.id));
+});
 
       document.getElementById('saveClaimBtn').addEventListener('click', async () => {
         const payload = {
