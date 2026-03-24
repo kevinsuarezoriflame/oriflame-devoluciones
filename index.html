@@ -415,7 +415,8 @@ table {
 
    #processTable td,
 #canalesTable td,
-#reenviosTable td,
+#reenviosTablePendientes td,
+#reenviosTableHistorial td,
 #anulacionesTable td,
 #claimsTable td,
 #centersTable td {
@@ -769,6 +770,39 @@ table {
   display: inline-block;
   min-width: 48px;
 }
+
+
+    .subtabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+
+    .subtab-btn {
+      border: 1px solid #d6e4d1;
+      background: #f5faf3;
+      color: #355f34;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: .85rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subtab-btn.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+      box-shadow: 0 4px 10px rgba(75,145,68,.18);
+    }
+
+    .subtab-panel { display: none; }
+    .subtab-panel.active { display: block; }
+
     @media (max-width: 1100px) {
       .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
@@ -1009,7 +1043,7 @@ table {
           <div class="section-title-row">
             <h3 class="section-title">Reenvíos</h3>
           </div>
-          <span class="pill pill-red">Pendientes y reenviados visibles para el equipo</span>
+          <span class="pill pill-red">Pendientes operativos + historial dentro de la misma pestaña</span>
         </div>
         <div class="section-body">
           <div class="btn-row">
@@ -1023,29 +1057,64 @@ table {
               <input type="text" id="reenviosSearch" placeholder="Guía, orden, nombre, estado, courier..." />
             </div>
           </div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <table id="reenviosTable">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Guía</th>
-                  <th>Orden</th>
-                  <th>Código</th>
-                  <th>Nombre</th>
-                  <th>Celular</th>
-                  <th>Punto de envío</th>
-                  <th>Courier</th>
-                  <th>Fecha de despacho</th>
-                  <th>Comentario</th>
-                  <th>Canales</th>
-                  <th>Guía nueva</th>
-                  <th>Fecha de envío</th>
-                  <th>Estado</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
+
+          <div class="subtabs" id="reenviosSubtabs">
+            <button class="subtab-btn active" type="button" data-reenvio-view="pendientes">Pendientes <span id="reenviosPendientesCount" class="pill pill-red">0</span></button>
+            <button class="subtab-btn" type="button" data-reenvio-view="historial">Historial de reenvíos <span id="reenviosHistorialCount" class="pill pill-green">0</span></button>
+          </div>
+
+          <div class="subtab-panel active" id="reenviosPendientesPanel">
+            <div class="table-wrap" style="margin-top:12px;">
+              <table id="reenviosTablePendientes">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Guía</th>
+                    <th>Orden</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Celular</th>
+                    <th>Punto de envío</th>
+                    <th>Courier</th>
+                    <th>Fecha de despacho</th>
+                    <th>Comentario</th>
+                    <th>Canales</th>
+                    <th>Guía nueva</th>
+                    <th>Fecha de envío</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="subtab-panel" id="reenviosHistorialPanel">
+            <div class="table-wrap" style="margin-top:12px;">
+              <table id="reenviosTableHistorial">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Guía</th>
+                    <th>Orden</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Celular</th>
+                    <th>Punto de envío</th>
+                    <th>Courier</th>
+                    <th>Fecha de despacho</th>
+                    <th>Comentario</th>
+                    <th>Canales</th>
+                    <th>Guía nueva</th>
+                    <th>Fecha de envío</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -1360,6 +1429,7 @@ table {
 processRows: [],
 processTSV: '',
 processAlreadySent: false,
+      reenviosView: 'pendientes',
       
       selectedCanales: new Set(),
       selectedAnulaciones: new Set(),
@@ -1409,9 +1479,15 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       bulkCanalComment: document.getElementById('bulkCanalComment'),
       selectAllCanales: document.getElementById('selectAllCanales'),
 
-      reenviosTableBody: document.querySelector('#reenviosTable tbody'),
+      reenviosPendientesTableBody: document.querySelector('#reenviosTablePendientes tbody'),
+      reenviosHistorialTableBody: document.querySelector('#reenviosTableHistorial tbody'),
       reenviosStatus: document.getElementById('reenviosStatus'),
       reenviosSearch: document.getElementById('reenviosSearch'),
+      reenviosSubtabButtons: document.querySelectorAll('[data-reenvio-view]'),
+      reenviosPendientesPanel: document.getElementById('reenviosPendientesPanel'),
+      reenviosHistorialPanel: document.getElementById('reenviosHistorialPanel'),
+      reenviosPendientesCount: document.getElementById('reenviosPendientesCount'),
+      reenviosHistorialCount: document.getElementById('reenviosHistorialCount'),
 
       anulacionesTableBody: document.querySelector('#anulacionesTable tbody'),
       anulacionesStatus: document.getElementById('anulacionesStatus'),
@@ -1583,7 +1659,10 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       el.metricAvisos.textContent = state.alerts.length;
       el.metricCanales.textContent = state.canales.length;
       const rePending = state.reenvios.filter(r => !normalizeText(r.guiaNueva)).length;
+      const reDone = state.reenvios.filter(r => normalizeText(r.guiaNueva)).length;
       el.metricReenvios.textContent = rePending;
+      if (el.reenviosPendientesCount) el.reenviosPendientesCount.textContent = rePending;
+      if (el.reenviosHistorialCount) el.reenviosHistorialCount.textContent = reDone;
       el.metricAnulaciones.textContent = state.anulaciones.length;
       if (rePending > 0) {
         el.reenviosPendingBadge.style.display = 'inline-flex';
@@ -1884,20 +1963,19 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       return normalizeText(item.guiaNueva) ? 'Reenviado' : 'Pendiente';
     }
 
-    function renderReenviosTable() {
-      el.reenviosTableBody.innerHTML = '';
-      if (!state.reenvios.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos registrados.</td></tr>`;
-        updateMetrics();
-        return;
-      }
-      state.reenvios.forEach(item => {
-        const estado = reenvioState(item);
-        if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvioActual, item.courier, item.fechaDespacho, item.comentario, item.canal, item.guiaNueva, item.fechaEnvio, estado], el.reenviosSearch)) return;
-        const changed = normalizeText(item.puntoEnvioOriginal) && normalizeText(item.puntoEnvioActual) !== normalizeText(item.puntoEnvioOriginal);
-        const tr = document.createElement('tr');
-        tr.className = courierClass(item.courier);
-        tr.innerHTML = `
+    function setReenviosView(view) {
+      state.reenviosView = view === 'historial' ? 'historial' : 'pendientes';
+      el.reenviosSubtabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.reenvioView === state.reenviosView));
+      el.reenviosPendientesPanel.classList.toggle('active', state.reenviosView === 'pendientes');
+      el.reenviosHistorialPanel.classList.toggle('active', state.reenviosView === 'historial');
+    }
+
+    function buildReenvioRow(item) {
+      const estado = reenvioState(item);
+      const changed = normalizeText(item.puntoEnvioOriginal) && normalizeText(item.puntoEnvioActual) !== normalizeText(item.puntoEnvioOriginal);
+      const tr = document.createElement('tr');
+      tr.className = courierClass(item.courier);
+      tr.innerHTML = `
           <td>${escapeHtml(item.fecha || '')}</td>
           <td>${escapeHtml(item.guia || '')}</td>
           <td>${escapeHtml(item.orden || '')}</td>
@@ -1922,10 +2000,40 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             </div>
           </td>
         `;
-        el.reenviosTableBody.appendChild(tr);
+      return tr;
+    }
+
+    function renderReenviosTable() {
+      el.reenviosPendientesTableBody.innerHTML = '';
+      el.reenviosHistorialTableBody.innerHTML = '';
+      if (!state.reenvios.length) {
+        el.reenviosPendientesTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos pendientes.</td></tr>`;
+        el.reenviosHistorialTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay historial de reenvíos.</td></tr>`;
+        updateMetrics();
+        return;
+      }
+
+      let pendingVisible = 0;
+      let historyVisible = 0;
+
+      state.reenvios.forEach(item => {
+        const estado = reenvioState(item);
+        if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvioActual, item.courier, item.fechaDespacho, item.comentario, item.canal, item.guiaNueva, item.fechaEnvio, estado], el.reenviosSearch)) return;
+        const tr = buildReenvioRow(item);
+        if (estado === 'Pendiente') {
+          el.reenviosPendientesTableBody.appendChild(tr);
+          pendingVisible++;
+        } else {
+          el.reenviosHistorialTableBody.appendChild(tr);
+          historyVisible++;
+        }
       });
-      if (!el.reenviosTableBody.children.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
+
+      if (!pendingVisible) {
+        el.reenviosPendientesTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos pendientes para esa búsqueda.</td></tr>`;
+      }
+      if (!historyVisible) {
+        el.reenviosHistorialTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay historial de reenvíos para esa búsqueda.</td></tr>`;
       }
       updateMetrics();
     }
@@ -2368,10 +2476,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         }
       });
 
-      document.getElementById('copyReenviosBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('reenviosTable')), 'Reenvíos copiado.'));
-      document.getElementById('exportReenviosBtn').addEventListener('click', () => exportTableToExcel('reenviosTable', 'Reenvios', 'reenvios.xlsx'));
+      document.getElementById('copyReenviosBtn').addEventListener('click', () => {
+        const activeId = state.reenviosView === 'historial' ? 'reenviosTableHistorial' : 'reenviosTablePendientes';
+        copyText(tableToTSV(document.getElementById(activeId)), 'Reenvíos copiado.');
+      });
+      document.getElementById('exportReenviosBtn').addEventListener('click', () => {
+        const activeId = state.reenviosView === 'historial' ? 'reenviosTableHistorial' : 'reenviosTablePendientes';
+        const fileName = state.reenviosView === 'historial' ? 'reenvios_historial.xlsx' : 'reenvios_pendientes.xlsx';
+        exportTableToExcel(activeId, 'Reenvios', fileName);
+      });
 
-      el.reenviosTableBody.addEventListener('change', async e => {
+      const bindReenviosBodyEvents = tbody => {
+        tbody.addEventListener('change', async e => {
         const id = e.target.dataset.id;
         if (!id) return;
         if (e.target.classList.contains('reenvio-celular')) {
@@ -2393,7 +2509,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         }
       });
 
-      el.reenviosTableBody.addEventListener('click', async e => {
+        });
+
+        tbody.addEventListener('click', async e => {
         const back = e.target.closest('.back-canales');
         if (back) {
           if (!confirm('¿Regresar este registro a Canales?')) return;
@@ -2406,6 +2524,10 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         if (!confirm('¿Eliminar este reenvío?')) return;
         await deleteDoc(doc(db, 'reenvios', del.dataset.id));
       });
+      };
+
+      bindReenviosBodyEvents(el.reenviosPendientesTableBody);
+      bindReenviosBodyEvents(el.reenviosHistorialTableBody);
 
       document.getElementById('verifyTc3Btn').addEventListener('click', verifyAnulacionesWithTc3);
       document.getElementById('clearTc3Btn').addEventListener('click', () => {
@@ -2597,6 +2719,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     function initialize() {
       setCanalOptionLists();
       initTabs();
+      setReenviosView(state.reenviosView);
       bindStaticEvents();
       attachSnapshots();
       el.guidesInput.value = loadLocal(STORAGE_KEYS.guides);
