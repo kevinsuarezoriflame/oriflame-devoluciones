@@ -1563,6 +1563,15 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         .replace(/'/g, '&#039;');
     }
 
+    function tdWithTitle(value, extraAttrs = '') {
+      const safe = escapeHtml(value || '');
+      return `<td title="${safe}" ${extraAttrs}>${safe}</td>`;
+    }
+
+    function inputValueWithTitle(value) {
+      return escapeHtml(value || '');
+    }
+
     function copyText(text, successMsg = 'Tabla copiada.') {
       if (!text) return alert('No hay datos para copiar.');
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1943,27 +1952,27 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
         tr.innerHTML = `
-          <td>${escapeHtml(item.fecha || '')}</td>
-          <td>${escapeHtml(item.guia || '')}</td>
-          <td>${escapeHtml(item.orden || '')}</td>
-          <td>${escapeHtml(item.codigo || '')}</td>
-          <td>${escapeHtml(item.nombre || '')}</td>
-          <td><input class="mini-input reenvio-celular" data-id="${item.id}" value="${escapeHtml(item.celular || '')}"></td>
-          <td class="${changed ? 'changed-point' : ''}">
-            ${changed ? '<div style="margin-bottom:6px;"><span class="badge badge-amber">Punto modificado</span></div>' : ''}
-            <input class="mini-input reenvio-punto" data-id="${item.id}" value="${escapeHtml(item.puntoEnvioActual || '')}">
+          ${tdWithTitle(item.fecha || '')}
+          ${tdWithTitle(item.guia || '')}
+          ${tdWithTitle(item.orden || '')}
+          ${tdWithTitle(item.codigo || '')}
+          ${tdWithTitle(item.nombre || '')}
+          <td><input class="mini-input reenvio-celular" data-id="${item.id}" title="${escapeHtml(item.celular || '')}" value="${inputValueWithTitle(item.celular || '')}"></td>
+          <td class="${changed ? 'changed-point' : ''}" title="${escapeHtml(item.puntoEnvioActual || '')}">
+            ${changed ? '<div style="margin-bottom:6px;"><span class="badge badge-amber" title="Punto modificado">Punto modificado</span></div>' : ''}
+            <input class="mini-input reenvio-punto" data-id="${item.id}" title="${escapeHtml(item.puntoEnvioActual || '')}" value="${inputValueWithTitle(item.puntoEnvioActual || '')}">
           </td>
-          <td>${escapeHtml(item.courier || '')}</td>
-          <td>${escapeHtml(item.fechaDespacho || '')}</td>
-          <td><input class="mini-input reenvio-comment" data-id="${item.id}" value="${escapeHtml(item.comentario || '')}"></td>
-          <td>${escapeHtml(item.canal || '')}</td>
-          <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" value="${escapeHtml(item.guiaNueva || '')}"></td>
-          <td>${escapeHtml(item.fechaEnvio || '')}</td>
-          <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
+          ${tdWithTitle(item.courier || '')}
+          ${tdWithTitle(item.fechaDespacho || '')}
+          <td><input class="mini-input reenvio-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${inputValueWithTitle(item.comentario || '')}"></td>
+          ${tdWithTitle(item.canal || '')}
+          <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" title="${escapeHtml(item.guiaNueva || '')}" value="${inputValueWithTitle(item.guiaNueva || '')}"></td>
+          ${tdWithTitle(item.fechaEnvio || '')}
+          <td title="${escapeHtml(estado)}">${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
           <td>
             <div class="actions">
               <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-              <button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}">Del</button>
+              <button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}" title="Eliminar reenvío">Del</button>
             </div>
           </td>
         `;
@@ -1996,22 +2005,22 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         tr.className = courierClass(item.courier);
         tr.innerHTML = `
           <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
-          <td>${escapeHtml(item.orden || '')}</td>
-          <td>${escapeHtml(item.codigo || '')}</td>
-          <td>${escapeHtml(item.nombre || '')}</td>
-          <td>${escapeHtml(item.celular || '')}</td>
-          <td>${escapeHtml(item.puntoEnvio || '')}</td>
-          <td>${escapeHtml(item.courier || '')}</td>
-          <td>${escapeHtml(item.fechaDespacho || '')}</td>
-          <td><input class="mini-input anulacion-cruce" data-id="${item.id}" value="${escapeHtml(item.cruceAmpliacion || '')}"></td>
-          <td>${escapeHtml(item.canal || '')}</td>
-          <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" value="${escapeHtml(item.estado || '')}"></td>
-          <td>${escapeHtml(item.fechaAnulacion || '')}</td>
-          <td>${verificacionBadge(item.verificacion || '')}</td>
+          ${tdWithTitle(item.orden || '')}
+          ${tdWithTitle(item.codigo || '')}
+          ${tdWithTitle(item.nombre || '')}
+          ${tdWithTitle(item.celular || '')}
+          ${tdWithTitle(item.puntoEnvio || '')}
+          ${tdWithTitle(item.courier || '')}
+          ${tdWithTitle(item.fechaDespacho || '')}
+          <td><input class="mini-input anulacion-cruce" data-id="${item.id}" title="${escapeHtml(item.cruceAmpliacion || '')}" value="${inputValueWithTitle(item.cruceAmpliacion || '')}"></td>
+          ${tdWithTitle(item.canal || '')}
+          <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" title="${escapeHtml(item.estado || '')}" value="${inputValueWithTitle(item.estado || '')}"></td>
+          ${tdWithTitle(item.fechaAnulacion || '')}
+          <td title="${escapeHtml(item.verificacion || '')}">${verificacionBadge(item.verificacion || '')}</td>
           <td>
             <div class="actions">
               <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-              <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}">Del</button>
+              <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}" title="Eliminar anulación">Del</button>
             </div>
           </td>
         `;
