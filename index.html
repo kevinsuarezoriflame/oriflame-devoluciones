@@ -1013,6 +1013,8 @@ table {
         </div>
         <div class="section-body">
           <div class="btn-row">
+            <button class="btn-ghost" id="viewPendientesBtn" type="button">Pendientes</button>
+            <button class="btn-soft-violet" id="viewHistorialBtn" type="button">Historial</button>
             <button class="btn-secondary" id="copyReenviosBtn">Copiar tabla</button>
             <button class="btn-secondary" id="exportReenviosBtn">Exportar Excel</button>
           </div>
@@ -1354,6 +1356,7 @@ table {
       alerts: [],
       canales: [],
       reenvios: [],
+      reenviosView: 'pendientes',
       anulaciones: [],
       reclamos: [],
       centros: [],
@@ -1441,6 +1444,35 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
       canalesList: document.getElementById('canalesList')
     };
+
+    const viewPendientesBtn = document.getElementById('viewPendientesBtn');
+    const viewHistorialBtn = document.getElementById('viewHistorialBtn');
+
+    function setReenviosViewButtons() {
+      if (state.reenviosView === 'pendientes') {
+        viewPendientesBtn.classList.add('btn-primary');
+        viewPendientesBtn.classList.remove('btn-ghost');
+        viewHistorialBtn.classList.add('btn-soft-violet');
+        viewHistorialBtn.classList.remove('btn-primary');
+      } else {
+        viewHistorialBtn.classList.add('btn-primary');
+        viewHistorialBtn.classList.remove('btn-soft-violet');
+        viewPendientesBtn.classList.add('btn-ghost');
+        viewPendientesBtn.classList.remove('btn-primary');
+      }
+    }
+
+    viewPendientesBtn.addEventListener('click', () => {
+      state.reenviosView = 'pendientes';
+      setReenviosViewButtons();
+      renderReenviosTable();
+    });
+
+    viewHistorialBtn.addEventListener('click', () => {
+      state.reenviosView = 'historial';
+      setReenviosViewButtons();
+      renderReenviosTable();
+    });
 
     function setStatus(node, msg = '', type = '') {
       node.textContent = msg;
@@ -1885,13 +1917,26 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     function renderReenviosTable() {
+      let data = state.reenvios;
+
+      if (state.reenviosView === 'pendientes') {
+        data = data.filter(item => !normalizeText(item.guiaNueva));
+      } else {
+        data = data.filter(item => normalizeText(item.guiaNueva));
+      }
+
       el.reenviosTableBody.innerHTML = '';
-      if (!state.reenvios.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos registrados.</td></tr>`;
+      if (!data.length) {
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">${
+          state.reenviosView === 'pendientes'
+            ? 'No hay reenvíos pendientes.'
+            : 'No hay historial de reenvíos.'
+        }</td></tr>`;
         updateMetrics();
         return;
       }
-      state.reenvios.forEach(item => {
+
+      data.forEach(item => {
         const estado = reenvioState(item);
         if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvioActual, item.courier, item.fechaDespacho, item.comentario, item.canal, item.guiaNueva, item.fechaEnvio, estado], el.reenviosSearch)) return;
         const changed = normalizeText(item.puntoEnvioOriginal) && normalizeText(item.puntoEnvioActual) !== normalizeText(item.puntoEnvioOriginal);
@@ -1924,6 +1969,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         `;
         el.reenviosTableBody.appendChild(tr);
       });
+
       if (!el.reenviosTableBody.children.length) {
         el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
       }
