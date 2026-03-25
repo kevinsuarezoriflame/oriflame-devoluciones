@@ -1013,8 +1013,6 @@ table {
         </div>
         <div class="section-body">
           <div class="btn-row">
-            <button class="btn-ghost" id="viewPendientesBtn" type="button">Pendientes</button>
-            <button class="btn-soft-violet" id="viewHistorialBtn" type="button">Historial</button>
             <button class="btn-secondary" id="copyReenviosBtn">Copiar tabla</button>
             <button class="btn-secondary" id="exportReenviosBtn">Exportar Excel</button>
           </div>
@@ -1110,7 +1108,7 @@ table {
                   <th>Punto de envío</th>
                   <th>Courier</th>
                   <th>Fecha de despacho</th>
-                  <th>Cruce ampliación</th>
+                  <th>Comentario</th>
                   <th>Canales</th>
                   <th>Estado</th>
                   <th>Fecha de anulación</th>
@@ -1356,7 +1354,6 @@ table {
       alerts: [],
       canales: [],
       reenvios: [],
-      reenviosView: 'pendientes',
       anulaciones: [],
       reclamos: [],
       centros: [],
@@ -1444,35 +1441,6 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
       canalesList: document.getElementById('canalesList')
     };
-
-    const viewPendientesBtn = document.getElementById('viewPendientesBtn');
-    const viewHistorialBtn = document.getElementById('viewHistorialBtn');
-
-    function setReenviosViewButtons() {
-      if (state.reenviosView === 'pendientes') {
-        viewPendientesBtn.classList.add('btn-primary');
-        viewPendientesBtn.classList.remove('btn-ghost');
-        viewHistorialBtn.classList.add('btn-soft-violet');
-        viewHistorialBtn.classList.remove('btn-primary');
-      } else {
-        viewHistorialBtn.classList.add('btn-primary');
-        viewHistorialBtn.classList.remove('btn-soft-violet');
-        viewPendientesBtn.classList.add('btn-ghost');
-        viewPendientesBtn.classList.remove('btn-primary');
-      }
-    }
-
-    viewPendientesBtn.addEventListener('click', () => {
-      state.reenviosView = 'pendientes';
-      setReenviosViewButtons();
-      renderReenviosTable();
-    });
-
-    viewHistorialBtn.addEventListener('click', () => {
-      state.reenviosView = 'historial';
-      setReenviosViewButtons();
-      renderReenviosTable();
-    });
 
     function setStatus(node, msg = '', type = '') {
       node.textContent = msg;
@@ -1916,62 +1884,96 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       return normalizeText(item.guiaNueva) ? 'Reenviado' : 'Pendiente';
     }
 
-    function renderReenviosTable() {
-      let data = state.reenvios;
+    function isCompactPhoneView() {
+      return window.matchMedia('(max-width: 820px)').matches;
+    }
 
-      if (state.reenviosView === 'pendientes') {
-        data = data.filter(item => !normalizeText(item.guiaNueva));
-      } else {
-        data = data.filter(item => normalizeText(item.guiaNueva));
+    function renderReenviosTable() {
+      const compact = isCompactPhoneView();
+      const theadRow = document.querySelector('#reenviosTable thead tr');
+      if (theadRow) {
+        theadRow.innerHTML = compact
+          ? `
+            <th>Guía</th>
+            <th>Orden</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Courier</th>
+            <th>Canal</th>
+            <th>Estado</th>
+          `
+          : `
+            <th>Fecha</th>
+            <th>Guía</th>
+            <th>Orden</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Celular</th>
+            <th>Punto de envío</th>
+            <th>Courier</th>
+            <th>Fecha de despacho</th>
+            <th>Comentario</th>
+            <th>Canales</th>
+            <th>Guía nueva</th>
+            <th>Fecha de envío</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          `;
       }
 
       el.reenviosTableBody.innerHTML = '';
-      if (!data.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">${
-          state.reenviosView === 'pendientes'
-            ? 'No hay reenvíos pendientes.'
-            : 'No hay historial de reenvíos.'
-        }</td></tr>`;
+      if (!state.reenvios.length) {
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="${compact ? 7 : 15}" class="empty-cell">No hay reenvíos registrados.</td></tr>`;
         updateMetrics();
         return;
       }
-
-      data.forEach(item => {
+      state.reenvios.forEach(item => {
         const estado = reenvioState(item);
         if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvioActual, item.courier, item.fechaDespacho, item.comentario, item.canal, item.guiaNueva, item.fechaEnvio, estado], el.reenviosSearch)) return;
         const changed = normalizeText(item.puntoEnvioOriginal) && normalizeText(item.puntoEnvioActual) !== normalizeText(item.puntoEnvioOriginal);
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
-        tr.innerHTML = `
-          <td>${escapeHtml(item.fecha || '')}</td>
-          <td>${escapeHtml(item.guia || '')}</td>
-          <td>${escapeHtml(item.orden || '')}</td>
-          <td>${escapeHtml(item.codigo || '')}</td>
-          <td>${escapeHtml(item.nombre || '')}</td>
-          <td><input class="mini-input reenvio-celular" data-id="${item.id}" value="${escapeHtml(item.celular || '')}"></td>
-          <td class="${changed ? 'changed-point' : ''}">
-            ${changed ? '<div style="margin-bottom:6px;"><span class="badge badge-amber">Punto modificado</span></div>' : ''}
-            <input class="mini-input reenvio-punto" data-id="${item.id}" value="${escapeHtml(item.puntoEnvioActual || '')}">
-          </td>
-          <td>${escapeHtml(item.courier || '')}</td>
-          <td>${escapeHtml(item.fechaDespacho || '')}</td>
-          <td><input class="mini-input reenvio-comment" data-id="${item.id}" value="${escapeHtml(item.comentario || '')}"></td>
-          <td>${escapeHtml(item.canal || '')}</td>
-          <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" value="${escapeHtml(item.guiaNueva || '')}"></td>
-          <td>${escapeHtml(item.fechaEnvio || '')}</td>
-          <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
-          <td>
-            <div class="actions">
-              <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-              <button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}">Del</button>
-            </div>
-          </td>
-        `;
+        if (compact) {
+          tr.innerHTML = `
+            <td>${escapeHtml(item.guia || '')}</td>
+            <td>${escapeHtml(item.orden || '')}</td>
+            <td>${escapeHtml(item.codigo || '')}</td>
+            <td>${escapeHtml(item.nombre || '')}</td>
+            <td>${escapeHtml(item.courier || '')}</td>
+            <td>${escapeHtml(item.canal || '')}</td>
+            <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
+          `;
+        } else {
+          tr.innerHTML = `
+            <td>${escapeHtml(item.fecha || '')}</td>
+            <td>${escapeHtml(item.guia || '')}</td>
+            <td>${escapeHtml(item.orden || '')}</td>
+            <td>${escapeHtml(item.codigo || '')}</td>
+            <td>${escapeHtml(item.nombre || '')}</td>
+            <td><input class="mini-input reenvio-celular" data-id="${item.id}" value="${escapeHtml(item.celular || '')}"></td>
+            <td class="${changed ? 'changed-point' : ''}">
+              ${changed ? '<div style="margin-bottom:6px;"><span class="badge badge-amber">Punto modificado</span></div>' : ''}
+              <input class="mini-input reenvio-punto" data-id="${item.id}" value="${escapeHtml(item.puntoEnvioActual || '')}">
+            </td>
+            <td>${escapeHtml(item.courier || '')}</td>
+            <td>${escapeHtml(item.fechaDespacho || '')}</td>
+            <td><input class="mini-input reenvio-comment" data-id="${item.id}" value="${escapeHtml(item.comentario || '')}"></td>
+            <td>${escapeHtml(item.canal || '')}</td>
+            <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" value="${escapeHtml(item.guiaNueva || '')}"></td>
+            <td>${escapeHtml(item.fechaEnvio || '')}</td>
+            <td>${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
+            <td>
+              <div class="actions">
+                <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
+                <button class="btn-danger mini-btn delete-reenvio" data-id="${item.id}">Del</button>
+              </div>
+            </td>
+          `;
+        }
         el.reenviosTableBody.appendChild(tr);
       });
-
       if (!el.reenviosTableBody.children.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="${compact ? 7 : 15}" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
       }
       updateMetrics();
     }
@@ -1984,41 +1986,87 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     function renderAnulacionesTable() {
+      const compact = isCompactPhoneView();
+      const theadRow = document.querySelector('#anulacionesTable thead tr');
+      if (theadRow) {
+        theadRow.innerHTML = compact
+          ? `
+            <th>Guía</th>
+            <th>Orden</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Courier</th>
+            <th>Canal</th>
+            <th>Estado</th>
+          `
+          : `
+            <th><input type="checkbox" id="selectAllAnulaciones" /></th>
+            <th>Orden</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Celular</th>
+            <th>Punto de envío</th>
+            <th>Courier</th>
+            <th>Fecha de despacho</th>
+            <th>Comentario</th>
+            <th>Canales</th>
+            <th>Estado</th>
+            <th>Fecha de anulación</th>
+            <th>Verificación</th>
+            <th>Acción</th>
+          `;
+        el.selectAllAnulaciones = document.getElementById('selectAllAnulaciones');
+        bindSelectAllAnulaciones();
+      }
+
       el.anulacionesTableBody.innerHTML = '';
       if (!state.anulaciones.length) {
-        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
+        el.anulacionesTableBody.innerHTML = `<tr><td colspan="${compact ? 7 : 14}" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
         updateMetrics();
         return;
       }
       state.anulaciones.forEach(item => {
-        if (!rowMatchesSearch([item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.cruceAmpliacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion], el.anulacionesSearch)) return;
+        const comentarioAnulacion = item.comentario || item.cruceAmpliacion || '';
+        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, comentarioAnulacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion], el.anulacionesSearch)) return;
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
-        tr.innerHTML = `
-          <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
-          <td>${escapeHtml(item.orden || '')}</td>
-          <td>${escapeHtml(item.codigo || '')}</td>
-          <td>${escapeHtml(item.nombre || '')}</td>
-          <td>${escapeHtml(item.celular || '')}</td>
-          <td>${escapeHtml(item.puntoEnvio || '')}</td>
-          <td>${escapeHtml(item.courier || '')}</td>
-          <td>${escapeHtml(item.fechaDespacho || '')}</td>
-          <td><input class="mini-input anulacion-cruce" data-id="${item.id}" value="${escapeHtml(item.cruceAmpliacion || '')}"></td>
-          <td>${escapeHtml(item.canal || '')}</td>
-          <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" value="${escapeHtml(item.estado || '')}"></td>
-          <td>${escapeHtml(item.fechaAnulacion || '')}</td>
-          <td>${verificacionBadge(item.verificacion || '')}</td>
-          <td>
-            <div class="actions">
-              <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-              <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}">Del</button>
-            </div>
-          </td>
-        `;
+        if (compact) {
+          tr.innerHTML = `
+            <td>${escapeHtml(item.guia || '')}</td>
+            <td>${escapeHtml(item.orden || '')}</td>
+            <td>${escapeHtml(item.codigo || '')}</td>
+            <td>${escapeHtml(item.nombre || '')}</td>
+            <td>${escapeHtml(item.courier || '')}</td>
+            <td>${escapeHtml(item.canal || '')}</td>
+            <td>${escapeHtml(item.estado || '')}</td>
+          `;
+        } else {
+          tr.innerHTML = `
+            <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
+            <td>${escapeHtml(item.orden || '')}</td>
+            <td>${escapeHtml(item.codigo || '')}</td>
+            <td>${escapeHtml(item.nombre || '')}</td>
+            <td>${escapeHtml(item.celular || '')}</td>
+            <td>${escapeHtml(item.puntoEnvio || '')}</td>
+            <td>${escapeHtml(item.courier || '')}</td>
+            <td>${escapeHtml(item.fechaDespacho || '')}</td>
+            <td><input class="mini-input anulacion-cruce" data-id="${item.id}" value="${escapeHtml(comentarioAnulacion)}"></td>
+            <td>${escapeHtml(item.canal || '')}</td>
+            <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" value="${escapeHtml(item.estado || '')}"></td>
+            <td>${escapeHtml(item.fechaAnulacion || '')}</td>
+            <td>${verificacionBadge(item.verificacion || '')}</td>
+            <td>
+              <div class="actions">
+                <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
+                <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}">Del</button>
+              </div>
+            </td>
+          `;
+        }
         el.anulacionesTableBody.appendChild(tr);
       });
       if (!el.anulacionesTableBody.children.length) {
-        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones para esa búsqueda.</td></tr>`;
+        el.anulacionesTableBody.innerHTML = `<tr><td colspan="${compact ? 7 : 14}" class="empty-cell">No hay anulaciones para esa búsqueda.</td></tr>`;
       }
       updateMetrics();
     }
@@ -2185,7 +2233,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       if (source === 'anulaciones') {
         payload = {
           fecha: todayES(),
-          guia: '',
+          guia: item.guia || '',
           orden: item.orden || '',
           codigo: item.codigo || '',
           nombre: item.nombre || '',
@@ -2235,6 +2283,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           }));
         } else {
           writes.push(addDoc(refs.anulaciones, {
+            guia: item.guia || '',
             orden: item.orden || '',
             codigo: item.codigo || '',
             nombre: item.nombre || '',
@@ -2242,7 +2291,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             puntoEnvio: item.puntoEnvio || '',
             courier: item.courier || '',
             fechaDespacho: item.fechaDespacho || '',
-            cruceAmpliacion: '',
+            cruceAmpliacion: item.comentario || '',
             canal: item.canal || '',
             estado: '',
             fechaAnulacion: '',
@@ -2473,11 +2522,16 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       document.getElementById('copyAnulacionesBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('anulacionesTable')), 'Anulaciones copiado.'));
       document.getElementById('exportAnulacionesBtn').addEventListener('click', () => exportTableToExcel('anulacionesTable', 'Anulaciones', 'anulaciones.xlsx'));
 
-      el.selectAllAnulaciones.addEventListener('change', e => {
-        if (e.target.checked) state.anulaciones.forEach(item => state.selectedAnulaciones.add(item.id));
-        else state.selectedAnulaciones.clear();
-        renderAnulacionesTable();
-      });
+      function bindSelectAllAnulaciones() {
+        if (!el.selectAllAnulaciones || el.selectAllAnulaciones.dataset.bound === '1') return;
+        el.selectAllAnulaciones.dataset.bound = '1';
+        el.selectAllAnulaciones.addEventListener('change', e => {
+          if (e.target.checked) state.anulaciones.forEach(item => state.selectedAnulaciones.add(item.id));
+          else state.selectedAnulaciones.clear();
+          renderAnulacionesTable();
+        });
+      }
+      bindSelectAllAnulaciones();
 
       el.anulacionesTableBody.addEventListener('change', async e => {
         const check = e.target.closest('.anulacion-check');
@@ -2642,6 +2696,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
     function initialize() {
       setCanalOptionLists();
+      window.addEventListener('resize', () => { renderReenviosTable(); renderAnulacionesTable(); });
       initTabs();
       bindStaticEvents();
       attachSnapshots();
