@@ -332,6 +332,12 @@
       border: 1px solid #d6e4d1;
     }
     .btn-ghost:hover { background: #e7f0e4; }
+    .btn-ghost.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+      box-shadow: 0 4px 10px rgba(75,145,68,.18);
+    }
 
     .status {
       margin-top: 10px;
@@ -1013,6 +1019,8 @@ table {
         </div>
         <div class="section-body">
           <div class="btn-row">
+            <button class="btn-ghost active" id="viewPendientesBtn">Pendientes</button>
+            <button class="btn-ghost" id="viewHistorialBtn">Historial</button>
             <button class="btn-secondary" id="copyReenviosBtn">Copiar tabla</button>
             <button class="btn-secondary" id="exportReenviosBtn">Exportar Excel</button>
           </div>
@@ -1441,6 +1449,25 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
       canalesList: document.getElementById('canalesList')
     };
+
+    const viewPendientesBtn = document.getElementById('viewPendientesBtn');
+    const viewHistorialBtn = document.getElementById('viewHistorialBtn');
+
+    if (viewPendientesBtn && viewHistorialBtn) {
+      viewPendientesBtn.addEventListener('click', () => {
+        state.reenviosView = 'pendientes';
+        viewPendientesBtn.classList.add('active');
+        viewHistorialBtn.classList.remove('active');
+        renderReenviosTable();
+      });
+
+      viewHistorialBtn.addEventListener('click', () => {
+        state.reenviosView = 'historial';
+        viewHistorialBtn.classList.add('active');
+        viewPendientesBtn.classList.remove('active');
+        renderReenviosTable();
+      });
+    }
 
     function setStatus(node, msg = '', type = '') {
       node.textContent = msg;
