@@ -844,12 +844,6 @@ table {
             <button class="btn-secondary" id="exportProcessBtn">Exportar Excel</button>
           </div>
           <div id="processStatus" class="status"></div>
-          <div class="table-tools">
-            <div class="field search-input">
-              <label for="gestionSearch">Buscar en Gestión diaria</label>
-              <input type="text" id="gestionSearch" placeholder="Guía, orden, código, nombre, courier..." />
-            </div>
-          </div>
          <div class="table-wrap" style="margin-top:12px;">
   <table id="processTable">
     <thead>
@@ -908,6 +902,12 @@ table {
             <button class="btn-secondary" id="clearAlertFormBtn">Limpiar formulario</button>
           </div>
           <div id="alertStatus" class="status"></div>
+          <div class="table-tools">
+            <div class="field search-input">
+              <label for="alertsSearch">Buscador en avisos</label>
+              <input type="text" id="alertsSearch" placeholder="Guía, orden, código, nombre, responsable, comentario..." />
+            </div>
+          </div>
           <div class="table-wrap" style="margin-top:12px;">
             <table id="alertsTable" class="alerts-table">
               <thead>
@@ -1012,6 +1012,33 @@ table {
           <span class="pill pill-red">Pendientes y reenviados visibles para el equipo</span>
         </div>
         <div class="section-body">
+          <details class="collapsible" style="margin-bottom:12px;">
+            <summary>
+              <span>Agregar reenvío manual</span>
+              <span class="pill pill-blue">Puedes crearlo como pendiente o como historial</span>
+            </summary>
+            <div class="collapsible-content">
+              <div class="grid-4">
+                <div><label for="manualReenvioFecha">Fecha</label><input type="text" id="manualReenvioFecha" placeholder="Ej: 26/3/2026" /></div>
+                <div><label for="manualReenvioGuia">Guía</label><input type="text" id="manualReenvioGuia" placeholder="Guía original" /></div>
+                <div><label for="manualReenvioOrden">Orden</label><input type="text" id="manualReenvioOrden" placeholder="Orden" /></div>
+                <div><label for="manualReenvioCodigo">Código</label><input type="text" id="manualReenvioCodigo" placeholder="Código" /></div>
+                <div><label for="manualReenvioNombre">Nombre</label><input type="text" id="manualReenvioNombre" placeholder="Nombre" /></div>
+                <div><label for="manualReenvioCelular">Celular</label><input type="text" id="manualReenvioCelular" placeholder="Celular" /></div>
+                <div><label for="manualReenvioPunto">Punto de envío</label><input type="text" id="manualReenvioPunto" placeholder="Punto de envío" /></div>
+                <div><label for="manualReenvioCourier">Courier</label><input type="text" id="manualReenvioCourier" placeholder="Courier" /></div>
+                <div><label for="manualReenvioFechaDespacho">Fecha de despacho</label><input type="text" id="manualReenvioFechaDespacho" placeholder="Ej: 19/03/2026" /></div>
+                <div><label for="manualReenvioCanal">Canal</label><select id="manualReenvioCanal"><option value="">Seleccionar...</option></select></div>
+                <div><label for="manualReenvioTipo">Guardar en</label><select id="manualReenvioTipo"><option value="pendiente">Pendientes</option><option value="historial">Historial</option></select></div>
+                <div><label for="manualReenvioGuiaNueva">Guía nueva</label><input type="text" id="manualReenvioGuiaNueva" placeholder="Solo si ya fue reenviado" /></div>
+                <div class="full"><label for="manualReenvioComentario">Comentario</label><input type="text" id="manualReenvioComentario" placeholder="Comentario del reenvío manual" /></div>
+              </div>
+              <div class="btn-row">
+                <button class="btn-primary" id="saveManualReenvioBtn">Guardar reenvío manual</button>
+                <button class="btn-secondary" id="clearManualReenvioBtn">Limpiar formulario</button>
+              </div>
+            </div>
+          </details>
           <div class="btn-row">
             <button class="btn-ghost" id="viewPendientesBtn" type="button">Pendientes</button>
             <button class="btn-soft-violet" id="viewHistorialBtn" type="button">Historial</button>
@@ -1103,6 +1130,7 @@ table {
               <thead>
                 <tr>
                   <th><input type="checkbox" id="selectAllAnulaciones" /></th>
+                  <th>Guía</th>
                   <th>Orden</th>
                   <th>Código</th>
                   <th>Nombre</th>
@@ -1110,7 +1138,7 @@ table {
                   <th>Punto de envío</th>
                   <th>Courier</th>
                   <th>Fecha de despacho</th>
-                  <th>Cruce ampliación</th>
+                  <th>Comentario</th>
                   <th>Canales</th>
                   <th>Estado</th>
                   <th>Fecha de anulación</th>
@@ -1391,7 +1419,6 @@ processAlreadySent: false,
       dataInput: document.getElementById('dataInput'),
       processTableBody: document.querySelector('#processTable tbody'),
 processStatus: document.getElementById('processStatus'),
-gestionSearch: document.getElementById('gestionSearch'),
 guidesStatus: document.getElementById('guidesStatus'),
 dataStatus: document.getElementById('dataStatus'),
 sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
@@ -1404,6 +1431,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       alertComment: document.getElementById('alertComment'),
       alertStatus: document.getElementById('alertStatus'),
       alertsTableBody: document.querySelector('#alertsTable tbody'),
+      alertsSearch: document.getElementById('alertsSearch'),
 
       canalesTableBody: document.querySelector('#canalesTable tbody'),
       canalesStatus: document.getElementById('canalesStatus'),
@@ -1415,6 +1443,19 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       reenviosTableBody: document.querySelector('#reenviosTable tbody'),
       reenviosStatus: document.getElementById('reenviosStatus'),
       reenviosSearch: document.getElementById('reenviosSearch'),
+      manualReenvioFecha: document.getElementById('manualReenvioFecha'),
+      manualReenvioGuia: document.getElementById('manualReenvioGuia'),
+      manualReenvioOrden: document.getElementById('manualReenvioOrden'),
+      manualReenvioCodigo: document.getElementById('manualReenvioCodigo'),
+      manualReenvioNombre: document.getElementById('manualReenvioNombre'),
+      manualReenvioCelular: document.getElementById('manualReenvioCelular'),
+      manualReenvioPunto: document.getElementById('manualReenvioPunto'),
+      manualReenvioCourier: document.getElementById('manualReenvioCourier'),
+      manualReenvioFechaDespacho: document.getElementById('manualReenvioFechaDespacho'),
+      manualReenvioCanal: document.getElementById('manualReenvioCanal'),
+      manualReenvioTipo: document.getElementById('manualReenvioTipo'),
+      manualReenvioGuiaNueva: document.getElementById('manualReenvioGuiaNueva'),
+      manualReenvioComentario: document.getElementById('manualReenvioComentario'),
 
       anulacionesTableBody: document.querySelector('#anulacionesTable tbody'),
       anulacionesStatus: document.getElementById('anulacionesStatus'),
@@ -1550,7 +1591,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     function setCanalOptionLists() {
-      el.bulkCanalSelect.innerHTML = '<option value="">Seleccionar...</option>' + CANAL_OPTIONS.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      const optionsHtml = CANAL_OPTIONS.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      el.bulkCanalSelect.innerHTML = '<option value="">Seleccionar...</option>' + optionsHtml;
+      if (el.manualReenvioCanal) el.manualReenvioCanal.innerHTML = '<option value="">Seleccionar...</option>' + optionsHtml;
       el.canalesList.innerHTML = CANAL_OPTIONS.map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
     }
 
@@ -1856,6 +1899,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         return;
       }
       state.alerts.forEach(item => {
+        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.responsable, item.comentario], el.alertsSearch)) return;
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${escapeHtml(formatFsDate(item.fechaRegistro, item.createdAt))}</td>
@@ -1869,6 +1913,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         `;
         el.alertsTableBody.appendChild(tr);
       });
+      if (!el.alertsTableBody.children.length) {
+        el.alertsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay avisos para esa búsqueda.</td></tr>`;
+      }
       updateMetrics();
     }
 
@@ -1923,6 +1970,40 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
     function reenvioState(item) {
       return normalizeText(item.guiaNueva) ? 'Reenviado' : 'Pendiente';
+    }
+
+    function getManualReenvioPayload() {
+      const tipo = el.manualReenvioTipo.value || 'pendiente';
+      const guiaNueva = el.manualReenvioGuiaNueva.value.trim();
+      return {
+        fecha: el.manualReenvioFecha.value.trim() || todayES(),
+        guia: el.manualReenvioGuia.value.trim(),
+        orden: el.manualReenvioOrden.value.trim(),
+        codigo: el.manualReenvioCodigo.value.trim(),
+        nombre: el.manualReenvioNombre.value.trim(),
+        celular: el.manualReenvioCelular.value.trim(),
+        puntoEnvioOriginal: el.manualReenvioPunto.value.trim(),
+        puntoEnvioActual: el.manualReenvioPunto.value.trim(),
+        courier: el.manualReenvioCourier.value.trim(),
+        fechaDespacho: el.manualReenvioFechaDespacho.value.trim(),
+        comentario: el.manualReenvioComentario.value.trim(),
+        canal: el.manualReenvioCanal.value,
+        guiaNueva: tipo === 'historial' ? guiaNueva : '',
+        fechaEnvio: tipo === 'historial' ? todayES() : '',
+        createdAt: serverTimestamp(),
+        source: 'manual'
+      };
+    }
+
+    function clearManualReenvioForm() {
+      [
+        el.manualReenvioFecha, el.manualReenvioGuia, el.manualReenvioOrden, el.manualReenvioCodigo,
+        el.manualReenvioNombre, el.manualReenvioCelular, el.manualReenvioPunto, el.manualReenvioCourier,
+        el.manualReenvioFechaDespacho, el.manualReenvioGuiaNueva, el.manualReenvioComentario
+      ].forEach(input => input.value = '');
+      el.manualReenvioCanal.value = '';
+      el.manualReenvioTipo.value = 'pendiente';
+      el.manualReenvioFecha.value = todayES();
     }
 
     function renderReenviosTable() {
@@ -1995,16 +2076,17 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     function renderAnulacionesTable() {
       el.anulacionesTableBody.innerHTML = '';
       if (!state.anulaciones.length) {
-        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
+        el.anulacionesTableBody.innerHTML = `<tr><td colspan="16" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
         updateMetrics();
         return;
       }
       state.anulaciones.forEach(item => {
-        if (!rowMatchesSearch([item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.cruceAmpliacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion], el.anulacionesSearch)) return;
+        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.comentario, item.cruceAmpliacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion], el.anulacionesSearch)) return;
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
         tr.innerHTML = `
           <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
+          ${tdWithTitle(item.guia || '')}
           ${tdWithTitle(item.orden || '')}
           ${tdWithTitle(item.codigo || '')}
           ${tdWithTitle(item.nombre || '')}
@@ -2012,7 +2094,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           ${tdWithTitle(item.puntoEnvio || '')}
           ${tdWithTitle(item.courier || '')}
           ${tdWithTitle(item.fechaDespacho || '')}
-          <td><input class="mini-input anulacion-cruce" data-id="${item.id}" title="${escapeHtml(item.cruceAmpliacion || '')}" value="${inputValueWithTitle(item.cruceAmpliacion || '')}"></td>
+          <td><input class="mini-input anulacion-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${inputValueWithTitle(item.comentario || '')}"></td>
           ${tdWithTitle(item.canal || '')}
           <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" title="${escapeHtml(item.estado || '')}" value="${inputValueWithTitle(item.estado || '')}"></td>
           ${tdWithTitle(item.fechaAnulacion || '')}
@@ -2027,7 +2109,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         el.anulacionesTableBody.appendChild(tr);
       });
       if (!el.anulacionesTableBody.children.length) {
-        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones para esa búsqueda.</td></tr>`;
+        el.anulacionesTableBody.innerHTML = `<tr><td colspan="16" class="empty-cell">No hay anulaciones para esa búsqueda.</td></tr>`;
       }
       updateMetrics();
     }
@@ -2194,7 +2276,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       if (source === 'anulaciones') {
         payload = {
           fecha: todayES(),
-          guia: '',
+          guia: item.guia || '',
           orden: item.orden || '',
           codigo: item.codigo || '',
           nombre: item.nombre || '',
@@ -2202,7 +2284,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           puntoEnvio: item.puntoEnvio || '',
           courier: item.courier || '',
           fechaDespacho: item.fechaDespacho || '',
-          aviso: '',
+          aviso: item.aviso || '',
           comentario: item.comentario
             ? item.comentario
             : `Regresado desde Anulaciones | Estado: ${item.estado || ''} | Cruce: ${item.cruceAmpliacion || ''}`,
@@ -2244,6 +2326,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           }));
         } else {
           writes.push(addDoc(refs.anulaciones, {
+            guia: item.guia || '',
             orden: item.orden || '',
             codigo: item.codigo || '',
             nombre: item.nombre || '',
@@ -2251,7 +2334,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             puntoEnvio: item.puntoEnvio || '',
             courier: item.courier || '',
             fechaDespacho: item.fechaDespacho || '',
-            cruceAmpliacion: '',
+            aviso: item.aviso || '',
+            comentario: item.comentario || '',
             canal: item.canal || '',
             estado: '',
             fechaAnulacion: '',
@@ -2426,6 +2510,26 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       document.getElementById('copyReenviosBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('reenviosTable')), 'Reenvíos copiado.'));
       document.getElementById('exportReenviosBtn').addEventListener('click', () => exportTableToExcel('reenviosTable', 'Reenvios', 'reenvios.xlsx'));
 
+      document.getElementById('saveManualReenvioBtn').addEventListener('click', async () => {
+        const payload = getManualReenvioPayload();
+        if (!(payload.guia || payload.orden || payload.codigo || payload.nombre || payload.courier || payload.puntoEnvioActual)) {
+          setStatus(el.reenviosStatus, 'Completa al menos un dato operativo para guardar el reenvío manual.', 'error');
+          return;
+        }
+        if (el.manualReenvioTipo.value === 'historial' && !payload.guiaNueva) {
+          setStatus(el.reenviosStatus, 'Si lo vas a guardar en historial, ingresa la guía nueva.', 'error');
+          return;
+        }
+        await addDoc(refs.reenvios, payload);
+        clearManualReenvioForm();
+        setStatus(el.reenviosStatus, 'Reenvío manual guardado correctamente.', 'success');
+      });
+
+      document.getElementById('clearManualReenvioBtn').addEventListener('click', () => {
+        clearManualReenvioForm();
+        setStatus(el.reenviosStatus, 'Formulario de reenvío manual limpiado.', 'success');
+      });
+
       el.reenviosTableBody.addEventListener('change', async e => {
         const id = e.target.dataset.id;
         if (!id) return;
@@ -2495,6 +2599,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           else state.selectedAnulaciones.delete(check.dataset.id);
           return;
         }
+        const comment = e.target.closest('.anulacion-comment');
+        if (comment) { await updateDoc(doc(db, 'anulaciones', comment.dataset.id), { comentario: comment.value }); return; }
         const cruce = e.target.closest('.anulacion-cruce');
         if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), { cruceAmpliacion: cruce.value }); return; }
         const estado = e.target.closest('.anulacion-estado');
@@ -2593,7 +2699,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       });
 
       el.centerFilterField.addEventListener('change', renderCentersTable);
-      el.gestionSearch.addEventListener('input', renderProcessTable);
+      el.alertsSearch.addEventListener('input', renderAlertsTable);
             el.processTableBody.addEventListener('change', e => {
         const input = e.target.closest('.process-edit');
         if (!input) return;
@@ -2658,6 +2764,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       el.dataInput.value = loadLocal(STORAGE_KEYS.data);
       el.tc3Input.value = loadLocal(STORAGE_KEYS.tc3);
       el.claimDate.value = isoToday();
+      if (el.manualReenvioFecha) el.manualReenvioFecha.value = todayES();
       if (el.guidesInput.value) setStatus(el.guidesStatus, 'Se recuperaron guías guardadas localmente.', 'success');
       if (el.dataInput.value) setStatus(el.dataStatus, 'Se recuperó la data guardada localmente.', 'success');
       renderProcessTable();
