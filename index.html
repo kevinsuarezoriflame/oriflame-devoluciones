@@ -567,6 +567,17 @@ table {
       gap: 6px;
     }
 
+    .audit-emoji{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:22px;
+      height:22px;
+      cursor:help;
+      font-size:.9rem;
+    }
+
+
     .actions-canales {
   display: flex;
   flex-direction: row;
@@ -1213,7 +1224,7 @@ table {
                   <th>Canales</th>
                   <th>Guía nueva</th>
                   <th>Fecha de envío</th>
-                  <th>Solicitado por</th>
+                  <th title="Trazabilidad">👤</th>
                   <th>Estado</th>
                   <th>Acción</th>
                 </tr>
@@ -1723,6 +1734,11 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       return parts.join(' | ');
     }
 
+    function auditEmoji(item = {}) {
+      const tip = auditTitle(item) || 'Sin trazabilidad registrada.';
+      return `<span class="audit-emoji" title="${escapeHtml(tip)}">👤</span>`;
+    }
+
     function initLoginUi() {
       el.loginUser.innerHTML = '<option value="">Seleccionar...</option>' + USERS.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
       const savedUser = loadLocal(STORAGE_KEYS.activeUser);
@@ -2178,7 +2194,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td>${escapeHtml(item.codigo || '')}</td>
           <td>${escapeHtml(item.nombre || '')}</td>
           <td title="${escapeHtml(commentTitle)}">${escapeHtml(item.comentario || '')}</td>
-          <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}" title="Eliminar aviso">Del</button></td>
+          <td><div class="actions" style="justify-content:center;">${auditEmoji(item)}<button class="btn-danger mini-btn" data-delete-alert="${item.id}" title="Eliminar aviso">Del</button></div></td>
         `;
         el.alertsTableBody.appendChild(tr);
       });
@@ -2196,7 +2212,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         return;
       }
       state.canales.forEach(item => {
-        if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.aviso, item.comentario, item.canal], el.canalesSearch)) return;
+        if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.aviso, item.comentario, item.canal, item.createdBy, item.lastUpdatedBy], el.canalesSearch)) return;
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
         tr.innerHTML = `
@@ -2223,6 +2239,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           </td>
           <td>
   <div class="actions actions-canales">
+    ${auditEmoji(item)}
     <button class="btn-soft-green mini-btn move-reenvio" data-id="${item.id}" title="Mover a Reenvíos">Reenv.</button>
     <button class="btn-soft-violet mini-btn move-anulacion" data-id="${item.id}" title="Mover a Anulaciones">Anul.</button>
     <button class="btn-danger mini-btn delete-canal" data-id="${item.id}" title="Eliminar registro">Del</button>
@@ -2318,11 +2335,11 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           </td>
           ${tdWithTitle(item.courier || '')}
           ${tdWithTitle(item.fechaDespacho || '')}
-          <td><input class="mini-input reenvio-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${inputValueWithTitle(item.comentario || '')}"></td>
+          <td><input class="mini-input reenvio-comment" data-id="${item.id}" title="${escapeHtml([item.comentario || '', auditTitle(item)].filter(Boolean).join(' | '))}" value="${inputValueWithTitle(item.comentario || '')}"></td>
           ${tdWithTitle(item.canal || '')}
           <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" title="${escapeHtml(item.guiaNueva || '')}" value="${inputValueWithTitle(item.guiaNueva || '')}"></td>
           ${tdWithTitle(item.fechaEnvio || '')}
-          <td title="${escapeHtml(auditTitle(item) || item.solicitadoPor || '')}">${escapeHtml(item.solicitadoPor || item.createdBy || '')}</td>
+          <td>${auditEmoji(item)}</td>
           <td title="${escapeHtml(estado)}">${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
           <td>
             <div class="actions">
@@ -2355,7 +2372,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         return;
       }
       state.anulaciones.forEach(item => {
-        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.comentario, item.cruceAmpliacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion], el.anulacionesSearch)) return;
+        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.comentario, item.cruceAmpliacion, item.canal, item.estado, item.fechaAnulacion, item.verificacion, item.createdBy, item.lastUpdatedBy], el.anulacionesSearch)) return;
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
         tr.innerHTML = `
@@ -2368,13 +2385,14 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           ${tdWithTitle(item.puntoEnvio || '')}
           ${tdWithTitle(item.courier || '')}
           ${tdWithTitle(item.fechaDespacho || '')}
-          <td><input class="mini-input anulacion-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${inputValueWithTitle(item.comentario || '')}"></td>
+          <td><input class="mini-input anulacion-comment" data-id="${item.id}" title="${escapeHtml([item.comentario || '', auditTitle(item)].filter(Boolean).join(' | '))}" value="${inputValueWithTitle(item.comentario || '')}"></td>
           ${tdWithTitle(item.canal || '')}
           <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" title="${escapeHtml(item.estado || '')}" value="${inputValueWithTitle(item.estado || '')}"></td>
           ${tdWithTitle(item.fechaAnulacion || '')}
           <td title="${escapeHtml(item.verificacion || '')}">${verificacionBadge(item.verificacion || '')}</td>
           <td>
             <div class="actions">
+              ${auditEmoji(item)}
               <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
               <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}" title="Eliminar anulación">Del</button>
             </div>
@@ -2406,7 +2424,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" title="${escapeHtml(item.estado || '')}" value="${escapeHtml(item.estado || '')}"></td>
           <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" title="${escapeHtml(item.gestion || '')}" value="${escapeHtml(item.gestion || '')}"></td>
           <td><input class="mini-input claim-comentario" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}"></td>
-          <td><button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></td>
+          <td><div class="actions" style="justify-content:center;">${auditEmoji(item)}<button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></div></td>
         `;
         el.claimsTableBody.appendChild(tr);
       });
