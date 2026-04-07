@@ -665,28 +665,31 @@ table {
 }
 
 #claimsTable th:nth-child(1),
-#claimsTable td:nth-child(1) { min-width: 110px; }   /* Fecha */
+#claimsTable td:nth-child(1) { min-width: 92px; width: 92px; }   /* Fecha */
 
 #claimsTable th:nth-child(2),
-#claimsTable td:nth-child(2) { min-width: 130px; }   /* Socio */
+#claimsTable td:nth-child(2) { min-width: 120px; width: 120px; }   /* Socio */
 
 #claimsTable th:nth-child(3),
-#claimsTable td:nth-child(3) { min-width: 140px; }   /* Guía */
+#claimsTable td:nth-child(3) { min-width: 112px; width: 112px; }   /* Guía */
 
 #claimsTable th:nth-child(4),
-#claimsTable td:nth-child(4) { min-width: 130px; }   /* Producto */
+#claimsTable td:nth-child(4) { min-width: 120px; width: 120px; }   /* Producto */
 
 #claimsTable th:nth-child(5),
-#claimsTable td:nth-child(5) { min-width: 110px; }   /* Unidad */
+#claimsTable td:nth-child(5) { min-width: 78px; width: 78px; }   /* Unidad */
 
 #claimsTable th:nth-child(6),
-#claimsTable td:nth-child(6) { min-width: 260px; }   /* Estado */
+#claimsTable td:nth-child(6) { min-width: 175px; width: 175px; }   /* Estado */
 
 #claimsTable th:nth-child(7),
-#claimsTable td:nth-child(7) { min-width: 320px; }   /* Gestión */
+#claimsTable td:nth-child(7) { min-width: 220px; width: 220px; }   /* Gestión */
 
 #claimsTable th:nth-child(8),
-#claimsTable td:nth-child(8) { min-width: 120px; }   /* Acción */
+#claimsTable td:nth-child(8) { min-width: 200px; width: 200px; }   /* Comentario */
+
+#claimsTable th:nth-child(9),
+#claimsTable td:nth-child(9) { min-width: 90px; width: 90px; }   /* Acción */
 
 #claimsTable input,
 #claimsTable select,
@@ -745,30 +748,140 @@ table {
 
 #alertsTable th:nth-child(6),
 #alertsTable td:nth-child(6) {
-  width: 140px;
-  max-width: 140px;
-  min-width: 140px;
-} /* Responsable */
+  width: 320px;
+  max-width: 320px;
+  min-width: 320px;
+} /* Comentario */
 
 #alertsTable th:nth-child(7),
 #alertsTable td:nth-child(7) {
-  width: 260px;
-  max-width: 260px;
-  min-width: 260px;
-} /* Comentario */
-
-#alertsTable th:nth-child(8),
-#alertsTable td:nth-child(8) {
   width: 90px;
   max-width: 90px;
   min-width: 90px;
   text-align: center;
 } /* Acción */
 
-#alertsTable td:nth-child(8) .mini-btn {
+#alertsTable td:nth-child(7) .mini-btn {
   display: inline-block;
   min-width: 48px;
 }
+
+
+    .user-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eef7ed;
+      border: 1px solid #cfe0cc;
+      color: #2f6330;
+      font-size: .85rem;
+      font-weight: 800;
+    }
+
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(24, 36, 25, .48);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 18px;
+    }
+
+    .login-overlay.active { display: flex; }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 48px rgba(20, 34, 22, .18);
+      overflow: hidden;
+    }
+
+    .login-card-head {
+      padding: 18px 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #f6fbf4 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .login-card-body { padding: 20px; }
+
+    .login-title {
+      margin: 0 0 6px;
+      color: #2e6731;
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .login-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.35;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      min-width: 240px;
+      max-width: 380px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--green);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      box-shadow: 0 14px 30px rgba(20,34,22,.12);
+      font-size: .88rem;
+      line-height: 1.35;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.error { border-left-color: var(--red); }
+    .toast.success { border-left-color: var(--green); }
+
+    .subswitch {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .audit-note {
+      color: var(--muted);
+      font-size: .78rem;
+      margin-left: auto;
+    }
+
     @media (max-width: 1100px) {
       .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
@@ -783,8 +896,39 @@ table {
   </style>
 </head>
 <body>
+  <div id="loginOverlay" class="login-overlay active">
+    <div class="login-card">
+      <div class="login-card-head">
+        <h2 class="login-title">Ingreso de usuarios</h2>
+        <p class="login-subtitle">Selecciona tu usuario y coloca la clave operativa para ingresar al tablero.</p>
+      </div>
+      <div class="login-card-body">
+        <div class="grid-2">
+          <div>
+            <label for="loginUser">Usuario</label>
+            <select id="loginUser"></select>
+          </div>
+          <div>
+            <label for="loginPassword">Clave</label>
+            <input type="password" id="loginPassword" placeholder="Clave" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="loginBtn">Ingresar</button>
+        </div>
+        <div id="loginStatus" class="status"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastWrap" class="toast-wrap"></div>
+
   <div class="app">
   <div class="header-toggle-wrap">
+    <div class="user-status-bar">
+      <span id="activeUserChip" class="user-chip">Usuario activo: Sin iniciar</span>
+      <button id="logoutBtn" class="btn-secondary" type="button">Salir</button>
+    </div>
     <button id="toggleHeaderBtn" class="btn-secondary">Ocultar encabezado</button>
   </div>
 
@@ -888,10 +1032,6 @@ table {
               <label for="alertName">Nombre</label>
               <input type="text" id="alertName" placeholder="Ej: ANA MAGALI BRICEÑO MULLO" />
             </div>
-            <div>
-              <label for="alertResponsible">Responsable</label>
-              <input type="text" id="alertResponsible" placeholder="Ej: Kevin / Luisa / Evelyn" />
-            </div>
             <div class="full">
               <label for="alertComment">Comentario</label>
               <input type="text" id="alertComment" placeholder="Ej: esperar que llegue y anular / pedido duplicado / no tienen contacto" />
@@ -902,10 +1042,15 @@ table {
             <button class="btn-secondary" id="clearAlertFormBtn">Limpiar formulario</button>
           </div>
           <div id="alertStatus" class="status"></div>
+          <div class="subswitch">
+            <button class="btn-ghost" id="viewAlertsPendingBtn" type="button">Pendientes</button>
+            <button class="btn-soft-violet" id="viewAlertsHistoryBtn" type="button">Historial</button>
+            <span class="audit-note">Los avisos pasan a historial cuando el pedido se envía a Canales.</span>
+          </div>
           <div class="table-tools">
             <div class="field search-input">
               <label for="alertsSearch">Buscador en avisos</label>
-              <input type="text" id="alertsSearch" placeholder="Guía, orden, código, nombre, responsable, comentario..." />
+              <input type="text" id="alertsSearch" placeholder="Guía, orden, código, nombre, comentario..." />
             </div>
           </div>
           <div class="table-wrap" style="margin-top:12px;">
@@ -917,7 +1062,6 @@ table {
                   <th>Orden</th>
                   <th>Código</th>
                   <th>Nombre</th>
-                  <th>Responsable</th>
                   <th>Comentario</th>
                   <th>Acción</th>
                 </tr>
@@ -1069,6 +1213,7 @@ table {
                   <th>Canales</th>
                   <th>Guía nueva</th>
                   <th>Fecha de envío</th>
+                  <th>Solicitado por</th>
                   <th>Estado</th>
                   <th>Acción</th>
                 </tr>
@@ -1185,9 +1330,13 @@ table {
               <label for="claimState">Estado</label>
               <input type="text" id="claimState" list="estadoReclamosList" placeholder="Ej: DEVOLUCION EN BUEN ESTADO" />
             </div>
-            <div class="full">
+            <div>
               <label for="claimGestion">Gestión</label>
               <input type="text" id="claimGestion" list="gestionReclamosList" placeholder="Ej: reclamo no procede devolver al remitente" />
+            </div>
+            <div>
+              <label for="claimComment">Comentario</label>
+              <input type="text" id="claimComment" placeholder="Comentario adicional" />
             </div>
           </div>
           <div class="btn-row">
@@ -1200,7 +1349,7 @@ table {
           <div class="table-tools">
             <div class="field search-input">
               <label for="claimsSearch">Buscar en Reclamos</label>
-              <input type="text" id="claimsSearch" placeholder="Socio, guía, producto, estado, gestión..." />
+              <input type="text" id="claimsSearch" placeholder="Socio, guía, producto, estado, gestión, comentario..." />
             </div>
           </div>
           <div class="table-wrap claims-table-wrap" style="margin-top:12px;">
@@ -1214,6 +1363,7 @@ table {
                   <th>Unidad</th>
                   <th>Estado</th>
                   <th>Gestión</th>
+                  <th>Comentario</th>
                   <th>Acción</th>
                 </tr>
               </thead>
@@ -1375,9 +1525,12 @@ table {
     const STORAGE_KEYS = {
       guides: 'opshub_guides',
       data: 'opshub_data',
-      tc3: 'opshub_tc3'
+      tc3: 'opshub_tc3',
+      activeUser: 'opshub_active_user'
     };
 
+    const LOGIN_PASSWORD = 'Oriflame';
+    const USERS = ['Kevin','Lourdes','Shirley','Ana','Yuliana','Elizabeth','Carlos','María José','Luisa','Joseph','Alba','Daysi','José','Enrico'];
     const CANAL_OPTIONS = ['Pallet 1', 'Pallet 2', 'Pallet 3', 'Canal 1', 'Canal 2', 'Canal 3', 'Canal 4', 'Canal 5', 'Otro'];
 
     const state = {
@@ -1385,6 +1538,8 @@ table {
       canales: [],
       reenvios: [],
       reenviosView: 'pendientes',
+      alertsView: 'pendientes',
+      activeUser: '',
       anulaciones: [],
       reclamos: [],
       centros: [],
@@ -1427,7 +1582,6 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       alertOrder: document.getElementById('alertOrder'),
       alertCode: document.getElementById('alertCode'),
       alertName: document.getElementById('alertName'),
-      alertResponsible: document.getElementById('alertResponsible'),
       alertComment: document.getElementById('alertComment'),
       alertStatus: document.getElementById('alertStatus'),
       alertsTableBody: document.querySelector('#alertsTable tbody'),
@@ -1471,6 +1625,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       claimUnit: document.getElementById('claimUnit'),
       claimState: document.getElementById('claimState'),
       claimGestion: document.getElementById('claimGestion'),
+      claimComment: document.getElementById('claimComment'),
       claimsStatus: document.getElementById('claimsStatus'),
       claimsSearch: document.getElementById('claimsSearch'),
       claimsTableBody: document.querySelector('#claimsTable tbody'),
@@ -1483,11 +1638,20 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       centersStatus: document.getElementById('centersStatus'),
       centersTableBody: document.querySelector('#centersTable tbody'),
 
-      canalesList: document.getElementById('canalesList')
+      canalesList: document.getElementById('canalesList'),
+      loginOverlay: document.getElementById('loginOverlay'),
+      loginUser: document.getElementById('loginUser'),
+      loginPassword: document.getElementById('loginPassword'),
+      loginStatus: document.getElementById('loginStatus'),
+      activeUserChip: document.getElementById('activeUserChip'),
+      logoutBtn: document.getElementById('logoutBtn'),
+      toastWrap: document.getElementById('toastWrap')
     };
 
     const viewPendientesBtn = document.getElementById('viewPendientesBtn');
     const viewHistorialBtn = document.getElementById('viewHistorialBtn');
+    const viewAlertsPendingBtn = document.getElementById('viewAlertsPendingBtn');
+    const viewAlertsHistoryBtn = document.getElementById('viewAlertsHistoryBtn');
 
     function setReenviosViewButtons() {
       if (state.reenviosView === 'pendientes') {
@@ -1503,6 +1667,75 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       }
     }
 
+    function setAlertsViewButtons() {
+      if (state.alertsView === 'pendientes') {
+        viewAlertsPendingBtn.classList.add('btn-primary');
+        viewAlertsPendingBtn.classList.remove('btn-ghost');
+        viewAlertsHistoryBtn.classList.add('btn-soft-violet');
+        viewAlertsHistoryBtn.classList.remove('btn-primary');
+      } else {
+        viewAlertsHistoryBtn.classList.add('btn-primary');
+        viewAlertsHistoryBtn.classList.remove('btn-soft-violet');
+        viewAlertsPendingBtn.classList.add('btn-ghost');
+        viewAlertsPendingBtn.classList.remove('btn-primary');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      el.toastWrap.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 180);
+      }, 2600);
+    }
+
+    function currentUser() {
+      return state.activeUser || loadLocal(STORAGE_KEYS.activeUser) || '';
+    }
+
+    function updateActiveUserUi() {
+      const user = currentUser();
+      state.activeUser = user;
+      el.activeUserChip.textContent = user ? `Usuario activo: ${user}` : 'Usuario activo: Sin iniciar';
+    }
+
+    function buildAuditMeta(base = {}) {
+      const user = currentUser() || 'Sistema';
+      return {
+        ...base,
+        lastUpdatedBy: user,
+        lastUpdatedAtDisplay: nowES()
+      };
+    }
+
+    function auditTitle(item = {}) {
+      const parts = [];
+      if (item.createdBy) parts.push(`Creado por: ${item.createdBy}`);
+      if (item.createdAtDisplay) parts.push(`Fecha creación: ${item.createdAtDisplay}`);
+      if (item.lastUpdatedBy) parts.push(`Último cambio: ${item.lastUpdatedBy}`);
+      if (item.lastUpdatedAtDisplay) parts.push(`Fecha cambio: ${item.lastUpdatedAtDisplay}`);
+      if (item.procesadoPor) parts.push(`Procesado por: ${item.procesadoPor}`);
+      if (item.procesadoEn) parts.push(`Fecha proceso: ${item.procesadoEn}`);
+      return parts.join(' | ');
+    }
+
+    function initLoginUi() {
+      el.loginUser.innerHTML = '<option value="">Seleccionar...</option>' + USERS.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+      const savedUser = loadLocal(STORAGE_KEYS.activeUser);
+      if (savedUser && USERS.includes(savedUser)) {
+        state.activeUser = savedUser;
+        el.loginUser.value = savedUser;
+        el.loginOverlay.classList.remove('active');
+      } else {
+        el.loginOverlay.classList.add('active');
+      }
+      updateActiveUserUi();
+    }
+
     viewPendientesBtn.addEventListener('click', () => {
       state.reenviosView = 'pendientes';
       setReenviosViewButtons();
@@ -1513,6 +1746,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       state.reenviosView = 'historial';
       setReenviosViewButtons();
       renderReenviosTable();
+    });
+
+    viewAlertsPendingBtn.addEventListener('click', () => {
+      state.alertsView = 'pendientes';
+      setAlertsViewButtons();
+      renderAlertsTable();
+    });
+
+    viewAlertsHistoryBtn.addEventListener('click', () => {
+      state.alertsView = 'historial';
+      setAlertsViewButtons();
+      renderAlertsTable();
     });
 
     function setStatus(node, msg = '', type = '') {
@@ -1664,7 +1909,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     function updateMetrics() {
-      el.metricAvisos.textContent = state.alerts.length;
+      el.metricAvisos.textContent = state.alerts.filter(item => normalizeText(item.estadoAviso) !== 'PROCESADO').length;
       el.metricCanales.textContent = state.canales.length;
       const rePending = state.reenvios.filter(r => !normalizeText(r.guiaNueva)).length;
       el.metricReenvios.textContent = rePending;
@@ -1683,6 +1928,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       const resultCode = normalizeNumericLike(rowData.codigo);
       const resultName = normalizeText(rowData.nombre);
       for (const alert of state.alerts) {
+        if (normalizeText(alert.estadoAviso) === 'PROCESADO') continue;
         if (alert.guia && normalizeNumericLike(alert.guia) === resultGuide && resultGuide) return { alert, matchBy: 'Guía' };
         if (alert.orden && normalizeNumericLike(alert.orden) === resultOrder && resultOrder) return { alert, matchBy: 'Orden' };
         if (alert.codigo && normalizeNumericLike(alert.codigo) === resultCode && resultCode) return { alert, matchBy: 'Código' };
@@ -1759,12 +2005,12 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           };
           const match = processMatchAlert({ guia: result.guia, orden: result.orden, codigo: result.codigo, nombre: result.nombre });
           if (match) {
+            result.alertMatchId = match.alert.id || '';
             foundAlerts++;
             result.aviso = 'Ya llegó pedido registrado';
             result.comentario = [
               `Coincidencia por ${match.matchBy}`,
               formatFsDate(match.alert.fechaRegistro, match.alert.createdAt) ? `Registrado: ${formatFsDate(match.alert.fechaRegistro, match.alert.createdAt)}` : '',
-              match.alert.responsable ? `Responsable: ${match.alert.responsable}` : '',
               match.alert.comentario ? `Comentario aviso: ${match.alert.comentario}` : ''
             ].filter(Boolean).join(' | ');
           }
@@ -1834,55 +2080,74 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       const existingKeys = new Set(state.canales.map(canalKey));
       let inserted = 0;
       let duplicates = 0;
+      const processedAlertIds = new Set();
 
-      try {
-        for (const row of state.processRows) {
-          const hasOperationalData =
-            normalizeText(row.guia) ||
-            normalizeText(row.orden) ||
-            normalizeText(row.codigo) ||
-            normalizeText(row.nombre);
+      (async () => {
+        try {
+          for (const row of state.processRows) {
+            const hasOperationalData =
+              normalizeText(row.guia) ||
+              normalizeText(row.orden) ||
+              normalizeText(row.codigo) ||
+              normalizeText(row.nombre);
 
-          if (!hasOperationalData) continue;
+            if (!hasOperationalData) continue;
 
-          const duplicate = existingKeys.has(canalKey(row));
-          const payload = {
-            fecha: row.fecha || todayES(),
-            guia: row.guia || '',
-            orden: row.orden || '',
-            codigo: row.codigo || '',
-            nombre: row.nombre || '',
-            celular: row.celular || '',
-            puntoEnvio: row.puntoEnvio || '',
-            courier: row.courier || '',
-            fechaDespacho: row.fechaDespacho || '',
-            aviso: row.aviso || '',
-            comentario: row.comentario || '',
-            canal: '',
-            duplicate,
-            createdAt: serverTimestamp(),
-            source: 'gestion-diaria'
-          };
+            const duplicate = existingKeys.has(canalKey(row));
+            const payload = {
+              fecha: row.fecha || todayES(),
+              guia: row.guia || '',
+              orden: row.orden || '',
+              codigo: row.codigo || '',
+              nombre: row.nombre || '',
+              celular: row.celular || '',
+              puntoEnvio: row.puntoEnvio || '',
+              courier: row.courier || '',
+              fechaDespacho: row.fechaDespacho || '',
+              aviso: row.aviso || '',
+              comentario: row.comentario || '',
+              canal: '',
+              duplicate,
+              createdAt: serverTimestamp(),
+              createdBy: currentUser() || 'Sistema',
+              createdAtDisplay: nowES(),
+              ...buildAuditMeta(),
+              source: 'gestion-diaria'
+            };
 
-          await addDoc(refs.canales, payload);
-          inserted++;
-          if (duplicate) duplicates++;
-          existingKeys.add(canalKey(row));
+            await addDoc(refs.canales, payload);
+            inserted++;
+            if (duplicate) duplicates++;
+            existingKeys.add(canalKey(row));
+            if (row.alertMatchId) processedAlertIds.add(row.alertMatchId);
+          }
+
+          for (const alertId of processedAlertIds) {
+            await updateDoc(doc(db, 'avisos', alertId), {
+              estadoAviso: 'procesado',
+              procesadoEn: nowES(),
+              procesadoPor: currentUser() || 'Sistema',
+              ...buildAuditMeta()
+            });
+          }
+
+          state.processAlreadySent = true;
+          el.sendToCanalesBtn.textContent = 'Ya enviado';
+          el.sendToCanalesBtn.disabled = true;
+
+          let msg = `✅ Envío completado. Registros enviados a Canales: ${inserted}.`;
+          if (duplicates) msg += ` Duplicados detectados: ${duplicates}.`;
+          if (processedAlertIds.size) msg += ` Avisos enviados a historial: ${processedAlertIds.size}.`;
+          setStatus(el.processStatus, msg, 'success');
+          showToast(`Envío a Canales completado por ${currentUser() || 'Sistema'}.`, 'success');
+        } catch (error) {
+          console.error(error);
+          el.sendToCanalesBtn.disabled = false;
+          el.sendToCanalesBtn.textContent = 'Enviar a Canales';
+          setStatus(el.processStatus, 'Ocurrió un error al enviar a Canales.', 'error');
+          showToast('Ocurrió un error al enviar a Canales.', 'error');
         }
-
-        state.processAlreadySent = true;
-        el.sendToCanalesBtn.textContent = 'Ya enviado';
-        el.sendToCanalesBtn.disabled = true;
-
-        let msg = `✅ Envío completado. Registros enviados a Canales: ${inserted}.`;
-        if (duplicates) msg += ` Duplicados detectados: ${duplicates}.`;
-        setStatus(el.processStatus, msg, 'success');
-      } catch (error) {
-        console.error(error);
-        el.sendToCanalesBtn.disabled = false;
-        el.sendToCanalesBtn.textContent = 'Enviar a Canales';
-        setStatus(el.processStatus, 'Ocurrió un error al enviar a Canales.', 'error');
-      }
+      })();
     }
 
     function rowMatchesSearch(textParts, searchNode) {
@@ -1893,28 +2158,32 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
     function renderAlertsTable() {
       el.alertsTableBody.innerHTML = '';
-      if (!state.alerts.length) {
-        el.alertsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay avisos registrados.</td></tr>`;
+      const data = state.alerts.filter(item => {
+        const isProcessed = normalizeText(item.estadoAviso) === 'PROCESADO';
+        return state.alertsView === 'historial' ? isProcessed : !isProcessed;
+      });
+      if (!data.length) {
+        el.alertsTableBody.innerHTML = `<tr><td colspan="7" class="empty-cell">${state.alertsView === 'historial' ? 'No hay avisos procesados.' : 'No hay avisos pendientes.'}</td></tr>`;
         updateMetrics();
         return;
       }
-      state.alerts.forEach(item => {
-        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.responsable, item.comentario], el.alertsSearch)) return;
+      data.forEach(item => {
+        if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.comentario, item.createdBy, item.procesadoPor], el.alertsSearch)) return;
         const tr = document.createElement('tr');
+        const commentTitle = [item.comentario || '', auditTitle(item), item.estadoAviso === 'procesado' ? `Vinculado a Canales: ${item.procesadoPor || ''}` : ''].filter(Boolean).join(' | ');
         tr.innerHTML = `
-          <td>${escapeHtml(formatFsDate(item.fechaRegistro, item.createdAt))}</td>
+          <td title="${escapeHtml(auditTitle(item) || formatFsDate(item.fechaRegistro, item.createdAt))}">${escapeHtml(formatFsDate(item.fechaRegistro, item.createdAt) || '')}</td>
           <td>${escapeHtml(item.guia || '')}</td>
           <td>${escapeHtml(item.orden || '')}</td>
           <td>${escapeHtml(item.codigo || '')}</td>
           <td>${escapeHtml(item.nombre || '')}</td>
-          <td>${escapeHtml(item.responsable || '')}</td>
-          <td title="${escapeHtml(item.comentario || '')}">${escapeHtml(item.comentario || '')}</td>
+          <td title="${escapeHtml(commentTitle)}">${escapeHtml(item.comentario || '')}</td>
           <td><button class="btn-danger mini-btn" data-delete-alert="${item.id}" title="Eliminar aviso">Del</button></td>
         `;
         el.alertsTableBody.appendChild(tr);
       });
       if (!el.alertsTableBody.children.length) {
-        el.alertsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay avisos para esa búsqueda.</td></tr>`;
+        el.alertsTableBody.innerHTML = `<tr><td colspan="7" class="empty-cell">No hay avisos para esa búsqueda.</td></tr>`;
       }
       updateMetrics();
     }
@@ -1944,7 +2213,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td>${item.aviso ? `<span class="badge badge-amber">${escapeHtml(item.aviso)}</span>` : ''}</td>
           <td>
             ${item.duplicate ? '<div style="margin-bottom:6px;"><span class="badge badge-red">Duplicado detectado</span></div>' : ''}
-            <input class="mini-input canal-comment" data-id="${item.id}" value="${escapeHtml(item.comentario || '')}">
+            <input class="mini-input canal-comment" data-id="${item.id}" title="${escapeHtml(auditTitle(item) || item.comentario || '')}" value="${escapeHtml(item.comentario || '')}">
           </td>
           <td>
             <select class="mini-select canal-select" data-id="${item.id}">
@@ -1990,7 +2259,11 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         canal: el.manualReenvioCanal.value,
         guiaNueva: tipo === 'historial' ? guiaNueva : '',
         fechaEnvio: tipo === 'historial' ? todayES() : '',
+        solicitadoPor: currentUser() || 'Sistema',
         createdAt: serverTimestamp(),
+        createdBy: currentUser() || 'Sistema',
+        createdAtDisplay: nowES(),
+        ...buildAuditMeta(),
         source: 'manual'
       };
     }
@@ -2017,7 +2290,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
       el.reenviosTableBody.innerHTML = '';
       if (!data.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">${
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="16" class="empty-cell">${
           state.reenviosView === 'pendientes'
             ? 'No hay reenvíos pendientes.'
             : 'No hay historial de reenvíos.'
@@ -2049,6 +2322,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           ${tdWithTitle(item.canal || '')}
           <td><input class="mini-input reenvio-guianueva" data-id="${item.id}" title="${escapeHtml(item.guiaNueva || '')}" value="${inputValueWithTitle(item.guiaNueva || '')}"></td>
           ${tdWithTitle(item.fechaEnvio || '')}
+          <td title="${escapeHtml(auditTitle(item) || item.solicitadoPor || '')}">${escapeHtml(item.solicitadoPor || item.createdBy || '')}</td>
           <td title="${escapeHtml(estado)}">${estado === 'Pendiente' ? '<span class="badge badge-red">Pendiente</span>' : '<span class="badge badge-green">Reenviado</span>'}</td>
           <td>
             <div class="actions">
@@ -2061,7 +2335,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       });
 
       if (!el.reenviosTableBody.children.length) {
-        el.reenviosTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
+        el.reenviosTableBody.innerHTML = `<tr><td colspan="16" class="empty-cell">No hay reenvíos para esa búsqueda.</td></tr>`;
       }
       updateMetrics();
     }
@@ -2117,26 +2391,27 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     function renderClaimsTable() {
       el.claimsTableBody.innerHTML = '';
       if (!state.reclamos.length) {
-        el.claimsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay reclamos cargados.</td></tr>`;
+        el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos cargados.</td></tr>`;
         return;
       }
       state.reclamos.forEach(item => {
-        if (!rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.gestion], el.claimsSearch)) return;
+        if (!rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.gestion, item.comentario], el.claimsSearch)) return;
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${escapeHtml(item.fecha || '')}</td>
-          <td><input class="mini-input claim-socio" data-id="${item.id}" value="${escapeHtml(item.socio || '')}"></td>
-          <td><input class="mini-input claim-guia" data-id="${item.id}" value="${escapeHtml(item.guia || '')}"></td>
-          <td><input class="mini-input claim-producto" data-id="${item.id}" value="${escapeHtml(item.producto || '')}"></td>
-          <td><input class="mini-input claim-unidad" data-id="${item.id}" value="${escapeHtml(item.unidad || '')}"></td>
-          <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" value="${escapeHtml(item.estado || '')}"></td>
-          <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" value="${escapeHtml(item.gestion || '')}"></td>
+          <td title="${escapeHtml(auditTitle(item) || '')}">${escapeHtml(item.fecha || '')}</td>
+          <td><input class="mini-input claim-socio" data-id="${item.id}" title="${escapeHtml(item.socio || '')}" value="${escapeHtml(item.socio || '')}"></td>
+          <td><input class="mini-input claim-guia" data-id="${item.id}" title="${escapeHtml(item.guia || '')}" value="${escapeHtml(item.guia || '')}"></td>
+          <td><input class="mini-input claim-producto" data-id="${item.id}" title="${escapeHtml(item.producto || '')}" value="${escapeHtml(item.producto || '')}"></td>
+          <td><input class="mini-input claim-unidad" data-id="${item.id}" title="${escapeHtml(item.unidad || '')}" value="${escapeHtml(item.unidad || '')}"></td>
+          <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" title="${escapeHtml(item.estado || '')}" value="${escapeHtml(item.estado || '')}"></td>
+          <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" title="${escapeHtml(item.gestion || '')}" value="${escapeHtml(item.gestion || '')}"></td>
+          <td><input class="mini-input claim-comentario" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}"></td>
           <td><button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></td>
         `;
         el.claimsTableBody.appendChild(tr);
       });
       if (!el.claimsTableBody.children.length) {
-        el.claimsTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay reclamos para esa búsqueda.</td></tr>`;
+        el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos para esa búsqueda.</td></tr>`;
       }
     }
 
@@ -2269,6 +2544,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           canal: item.canal || '',
           duplicate: false,
           createdAt: serverTimestamp(),
+          createdBy: currentUser() || 'Sistema',
+          createdAtDisplay: nowES(),
+          ...buildAuditMeta(),
           source: 'back-from-reenvios'
         };
       }
@@ -2291,6 +2569,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           canal: item.canal || '',
           duplicate: false,
           createdAt: serverTimestamp(),
+          createdBy: currentUser() || 'Sistema',
+          createdAtDisplay: nowES(),
+          ...buildAuditMeta(),
           source: 'back-from-anulaciones'
         };
       }
@@ -2322,7 +2603,11 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             canal: item.canal || '',
             guiaNueva: '',
             fechaEnvio: '',
-            createdAt: serverTimestamp()
+            solicitadoPor: currentUser() || 'Sistema',
+            createdAt: serverTimestamp(),
+            createdBy: currentUser() || 'Sistema',
+            createdAtDisplay: nowES(),
+            ...buildAuditMeta()
           }));
         } else {
           writes.push(addDoc(refs.anulaciones, {
@@ -2340,7 +2625,10 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             estado: '',
             fechaAnulacion: '',
             verificacion: '',
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            createdBy: currentUser() || 'Sistema',
+            createdAtDisplay: nowES(),
+            ...buildAuditMeta()
           }));
         }
         writes.push(deleteDoc(doc(db, 'canales_ransa', id)));
@@ -2392,6 +2680,30 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     function bindStaticEvents() {
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const user = el.loginUser.value;
+        const password = el.loginPassword.value;
+        if (!user) { setStatus(el.loginStatus, 'Selecciona un usuario.', 'error'); return; }
+        if (password !== LOGIN_PASSWORD) { setStatus(el.loginStatus, 'Clave incorrecta.', 'error'); showToast('Clave incorrecta.', 'error'); return; }
+        state.activeUser = user;
+        saveLocal(STORAGE_KEYS.activeUser, user);
+        el.loginPassword.value = '';
+        el.loginOverlay.classList.remove('active');
+        setStatus(el.loginStatus, 'Ingreso correcto.', 'success');
+        updateActiveUserUi();
+        showToast(`Ingreso correcto: ${user}.`, 'success');
+      });
+
+      el.logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEYS.activeUser);
+        state.activeUser = '';
+        updateActiveUserUi();
+        el.loginUser.value = '';
+        el.loginPassword.value = '';
+        el.loginOverlay.classList.add('active');
+        showToast('Sesión cerrada.', 'success');
+      });
+
       el.guidesInput.addEventListener('input', () => { saveLocal(STORAGE_KEYS.guides, el.guidesInput.value); setStatus(el.guidesStatus, 'Guías guardadas localmente.', 'success'); });
       el.dataInput.addEventListener('input', () => { saveLocal(STORAGE_KEYS.data, el.dataInput.value); setStatus(el.dataStatus, 'Data guardada localmente.', 'success'); });
 
@@ -2420,22 +2732,26 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           orden: el.alertOrder.value.trim(),
           codigo: el.alertCode.value.trim(),
           nombre: el.alertName.value.trim(),
-          responsable: el.alertResponsible.value.trim(),
           comentario: el.alertComment.value.trim(),
+          estadoAviso: 'pendiente',
           fechaRegistro: nowES(),
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
+          createdBy: currentUser() || 'Sistema',
+          createdAtDisplay: nowES(),
+          ...buildAuditMeta()
         };
-        if (!(payload.guia || payload.orden || payload.codigo || payload.nombre || payload.responsable || payload.comentario)) {
+        if (!(payload.guia || payload.orden || payload.codigo || payload.nombre || payload.comentario)) {
           setStatus(el.alertStatus, 'Debes llenar al menos un dato.', 'error');
           return;
         }
         await addDoc(refs.avisos, payload);
-        [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertResponsible, el.alertComment].forEach(i => i.value = '');
+        [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertComment].forEach(i => i.value = '');
         setStatus(el.alertStatus, 'Aviso guardado correctamente.', 'success');
+        showToast(`Aviso guardado por ${currentUser() || 'Sistema'}.`, 'success');
       });
 
       document.getElementById('clearAlertFormBtn').addEventListener('click', () => {
-        [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertResponsible, el.alertComment].forEach(i => i.value = '');
+        [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertComment].forEach(i => i.value = '');
         setStatus(el.alertStatus, 'Formulario limpiado.', 'success');
       });
 
@@ -2451,12 +2767,13 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         if (!ids.length) return alert('Selecciona al menos una fila.');
         const canal = el.bulkCanalSelect.value;
         const comment = el.bulkCanalComment.value.trim();
-        const updates = ids.map(id => updateDoc(doc(db, 'canales_ransa', id), {
+        const updates = ids.map(id => updateDoc(doc(db, 'canales_ransa', id), buildAuditMeta({
           ...(canal ? { canal } : {}),
           ...(comment ? { comentario: comment } : {})
-        }));
+        })));
         await Promise.all(updates);
         setStatus(el.canalesStatus, `Actualización masiva aplicada a ${ids.length} fila(s).`, 'success');
+        showToast(`Actualización masiva registrada por ${currentUser() || 'Sistema'}.`, 'success');
       });
 
       document.getElementById('moveSelectedReenviosBtn').addEventListener('click', async () => {
@@ -2490,16 +2807,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           return;
         }
         const comment = e.target.closest('.canal-comment');
-        if (comment) { await updateDoc(doc(db, 'canales_ransa', comment.dataset.id), { comentario: comment.value }); return; }
+        if (comment) { await updateDoc(doc(db, 'canales_ransa', comment.dataset.id), buildAuditMeta({ comentario: comment.value })); return; }
         const select = e.target.closest('.canal-select');
-        if (select) { await updateDoc(doc(db, 'canales_ransa', select.dataset.id), { canal: select.value }); return; }
+        if (select) { await updateDoc(doc(db, 'canales_ransa', select.dataset.id), buildAuditMeta({ canal: select.value })); return; }
       });
 
       el.canalesTableBody.addEventListener('click', async e => {
         const re = e.target.closest('.move-reenvio');
         if (re) return await moveCanalesToTarget([re.dataset.id], 'reenvios');
+        showToast('Registro movido a Reenvíos.', 'success');
         const an = e.target.closest('.move-anulacion');
         if (an) return await moveCanalesToTarget([an.dataset.id], 'anulaciones');
+        showToast('Registro movido a Anulaciones.', 'success');
         const del = e.target.closest('.delete-canal');
         if (del) {
           if (!confirm('¿Eliminar este registro de Canales?')) return;
@@ -2523,6 +2842,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         await addDoc(refs.reenvios, payload);
         clearManualReenvioForm();
         setStatus(el.reenviosStatus, 'Reenvío manual guardado correctamente.', 'success');
+        showToast(`Reenvío manual guardado por ${currentUser() || 'Sistema'}.`, 'success');
       });
 
       document.getElementById('clearManualReenvioBtn').addEventListener('click', () => {
@@ -2534,20 +2854,20 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         const id = e.target.dataset.id;
         if (!id) return;
         if (e.target.classList.contains('reenvio-celular')) {
-          await updateDoc(doc(db, 'reenvios', id), { celular: e.target.value });
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ celular: e.target.value }));
           return;
         }
         if (e.target.classList.contains('reenvio-punto')) {
-          await updateDoc(doc(db, 'reenvios', id), { puntoEnvioActual: e.target.value });
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ puntoEnvioActual: e.target.value }));
           return;
         }
         if (e.target.classList.contains('reenvio-comment')) {
-          await updateDoc(doc(db, 'reenvios', id), { comentario: e.target.value });
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ comentario: e.target.value }));
           return;
         }
         if (e.target.classList.contains('reenvio-guianueva')) {
           const value = e.target.value.trim();
-          await updateDoc(doc(db, 'reenvios', id), { guiaNueva: value, fechaEnvio: value ? todayES() : '' });
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ guiaNueva: value, fechaEnvio: value ? todayES() : '' }));
           return;
         }
       });
@@ -2564,6 +2884,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         if (!del) return;
         if (!confirm('¿Eliminar este reenvío?')) return;
         await deleteDoc(doc(db, 'reenvios', del.dataset.id));
+        showToast('Reenvío eliminado.', 'success');
       });
 
       document.getElementById('verifyTc3Btn').addEventListener('click', verifyAnulacionesWithTc3);
@@ -2600,13 +2921,13 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           return;
         }
         const comment = e.target.closest('.anulacion-comment');
-        if (comment) { await updateDoc(doc(db, 'anulaciones', comment.dataset.id), { comentario: comment.value }); return; }
+        if (comment) { await updateDoc(doc(db, 'anulaciones', comment.dataset.id), buildAuditMeta({ comentario: comment.value })); return; }
         const cruce = e.target.closest('.anulacion-cruce');
-        if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), { cruceAmpliacion: cruce.value }); return; }
+        if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), buildAuditMeta({ cruceAmpliacion: cruce.value })); return; }
         const estado = e.target.closest('.anulacion-estado');
         if (estado) {
           const value = estado.value.trim();
-          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), { estado: value, fechaAnulacion: value ? todayES() : '' });
+          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), buildAuditMeta({ estado: value, fechaAnulacion: value ? todayES() : '' }));
           return;
         }
       });
@@ -2634,20 +2955,25 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           unidad: el.claimUnit.value.trim(),
           estado: el.claimState.value.trim(),
           gestion: el.claimGestion.value.trim(),
-          createdAt: serverTimestamp()
+          comentario: el.claimComment.value.trim(),
+          createdAt: serverTimestamp(),
+          createdBy: currentUser() || 'Sistema',
+          createdAtDisplay: nowES(),
+          ...buildAuditMeta()
         };
-        if (!(payload.socio || payload.guia || payload.producto || payload.unidad || payload.estado || payload.gestion)) {
+        if (!(payload.socio || payload.guia || payload.producto || payload.unidad || payload.estado || payload.gestion || payload.comentario)) {
           setStatus(el.claimsStatus, 'Debes llenar al menos un campo operativo.', 'error');
           return;
         }
         await addDoc(refs.reclamos, payload);
-        [el.claimSocio, el.claimGuide, el.claimProduct, el.claimUnit, el.claimState, el.claimGestion].forEach(i => i.value = '');
+        [el.claimSocio, el.claimGuide, el.claimProduct, el.claimUnit, el.claimState, el.claimGestion, el.claimComment].forEach(i => i.value = '');
         el.claimDate.value = isoToday();
         setStatus(el.claimsStatus, 'Reclamo guardado correctamente.', 'success');
+        showToast(`Reclamo guardado por ${currentUser() || 'Sistema'}.`, 'success');
       });
 
       document.getElementById('clearClaimFormBtn').addEventListener('click', () => {
-        [el.claimSocio, el.claimGuide, el.claimProduct, el.claimUnit, el.claimState, el.claimGestion].forEach(i => i.value = '');
+        [el.claimSocio, el.claimGuide, el.claimProduct, el.claimUnit, el.claimState, el.claimGestion, el.claimComment].forEach(i => i.value = '');
         el.claimDate.value = isoToday();
       });
 
@@ -2664,8 +2990,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         if (e.target.classList.contains('claim-unidad')) field = 'unidad';
         if (e.target.classList.contains('claim-estado')) field = 'estado';
         if (e.target.classList.contains('claim-gestion')) field = 'gestion';
+        if (e.target.classList.contains('claim-comentario')) field = 'comentario';
         if (!field) return;
-        await updateDoc(doc(db, 'reclamos_procesados', id), { [field]: e.target.value });
+        await updateDoc(doc(db, 'reclamos_procesados', id), buildAuditMeta({ [field]: e.target.value }));
       });
 
       el.claimsTableBody.addEventListener('click', async e => {
@@ -2758,6 +3085,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     function initialize() {
       setCanalOptionLists();
       initTabs();
+      initLoginUi();
       bindStaticEvents();
       attachSnapshots();
       el.guidesInput.value = loadLocal(STORAGE_KEYS.guides);
@@ -2767,6 +3095,9 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       if (el.manualReenvioFecha) el.manualReenvioFecha.value = todayES();
       if (el.guidesInput.value) setStatus(el.guidesStatus, 'Se recuperaron guías guardadas localmente.', 'success');
       if (el.dataInput.value) setStatus(el.dataStatus, 'Se recuperó la data guardada localmente.', 'success');
+      setReenviosViewButtons();
+      setAlertsViewButtons();
+      updateActiveUserUi();
       renderProcessTable();
       renderCentersTable();
     }
