@@ -704,10 +704,47 @@ table {
 
 #claimsTable input,
 #claimsTable select,
-#claimsTable textarea {
+#claimsTable textarea,
+#claimsHistoryTable input,
+#claimsHistoryTable select,
+#claimsHistoryTable textarea {
   width: 100%;
   min-width: 100%;
 }
+
+#claimsHistoryTable {
+  width: max-content;
+  min-width: 100%;
+}
+
+#claimsHistoryTable th,
+#claimsHistoryTable td {
+  white-space: nowrap;
+}
+
+#claimsHistoryTable th:nth-child(1),
+#claimsHistoryTable td:nth-child(1) { min-width: 92px; width: 92px; }
+
+#claimsHistoryTable th:nth-child(2),
+#claimsHistoryTable td:nth-child(2) { min-width: 120px; width: 120px; }
+
+#claimsHistoryTable th:nth-child(3),
+#claimsHistoryTable td:nth-child(3) { min-width: 112px; width: 112px; }
+
+#claimsHistoryTable th:nth-child(4),
+#claimsHistoryTable td:nth-child(4) { min-width: 120px; width: 120px; }
+
+#claimsHistoryTable th:nth-child(5),
+#claimsHistoryTable td:nth-child(5) { min-width: 78px; width: 78px; }
+
+#claimsHistoryTable th:nth-child(6),
+#claimsHistoryTable td:nth-child(6) { min-width: 175px; width: 175px; }
+
+#claimsHistoryTable th:nth-child(7),
+#claimsHistoryTable td:nth-child(7) { min-width: 220px; width: 220px; }
+
+#claimsHistoryTable th:nth-child(8),
+#claimsHistoryTable td:nth-child(8) { min-width: 200px; width: 200px; }
 
 /* AJUSTE FINO TABLA AVISOS */
 #alertsTable {
@@ -953,7 +990,7 @@ table {
       <button class="tab-btn" data-tab="canales">Canales de Ransa</button>
       <button class="tab-btn" data-tab="reenvios">Reenvíos <span id="reenviosPendingBadge" class="tab-badge" style="display:none;">0</span></button>
       <button class="tab-btn" data-tab="anulaciones">Anulaciones</button>
-      <button class="tab-btn" data-tab="reclamos">Reclamos Procesados</button>
+      <button class="tab-btn" data-tab="reclamos">Reclamos Físicos</button>
       <button class="tab-btn" data-tab="centros">Lista de Centros</button>
     </div>
   </div>
@@ -1312,7 +1349,7 @@ table {
     <section class="panel" id="panel-reclamos">
       <div class="section-card">
         <div class="section-head">
-          <h3 class="section-title">Reclamos Procesados</h3>
+          <h3 class="section-title">Reclamos Físicos</h3>
           <span class="pill pill-green">Registro manual en línea</span>
         </div>
         <div class="section-body">
@@ -1353,13 +1390,15 @@ table {
           <div class="btn-row">
             <button class="btn-primary" id="saveClaimBtn">Guardar reclamo</button>
             <button class="btn-secondary" id="clearClaimFormBtn">Limpiar formulario</button>
+            <button class="btn-ghost" id="viewClaimsPendingBtn" type="button">Pendientes</button>
+            <button class="btn-soft-violet" id="viewClaimsHistoryBtn" type="button">Historial</button>
             <button class="btn-secondary" id="copyClaimsBtn">Copiar tabla</button>
             <button class="btn-secondary" id="exportClaimsBtn">Exportar Excel</button>
           </div>
           <div id="claimsStatus" class="status"></div>
           <div class="table-tools">
             <div class="field search-input">
-              <label for="claimsSearch">Buscar en Reclamos</label>
+              <label for="claimsSearch">Buscar en Reclamos Físicos</label>
               <input type="text" id="claimsSearch" placeholder="Socio, guía, producto, estado, gestión, comentario..." />
             </div>
           </div>
@@ -1376,6 +1415,23 @@ table {
                   <th>Gestión</th>
                   <th>Comentario</th>
                   <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="table-wrap claims-table-wrap" id="claimsHistoryWrap" style="margin-top:12px; display:none;">
+            <table id="claimsHistoryTable">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Socio</th>
+                  <th>Guía</th>
+                  <th>Producto</th>
+                  <th>Unidad</th>
+                  <th>Estado</th>
+                  <th>Gestión</th>
+                  <th>Comentario</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -1550,6 +1606,7 @@ table {
       reenvios: [],
       reenviosView: 'pendientes',
       alertsView: 'pendientes',
+      claimsView: 'pendientes',
       activeUser: '',
       anulaciones: [],
       reclamos: [],
@@ -1640,6 +1697,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       claimsStatus: document.getElementById('claimsStatus'),
       claimsSearch: document.getElementById('claimsSearch'),
       claimsTableBody: document.querySelector('#claimsTable tbody'),
+      claimsHistoryWrap: document.getElementById('claimsHistoryWrap'),
+      claimsHistoryTableBody: document.querySelector('#claimsHistoryTable tbody'),
 
       centersFile: document.getElementById('centersFile'),
       centerSheetSelect: document.getElementById('centerSheetSelect'),
@@ -1663,6 +1722,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     const viewHistorialBtn = document.getElementById('viewHistorialBtn');
     const viewAlertsPendingBtn = document.getElementById('viewAlertsPendingBtn');
     const viewAlertsHistoryBtn = document.getElementById('viewAlertsHistoryBtn');
+    const viewClaimsPendingBtn = document.getElementById('viewClaimsPendingBtn');
+    const viewClaimsHistoryBtn = document.getElementById('viewClaimsHistoryBtn');
 
     function setReenviosViewButtons() {
       if (state.reenviosView === 'pendientes') {
@@ -1689,6 +1750,26 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         viewAlertsHistoryBtn.classList.remove('btn-soft-violet');
         viewAlertsPendingBtn.classList.add('btn-ghost');
         viewAlertsPendingBtn.classList.remove('btn-primary');
+      }
+    }
+
+    function isClaimProcessed(item = {}) {
+      return normalizeText(item.gestion || '') === normalizeText('PROCESADO PASA A RETORNO RANSA');
+    }
+
+    function setClaimsViewButtons() {
+      if (state.claimsView === 'pendientes') {
+        viewClaimsPendingBtn.classList.add('btn-primary');
+        viewClaimsPendingBtn.classList.remove('btn-ghost');
+        viewClaimsHistoryBtn.classList.add('btn-soft-violet');
+        viewClaimsHistoryBtn.classList.remove('btn-primary');
+        el.claimsHistoryWrap.style.display = 'none';
+      } else {
+        viewClaimsHistoryBtn.classList.add('btn-primary');
+        viewClaimsHistoryBtn.classList.remove('btn-soft-violet');
+        viewClaimsPendingBtn.classList.add('btn-ghost');
+        viewClaimsPendingBtn.classList.remove('btn-primary');
+        el.claimsHistoryWrap.style.display = '';
       }
     }
 
@@ -1774,6 +1855,18 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       state.alertsView = 'historial';
       setAlertsViewButtons();
       renderAlertsTable();
+    });
+
+    viewClaimsPendingBtn.addEventListener('click', () => {
+      state.claimsView = 'pendientes';
+      setClaimsViewButtons();
+      renderClaimsTable();
+    });
+
+    viewClaimsHistoryBtn.addEventListener('click', () => {
+      state.claimsView = 'historial';
+      setClaimsViewButtons();
+      renderClaimsTable();
     });
 
     function setStatus(node, msg = '', type = '') {
@@ -2408,28 +2501,67 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
     function renderClaimsTable() {
       el.claimsTableBody.innerHTML = '';
+      el.claimsHistoryTableBody.innerHTML = '';
+
       if (!state.reclamos.length) {
-        el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos cargados.</td></tr>`;
+        if (state.claimsView === 'pendientes') {
+          el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos físicos cargados.</td></tr>`;
+        } else {
+          el.claimsHistoryTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay historial de reclamos.</td></tr>`;
+        }
         return;
       }
-      state.reclamos.forEach(item => {
-        if (!rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.gestion, item.comentario], el.claimsSearch)) return;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td title="${escapeHtml(auditTitle(item) || '')}">${escapeHtml(item.fecha || '')}</td>
-          <td><input class="mini-input claim-socio" data-id="${item.id}" title="${escapeHtml(item.socio || '')}" value="${escapeHtml(item.socio || '')}"></td>
-          <td><input class="mini-input claim-guia" data-id="${item.id}" title="${escapeHtml(item.guia || '')}" value="${escapeHtml(item.guia || '')}"></td>
-          <td><input class="mini-input claim-producto" data-id="${item.id}" title="${escapeHtml(item.producto || '')}" value="${escapeHtml(item.producto || '')}"></td>
-          <td><input class="mini-input claim-unidad" data-id="${item.id}" title="${escapeHtml(item.unidad || '')}" value="${escapeHtml(item.unidad || '')}"></td>
-          <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" title="${escapeHtml(item.estado || '')}" value="${escapeHtml(item.estado || '')}"></td>
-          <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" title="${escapeHtml(item.gestion || '')}" value="${escapeHtml(item.gestion || '')}"></td>
-          <td><input class="mini-input claim-comentario" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}"></td>
-          <td><div class="actions" style="justify-content:center;">${auditEmoji(item)}<button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></div></td>
-        `;
-        el.claimsTableBody.appendChild(tr);
+
+      let data = state.reclamos.filter(item => {
+        const processed = isClaimProcessed(item);
+        return state.claimsView === 'pendientes' ? !processed : processed;
       });
-      if (!el.claimsTableBody.children.length) {
-        el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos para esa búsqueda.</td></tr>`;
+
+      data = data.filter(item =>
+        rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.gestion, item.comentario], el.claimsSearch)
+      );
+
+      if (state.claimsView === 'pendientes') {
+        if (!data.length) {
+          el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos pendientes para esa búsqueda.</td></tr>`;
+          return;
+        }
+
+        data.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td title="${escapeHtml(auditTitle(item) || '')}">${escapeHtml(item.fecha || '')}</td>
+            <td><input class="mini-input claim-socio" data-id="${item.id}" title="${escapeHtml(item.socio || '')}" value="${escapeHtml(item.socio || '')}"></td>
+            <td><input class="mini-input claim-guia" data-id="${item.id}" title="${escapeHtml(item.guia || '')}" value="${escapeHtml(item.guia || '')}"></td>
+            <td><input class="mini-input claim-producto" data-id="${item.id}" title="${escapeHtml(item.producto || '')}" value="${escapeHtml(item.producto || '')}"></td>
+            <td><input class="mini-input claim-unidad" data-id="${item.id}" title="${escapeHtml(item.unidad || '')}" value="${escapeHtml(item.unidad || '')}"></td>
+            <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" title="${escapeHtml(item.estado || '')}" value="${escapeHtml(item.estado || '')}"></td>
+            <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" title="${escapeHtml(item.gestion || '')}" value="${escapeHtml(item.gestion || '')}"></td>
+            <td><input class="mini-input claim-comentario" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}"></td>
+            <td><div class="actions" style="justify-content:center;">${auditEmoji(item)}<button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></div></td>
+          `;
+          el.claimsTableBody.appendChild(tr);
+        });
+      } else {
+        if (!data.length) {
+          el.claimsHistoryTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay historial de reclamos para esa búsqueda.</td></tr>`;
+          return;
+        }
+
+        data.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td title="${escapeHtml(auditTitle(item) || '')}">${escapeHtml(item.fecha || '')}</td>
+            ${tdWithTitle(item.socio || '')}
+            ${tdWithTitle(item.guia || '')}
+            ${tdWithTitle(item.producto || '')}
+            ${tdWithTitle(item.unidad || '')}
+            ${tdWithTitle(item.estado || '')}
+            ${tdWithTitle(item.gestion || '')}
+            ${tdWithTitle(item.comentario || '')}
+          `;
+          el.claimsHistoryTableBody.appendChild(tr);
+        });
       }
     }
 
@@ -2995,8 +3127,17 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         el.claimDate.value = isoToday();
       });
 
-      document.getElementById('copyClaimsBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('claimsTable')), 'Reclamos copiado.'));
-      document.getElementById('exportClaimsBtn').addEventListener('click', () => exportTableToExcel('claimsTable', 'Reclamos', 'reclamos_procesados.xlsx'));
+      document.getElementById('copyClaimsBtn').addEventListener('click', () => {
+        const tableId = state.claimsView === 'pendientes' ? 'claimsTable' : 'claimsHistoryTable';
+        const label = state.claimsView === 'pendientes' ? 'Reclamos pendientes copiados.' : 'Historial de reclamos copiado.';
+        copyText(tableToTSV(document.getElementById(tableId)), label);
+      });
+      document.getElementById('exportClaimsBtn').addEventListener('click', () => {
+        const tableId = state.claimsView === 'pendientes' ? 'claimsTable' : 'claimsHistoryTable';
+        const filename = state.claimsView === 'pendientes' ? 'reclamos_fisicos_pendientes.xlsx' : 'historial_reclamos_fisicos.xlsx';
+        const sheetName = state.claimsView === 'pendientes' ? 'Reclamos pendientes' : 'Historial reclamos';
+        exportTableToExcel(tableId, sheetName, filename);
+      });
 
       el.claimsTableBody.addEventListener('change', async e => {
         const id = e.target.dataset.id;
