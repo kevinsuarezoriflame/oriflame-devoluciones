@@ -99,6 +99,19 @@
       box-shadow: 0 4px 10px rgba(75,145,68,.22);
     }
 
+    .tab-alert {
+      background: #fdeeee;
+      color: #b73939;
+      border: 1px solid #efcccc;
+    }
+    .tab-alert:hover { background: #fae2e2; }
+    .tab-alert.active {
+      background: #d35656;
+      color: #fff;
+      border-color: #d35656;
+      box-shadow: 0 4px 10px rgba(211,86,86,.22);
+    }
+
     .tab-badge {
       min-width: 20px;
       height: 20px;
@@ -230,7 +243,7 @@
     }
     .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .grid-4 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 
     .full { grid-column: 1 / -1; }
@@ -482,9 +495,9 @@ table {
 
 #canalesTable th:nth-child(8),
 #canalesTable td:nth-child(8) {
-  width: 180px;
-  max-width: 180px;
-  min-width: 180px;
+  width: 240px;
+  max-width: 240px;
+  min-width: 240px;
 } /* Punto de envío */
 
 #canalesTable th:nth-child(10),
@@ -496,9 +509,9 @@ table {
 
 #canalesTable th:nth-child(14),
 #canalesTable td:nth-child(14) {
-  width: 148px;
-  max-width: 148px;
-  min-width: 148px;
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
 } /* Acciones */  
 
 #processTable th:nth-child(10),
@@ -533,7 +546,7 @@ table {
 
     tbody td {
   border: 1px solid #e3e8e0;
-  padding: 3px 5px;
+  padding: 4px 6px;
   vertical-align: middle;
   background: #fff;
   white-space: nowrap;
@@ -552,32 +565,29 @@ table {
    .mini-input, .mini-select {
   width: 100%;
   min-width: 0;
-  font-size: .74rem;
-  padding: 3px 5px;
+  font-size: .76rem;
+  padding: 4px 6px;
   border-radius: 6px;
   border: 1px solid #ccd7c7;
   font-family: inherit;
   background: rgba(255,255,255,.92);
 }
-.mini-input { min-height: 24px; }
+.mini-input { min-height: 28px; }
 
     .actions {
       display: flex;
-      flex-wrap: nowrap;
-      gap: 4px;
-      align-items: center;
-      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .audit-emoji{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-width:18px;
-      height:18px;
+      min-width:22px;
+      height:22px;
       cursor:help;
-      font-size:.82rem;
-      flex: 0 0 auto;
+      font-size:.9rem;
     }
 
 
@@ -585,18 +595,16 @@ table {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
+  gap: 4px;
   flex-wrap: nowrap;
 }
  .mini-btn {
-  padding: 2px 5px;
-  font-size: .62rem;
+  padding: 3px 6px;
+  font-size: .66rem;
   border-radius: 999px;
   font-weight: 800;
-  line-height: 1.0;
+  line-height: 1.05;
   white-space: nowrap;
-  flex: 0 0 auto;
 }
 
     .toolbar {
@@ -699,10 +707,10 @@ table {
 #claimsTable td:nth-child(6) { min-width: 175px; width: 175px; }   /* Estado */
 
 #claimsTable th:nth-child(7),
-#claimsTable td:nth-child(7) { min-width: 220px; width: 220px; }   /* Gestión */
+#claimsTable td:nth-child(7) { min-width: 200px; width: 200px; }   /* Comentario */
 
 #claimsTable th:nth-child(8),
-#claimsTable td:nth-child(8) { min-width: 200px; width: 200px; }   /* Comentario */
+#claimsTable td:nth-child(8) { min-width: 220px; width: 220px; }   /* Gestión */
 
 #claimsTable th:nth-child(9),
 #claimsTable td:nth-child(9) { min-width: 90px; width: 90px; }   /* Acción */
@@ -746,25 +754,10 @@ table {
 #claimsHistoryTable td:nth-child(6) { min-width: 175px; width: 175px; }
 
 #claimsHistoryTable th:nth-child(7),
-#claimsHistoryTable td:nth-child(7) { min-width: 220px; width: 220px; }
+#claimsHistoryTable td:nth-child(7) { min-width: 200px; width: 200px; }
 
 #claimsHistoryTable th:nth-child(8),
-#claimsHistoryTable td:nth-child(8) { min-width: 200px; width: 200px; }
-
-
-#anulacionesTable th:nth-child(10),
-#anulacionesTable td:nth-child(10) {
-  width: 240px;
-  min-width: 240px;
-  max-width: 240px;
-} /* Comentario */
-
-#anulacionesTable th:nth-child(14),
-#anulacionesTable td:nth-child(14) {
-  width: 108px;
-  min-width: 108px;
-  max-width: 108px;
-} /* Acción */
+#claimsHistoryTable td:nth-child(8) { min-width: 220px; width: 220px; }
 
 /* AJUSTE FINO TABLA AVISOS */
 #alertsTable {
@@ -832,6 +825,20 @@ table {
 #alertsTable td:nth-child(7) .mini-btn {
   display: inline-block;
   min-width: 48px;
+}
+
+
+#anulacionesTable,
+#anulacionesHistoryTable {
+  width: max-content;
+  min-width: 100%;
+}
+
+#anulacionesTable th,
+#anulacionesTable td,
+#anulacionesHistoryTable th,
+#anulacionesHistoryTable td {
+  white-space: nowrap;
 }
 
 
@@ -1006,12 +1013,13 @@ table {
     <div class="subtitle">Recepción, clasificación y gestión colaborativa de devoluciones, reenvíos, anulaciones, reclamos y lista maestra de centros.</div>
   </div>
   <div class="tabs">
-      <button class="tab-btn active" data-tab="gestion">Gestión diaria</button>
-      <button class="tab-btn" data-tab="canales">Canales de Ransa</button>
-      <button class="tab-btn" data-tab="reenvios">Reenvíos <span id="reenviosPendingBadge" class="tab-badge" style="display:none;">0</span></button>
-      <button class="tab-btn" data-tab="anulaciones">Anulaciones</button>
-      <button class="tab-btn" data-tab="reclamos">Reclamos Físicos</button>
-      <button class="tab-btn" data-tab="centros">Lista de Centros</button>
+      <button class="tab-btn active" data-tab="gestion">📊 Gestión diaria</button>
+      <button class="tab-btn" data-tab="canales">🚚 Canales de Ransa</button>
+      <button class="tab-btn" data-tab="reenvios">🔁 Reenvíos <span id="reenviosPendingBadge" class="tab-badge" style="display:none;">0</span></button>
+      <button class="tab-btn" data-tab="anulaciones">⛔ Anulaciones</button>
+      <button class="tab-btn" data-tab="reclamos">📦 Reclamos Físicos</button>
+      <button class="tab-btn tab-alert" data-tab="avisos">🚨 Avisos</button>
+      <button class="tab-btn" data-tab="centros">🏢 Lista de Centros</button>
     </div>
   </div>
 
@@ -1021,7 +1029,6 @@ table {
         <div class="metric"><div class="metric-label">Canales</div><div class="metric-value" id="metricCanales">0</div></div>
         <div class="metric"><div class="metric-label">Reenvíos pendientes</div><div class="metric-value" id="metricReenvios">0</div></div>
         <div class="metric"><div class="metric-label">Anulaciones</div><div class="metric-value" id="metricAnulaciones">0</div></div>
-        <div class="metric"><div class="metric-label">Reclamos Físicos</div><div class="metric-value" id="metricReclamos">0</div></div>
       </div>
 
       <div class="section-card">
@@ -1052,9 +1059,9 @@ table {
           </div>
           <div class="btn-row">
             <button class="btn-primary" id="processBtn">Procesar</button>
-<button class="btn-soft-green" id="sendToCanalesBtn">Enviar a Canales</button>
+            <button class="btn-soft-green" id="sendToCanalesBtn">Enviar a Canales</button>
+            <button class="btn-soft-violet" id="completeReenviosAndSendBtn">🔁 Completar desde Reenvíos + Enviar</button>
             <button class="btn-secondary" id="copyProcessBtn">Copiar resultado</button>
-            <button class="btn-secondary" id="exportProcessBtn">Exportar Excel</button>
           </div>
           <div id="processStatus" class="status"></div>
          <div class="table-wrap" style="margin-top:12px;">
@@ -1078,6 +1085,9 @@ table {
   </table>
 </div>
 
+    </section>
+
+    <section class="panel" id="panel-avisos">
       <div class="section-card">
         <div class="section-head">
           <h3 class="section-title">Avisos / Pendientes compartidos</h3>
@@ -1298,10 +1308,23 @@ table {
       <div class="section-card">
         <div class="section-head">
           <h3 class="section-title">Anulaciones</h3>
-          <span class="pill pill-violet">Pendientes e historial visibles para el equipo</span>
+          <span class="pill pill-violet">Control operativo con verificación por Total Control Order III</span>
         </div>
         <div class="section-body">
-          <div class="toolbar">
+          <details class="collapsible" id="tc3Details">
+            <summary>Panel de verificación TC III <span class="pill pill-gray">plegable</span></summary>
+            <div class="collapsible-content">
+              <label for="tc3Input">Pega aquí el Total Control Order III</label>
+              <textarea id="tc3Input" placeholder="Pega el reporte TC III. Se comparará la columna A (orden) contra las órdenes de anulaciones."></textarea>
+              <div class="btn-row">
+                <button class="btn-primary" id="verifyTc3Btn">Verificar anulaciones</button>
+                <button class="btn-secondary" id="clearTc3Btn">Limpiar TC III</button>
+              </div>
+              <div class="hint">Regla: si la orden ya no aparece en el TC III, queda verificada como <strong>Anulada</strong>. Si aún aparece, queda como <strong>No anulada</strong>.</div>
+            </div>
+          </details>
+
+          <div class="toolbar" style="margin-top:14px;">
             <div class="field small">
               <label for="bulkEstadoSelect">Estado masivo</label>
               <input type="text" id="bulkEstadoSelect" list="estadoAnulacionList" placeholder="Ej: Pendiente de anular" />
@@ -1310,21 +1333,27 @@ table {
               <label>&nbsp;</label>
               <button class="btn-ghost" id="applyEstadoBulkBtn">Aplicar a seleccionados</button>
             </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="copyAnulacionesBtn">Copiar tabla</button>
+            </div>
+            <div class="field small">
+              <label>&nbsp;</label>
+              <button class="btn-secondary" id="exportAnulacionesBtn">Exportar Excel</button>
+            </div>
           </div>
           <div class="btn-row">
             <button class="btn-ghost" id="viewAnulacionesPendingBtn" type="button">Pendientes</button>
             <button class="btn-soft-violet" id="viewAnulacionesHistoryBtn" type="button">Historial</button>
-            <button class="btn-secondary" id="copyAnulacionesBtn">Copiar tabla</button>
-            <button class="btn-secondary" id="exportAnulacionesBtn">Exportar Excel</button>
           </div>
           <div id="anulacionesStatus" class="status"></div>
           <div class="table-tools">
             <div class="field search-input">
               <label for="anulacionesSearch">Buscar en Anulaciones</label>
-              <input type="text" id="anulacionesSearch" placeholder="Orden, código, nombre, estado, comentario..." />
+              <input type="text" id="anulacionesSearch" placeholder="Orden, código, nombre, estado, comentario, verificación..." />
             </div>
           </div>
-          <div class="table-wrap" style="margin-top:12px;">
+          <div class="table-wrap" id="anulacionesPendingWrap" style="margin-top:12px;">
             <table id="anulacionesTable">
               <thead>
                 <tr>
@@ -1341,7 +1370,30 @@ table {
                   <th>Canales</th>
                   <th>Estado</th>
                   <th>Fecha de anulación</th>
+                  <th>Verificación</th>
                   <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="table-wrap" id="anulacionesHistoryWrap" style="margin-top:12px; display:none;">
+            <table id="anulacionesHistoryTable">
+              <thead>
+                <tr>
+                  <th>Guía</th>
+                  <th>Orden</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Punto de envío</th>
+                  <th>Courier</th>
+                  <th>Fecha de despacho</th>
+                  <th>Comentario</th>
+                  <th>Canales</th>
+                  <th>Estado</th>
+                  <th>Fecha de anulación</th>
+                  <th>Verificación</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -1417,8 +1469,8 @@ table {
                   <th>Producto</th>
                   <th>Unidad</th>
                   <th>Estado</th>
-                  <th>Gestión</th>
                   <th>Comentario</th>
+                  <th>Gestión</th>
                   <th>Acción</th>
                 </tr>
               </thead>
@@ -1435,8 +1487,8 @@ table {
                   <th>Producto</th>
                   <th>Unidad</th>
                   <th>Estado</th>
-                  <th>Gestión</th>
                   <th>Comentario</th>
+                  <th>Gestión</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -1619,7 +1671,6 @@ table {
       centros: [],
 processRows: [],
 processTSV: '',
-processAlreadySent: false,
       
       selectedCanales: new Set(),
       selectedAnulaciones: new Set(),
@@ -1635,6 +1686,7 @@ processAlreadySent: false,
         reenvios: document.getElementById('panel-reenvios'),
         anulaciones: document.getElementById('panel-anulaciones'),
         reclamos: document.getElementById('panel-reclamos'),
+        avisos: document.getElementById('panel-avisos'),
         centros: document.getElementById('panel-centros')
       },
 
@@ -1642,7 +1694,6 @@ processAlreadySent: false,
       metricCanales: document.getElementById('metricCanales'),
       metricReenvios: document.getElementById('metricReenvios'),
       metricAnulaciones: document.getElementById('metricAnulaciones'),
-      metricReclamos: document.getElementById('metricReclamos'),
       reenviosPendingBadge: document.getElementById('reenviosPendingBadge'),
 
       guidesInput: document.getElementById('guidesInput'),
@@ -1652,6 +1703,7 @@ processStatus: document.getElementById('processStatus'),
 guidesStatus: document.getElementById('guidesStatus'),
 dataStatus: document.getElementById('dataStatus'),
 sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
+completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'),
 
       alertGuide: document.getElementById('alertGuide'),
       alertOrder: document.getElementById('alertOrder'),
@@ -1687,10 +1739,13 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       manualReenvioComentario: document.getElementById('manualReenvioComentario'),
 
       anulacionesTableBody: document.querySelector('#anulacionesTable tbody'),
+      anulacionesHistoryWrap: document.getElementById('anulacionesHistoryWrap'),
+      anulacionesHistoryTableBody: document.querySelector('#anulacionesHistoryTable tbody'),
       anulacionesStatus: document.getElementById('anulacionesStatus'),
       anulacionesSearch: document.getElementById('anulacionesSearch'),
       selectAllAnulaciones: document.getElementById('selectAllAnulaciones'),
       bulkEstadoSelect: document.getElementById('bulkEstadoSelect'),
+      tc3Input: document.getElementById('tc3Input'),
 
       claimDate: document.getElementById('claimDate'),
       claimSocio: document.getElementById('claimSocio'),
@@ -1762,7 +1817,27 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     }
 
     function isClaimProcessed(item = {}) {
-      return normalizeText(item.gestion || '').includes(normalizeText('PROCESADO PASA A RETORNO RANSA'));
+      return !!(item.comentario || '').toString().trim();
+    }
+
+    function isAnulacionProcessed(item = {}) {
+      return !!(item.comentario || '').toString().trim();
+    }
+
+    function setAnulacionesViewButtons() {
+      if (state.anulacionesView === 'pendientes') {
+        viewAnulacionesPendingBtn.classList.add('btn-primary');
+        viewAnulacionesPendingBtn.classList.remove('btn-ghost');
+        viewAnulacionesHistoryBtn.classList.add('btn-soft-violet');
+        viewAnulacionesHistoryBtn.classList.remove('btn-primary');
+        el.anulacionesHistoryWrap.style.display = 'none';
+      } else {
+        viewAnulacionesHistoryBtn.classList.add('btn-primary');
+        viewAnulacionesHistoryBtn.classList.remove('btn-soft-violet');
+        viewAnulacionesPendingBtn.classList.add('btn-ghost');
+        viewAnulacionesPendingBtn.classList.remove('btn-primary');
+        el.anulacionesHistoryWrap.style.display = '';
+      }
     }
 
     function setClaimsViewButtons() {
@@ -1778,25 +1853,6 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         viewClaimsPendingBtn.classList.add('btn-ghost');
         viewClaimsPendingBtn.classList.remove('btn-primary');
         el.claimsHistoryWrap.style.display = '';
-      }
-    }
-
-
-    function isAnulacionProcessed(item = {}) {
-      return !!normalizeText(item.estado || '');
-    }
-
-    function setAnulacionesViewButtons() {
-      if (state.anulacionesView === 'pendientes') {
-        viewAnulacionesPendingBtn.classList.add('btn-primary');
-        viewAnulacionesPendingBtn.classList.remove('btn-ghost');
-        viewAnulacionesHistoryBtn.classList.add('btn-soft-violet');
-        viewAnulacionesHistoryBtn.classList.remove('btn-primary');
-      } else {
-        viewAnulacionesHistoryBtn.classList.add('btn-primary');
-        viewAnulacionesHistoryBtn.classList.remove('btn-soft-violet');
-        viewAnulacionesPendingBtn.classList.add('btn-ghost');
-        viewAnulacionesPendingBtn.classList.remove('btn-primary');
       }
     }
 
@@ -1898,14 +1954,12 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
     viewAnulacionesPendingBtn.addEventListener('click', () => {
       state.anulacionesView = 'pendientes';
-      state.selectedAnulaciones.clear();
       setAnulacionesViewButtons();
       renderAnulacionesTable();
     });
 
     viewAnulacionesHistoryBtn.addEventListener('click', () => {
       state.anulacionesView = 'historial';
-      state.selectedAnulaciones.clear();
       setAnulacionesViewButtons();
       renderAnulacionesTable();
     });
@@ -2062,11 +2116,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       el.metricAvisos.textContent = state.alerts.filter(item => normalizeText(item.estadoAviso) !== 'PROCESADO').length;
       el.metricCanales.textContent = state.canales.length;
       const rePending = state.reenvios.filter(r => !normalizeText(r.guiaNueva)).length;
-      const anulacionesPendientes = state.anulaciones.filter(item => !isAnulacionProcessed(item)).length;
-      const reclamosPendientes = state.reclamos.filter(item => !isClaimProcessed(item)).length;
       el.metricReenvios.textContent = rePending;
-      el.metricAnulaciones.textContent = anulacionesPendientes;
-      el.metricReclamos.textContent = reclamosPendientes;
+      el.metricAnulaciones.textContent = state.anulaciones.length;
       if (rePending > 0) {
         el.reenviosPendingBadge.style.display = 'inline-flex';
         el.reenviosPendingBadge.textContent = rePending;
@@ -2122,10 +2173,13 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       });
 
             state.processRows = [];
-      state.processAlreadySent = false;
       el.processTableBody.innerHTML = '';
       el.sendToCanalesBtn.disabled = false;
       el.sendToCanalesBtn.textContent = 'Enviar a Canales';
+      if (el.completeReenviosAndSendBtn) {
+        el.completeReenviosAndSendBtn.disabled = false;
+        el.completeReenviosAndSendBtn.textContent = '🔁 Completar desde Reenvíos + Enviar';
+      }
       let foundAlerts = 0;
             let duplicateCanales = 0;
 
@@ -2216,37 +2270,93 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         el.processTableBody.appendChild(tr);
       });
     }
-        async function sendProcessedRowsToCanales() {
+        function isProcessRowComplete(row) {
+      return Boolean(
+        (normalizeText(row.guia) || normalizeText(row.orden)) &&
+        normalizeText(row.codigo) &&
+        normalizeText(row.nombre) &&
+        normalizeText(row.celular) &&
+        normalizeText(row.puntoEnvio) &&
+        normalizeText(row.courier) &&
+        normalizeText(row.fechaDespacho)
+      );
+    }
+
+    function fillMissingProcessRowsFromReenvios() {
+      let completed = 0;
+
+      state.processRows.forEach(row => {
+        if (isProcessRowComplete(row)) return;
+
+        const orderKey = normalizeNumericLike(row.orden);
+        const guideKey = normalizeNumericLike(row.guia);
+
+        const match = state.reenvios.find(item => {
+          const sameOrder = orderKey && normalizeNumericLike(item.orden) === orderKey;
+          const sameOriginalGuide = guideKey && normalizeNumericLike(item.guia) === guideKey;
+          const sameNewGuide = guideKey && normalizeNumericLike(item.guiaNueva) === guideKey;
+          return sameOrder || sameOriginalGuide || sameNewGuide;
+        });
+
+        if (!match) return;
+
+        const before = isProcessRowComplete(row);
+
+        row.guia = row.guia || match.guiaNueva || match.guia || '';
+        row.orden = row.orden || match.orden || '';
+        row.codigo = row.codigo || match.codigo || '';
+        row.nombre = row.nombre || match.nombre || '';
+        row.celular = row.celular || match.celular || '';
+        row.puntoEnvio = row.puntoEnvio || match.puntoEnvioActual || match.puntoEnvioOriginal || '';
+        row.courier = row.courier || match.courier || '';
+        row.fechaDespacho = row.fechaDespacho || match.fechaDespacho || '';
+        row.comentario = row.comentario && !/no encontrado en la data/i.test(row.comentario)
+          ? row.comentario
+          : `Autocompletado desde Reenvíos${match.guiaNueva ? ' | Guía nueva: ' + match.guiaNueva : ''}`;
+
+        row.notFound = !isProcessRowComplete(row);
+
+        if (!before && isProcessRowComplete(row)) completed++;
+      });
+
+      renderProcessTable();
+      return completed;
+    }
+
+    async function sendProcessedRowsToCanales() {
       if (!state.processRows.length) {
         setStatus(el.processStatus, 'Primero debes procesar registros.', 'error');
         return;
       }
 
-      if (state.processAlreadySent) {
-        setStatus(el.processStatus, 'Estos registros ya fueron enviados a Canales. Procesa nuevos datos antes de reenviar.', 'error');
+      el.sendToCanalesBtn.disabled = true;
+      if (el.completeReenviosAndSendBtn) el.completeReenviosAndSendBtn.disabled = true;
+      el.sendToCanalesBtn.textContent = 'Enviando...';
+
+      const rowsToSend = state.processRows.filter(isProcessRowComplete);
+      if (!rowsToSend.length) {
+        el.sendToCanalesBtn.disabled = false;
+        if (el.completeReenviosAndSendBtn) {
+          el.completeReenviosAndSendBtn.disabled = false;
+          el.completeReenviosAndSendBtn.textContent = '🔁 Completar desde Reenvíos + Enviar';
+        }
+        el.sendToCanalesBtn.textContent = 'Enviar a Canales';
+        setStatus(el.processStatus, 'No hay filas completas para enviar a Canales. Completa los datos faltantes o usa el botón de Reenvíos.', 'error');
         return;
       }
-
-      el.sendToCanalesBtn.disabled = true;
-      el.sendToCanalesBtn.textContent = 'Enviando...';
 
       const existingKeys = new Set(state.canales.map(canalKey));
       let inserted = 0;
       let duplicates = 0;
       const processedAlertIds = new Set();
+      const sentKeys = new Set();
 
-      (async () => {
-        try {
-          for (const row of state.processRows) {
-            const hasOperationalData =
-              normalizeText(row.guia) ||
-              normalizeText(row.orden) ||
-              normalizeText(row.codigo) ||
-              normalizeText(row.nombre);
+      try {
+        for (const row of rowsToSend) {
+          const key = canalKey(row);
+          const duplicate = existingKeys.has(key);
 
-            if (!hasOperationalData) continue;
-
-            const duplicate = existingKeys.has(canalKey(row));
+          if (!duplicate) {
             const payload = {
               fecha: row.fecha || todayES(),
               guia: row.guia || '',
@@ -2260,7 +2370,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
               aviso: row.aviso || '',
               comentario: row.comentario || '',
               canal: '',
-              duplicate,
+              duplicate: false,
               createdAt: serverTimestamp(),
               createdBy: currentUser() || 'Sistema',
               createdAtDisplay: nowES(),
@@ -2270,37 +2380,81 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
             await addDoc(refs.canales, payload);
             inserted++;
-            if (duplicate) duplicates++;
-            existingKeys.add(canalKey(row));
-            if (row.alertMatchId) processedAlertIds.add(row.alertMatchId);
+            existingKeys.add(key);
+          } else {
+            duplicates++;
           }
 
-          for (const alertId of processedAlertIds) {
-            await updateDoc(doc(db, 'avisos', alertId), {
-              estadoAviso: 'procesado',
-              procesadoEn: nowES(),
-              procesadoPor: currentUser() || 'Sistema',
-              ...buildAuditMeta()
-            });
-          }
-
-          state.processAlreadySent = true;
-          el.sendToCanalesBtn.textContent = 'Ya enviado';
-          el.sendToCanalesBtn.disabled = true;
-
-          let msg = `✅ Envío completado. Registros enviados a Canales: ${inserted}.`;
-          if (duplicates) msg += ` Duplicados detectados: ${duplicates}.`;
-          if (processedAlertIds.size) msg += ` Avisos enviados a historial: ${processedAlertIds.size}.`;
-          setStatus(el.processStatus, msg, 'success');
-          showToast(`Envío a Canales completado por ${currentUser() || 'Sistema'}.`, 'success');
-        } catch (error) {
-          console.error(error);
-          el.sendToCanalesBtn.disabled = false;
-          el.sendToCanalesBtn.textContent = 'Enviar a Canales';
-          setStatus(el.processStatus, 'Ocurrió un error al enviar a Canales.', 'error');
-          showToast('Ocurrió un error al enviar a Canales.', 'error');
+          sentKeys.add(key);
+          if (row.alertMatchId) processedAlertIds.add(row.alertMatchId);
         }
-      })();
+
+        for (const alertId of processedAlertIds) {
+          await updateDoc(doc(db, 'avisos', alertId), {
+            estadoAviso: 'procesado',
+            procesadoEn: nowES(),
+            procesadoPor: currentUser() || 'Sistema',
+            ...buildAuditMeta()
+          });
+        }
+
+        state.processRows = state.processRows.filter(row => !sentKeys.has(canalKey(row)));
+        renderProcessTable();
+
+        el.sendToCanalesBtn.textContent = 'Enviar a Canales';
+        el.sendToCanalesBtn.disabled = false;
+        if (el.completeReenviosAndSendBtn) {
+          el.completeReenviosAndSendBtn.textContent = '🔁 Completar desde Reenvíos + Enviar';
+          el.completeReenviosAndSendBtn.disabled = false;
+        }
+
+        const pendientes = state.processRows.length;
+        let msg = `✅ Envío completado. Registros nuevos enviados a Canales: ${inserted}.`;
+        if (duplicates) msg += ` Ya existían en Canales y se retiraron de la bandeja: ${duplicates}.`;
+        if (processedAlertIds.size) msg += ` Avisos enviados a historial: ${processedAlertIds.size}.`;
+        msg += ` Pendientes por completar: ${pendientes}.`;
+        setStatus(el.processStatus, msg, 'success');
+        showToast(`Envío a Canales completado por ${currentUser() || 'Sistema'}.`, 'success');
+      } catch (error) {
+        console.error(error);
+        el.sendToCanalesBtn.disabled = false;
+        if (el.completeReenviosAndSendBtn) {
+          el.completeReenviosAndSendBtn.disabled = false;
+          el.completeReenviosAndSendBtn.textContent = '🔁 Completar desde Reenvíos + Enviar';
+        }
+        el.sendToCanalesBtn.textContent = 'Enviar a Canales';
+        setStatus(el.processStatus, 'Ocurrió un error al enviar a Canales.', 'error');
+        showToast('Ocurrió un error al enviar a Canales.', 'error');
+      }
+    }
+
+    async function completeFromReenviosAndSend() {
+      if (!state.processRows.length) {
+        setStatus(el.processStatus, 'Primero debes procesar registros.', 'error');
+        return;
+      }
+
+
+      if (el.completeReenviosAndSendBtn) {
+        el.completeReenviosAndSendBtn.disabled = true;
+        el.completeReenviosAndSendBtn.textContent = 'Completando...';
+      }
+
+      const completed = fillMissingProcessRowsFromReenvios();
+      const stillPending = state.processRows.filter(row => !isProcessRowComplete(row)).length;
+
+      setStatus(
+        el.processStatus,
+        `Cruce con Reenvíos completado. Filas autocompletadas: ${completed}. Pendientes manuales: ${stillPending}. Se enviarán solo las filas completas.`,
+        completed ? 'success' : 'error'
+      );
+
+      if (el.completeReenviosAndSendBtn) {
+        el.completeReenviosAndSendBtn.disabled = false;
+        el.completeReenviosAndSendBtn.textContent = '🔁 Completar desde Reenvíos + Enviar';
+      }
+
+      await sendProcessedRowsToCanales();
     }
 
     function rowMatchesSearch(textParts, searchNode) {
@@ -2366,7 +2520,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
           <td>${item.aviso ? `<span class="badge badge-amber">${escapeHtml(item.aviso)}</span>` : ''}</td>
           <td>
             ${item.duplicate ? '<div style="margin-bottom:6px;"><span class="badge badge-red">Duplicado detectado</span></div>' : ''}
-            <input class="mini-input canal-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}">
+            <input class="mini-input canal-comment" data-id="${item.id}" title="${escapeHtml(auditTitle(item) || item.comentario || '')}" value="${escapeHtml(item.comentario || '')}">
           </td>
           <td>
             <select class="mini-select canal-select" data-id="${item.id}">
@@ -2494,61 +2648,98 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       updateMetrics();
     }
 
+    function verificacionBadge(value) {
+      const norm = normalizeText(value);
+      if (norm === 'ANULADA') return '<span class="badge badge-green">Anulada</span>';
+      if (norm === 'NO ANULADA') return '<span class="badge badge-red">No anulada</span>';
+      return '<span class="badge badge-gray">Sin verificar</span>';
+    }
+
     function renderAnulacionesTable() {
       el.anulacionesTableBody.innerHTML = '';
+      el.anulacionesHistoryTableBody.innerHTML = '';
 
-      let data = state.anulaciones.filter(item =>
-        state.anulacionesView === 'pendientes' ? !isAnulacionProcessed(item) : isAnulacionProcessed(item)
-      );
-
-      if (!data.length) {
-        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">${
-          state.anulacionesView === 'pendientes'
-            ? 'No hay anulaciones pendientes.'
-            : 'No hay historial de anulaciones.'
-        }</td></tr>`;
+      if (!state.anulaciones.length) {
+        if (state.anulacionesView === 'pendientes') {
+          el.anulacionesTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
+        } else {
+          el.anulacionesHistoryTableBody.innerHTML = `<tr><td colspan="13" class="empty-cell">No hay historial de anulaciones.</td></tr>`;
+        }
         updateMetrics();
         return;
       }
 
-      data = data.filter(item =>
-        rowMatchesSearch([
-          item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio,
-          item.courier, item.fechaDespacho, item.comentario, item.canal, item.estado,
-          item.fechaAnulacion, item.createdBy, item.lastUpdatedBy
-        ], el.anulacionesSearch)
-      );
-
-      data.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.className = courierClass(item.courier);
-        tr.innerHTML = `
-          <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
-          ${tdWithTitle(item.guia || '')}
-          ${tdWithTitle(item.orden || '')}
-          ${tdWithTitle(item.codigo || '')}
-          ${tdWithTitle(item.nombre || '')}
-          ${tdWithTitle(item.celular || '')}
-          ${tdWithTitle(item.puntoEnvio || '')}
-          ${tdWithTitle(item.courier || '')}
-          ${tdWithTitle(item.fechaDespacho || '')}
-          <td><input class="mini-input anulacion-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${inputValueWithTitle(item.comentario || '')}"></td>
-          ${tdWithTitle(item.canal || '')}
-          <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" title="${escapeHtml(item.estado || '')}" value="${inputValueWithTitle(item.estado || '')}"></td>
-          ${tdWithTitle(item.fechaAnulacion || '')}
-          <td>
-            <div class="actions">
-              ${auditEmoji(item)}
-              <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
-              <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}" title="Eliminar anulación">Del</button>
-            </div>
-          </td>
-        `;
-        el.anulacionesTableBody.appendChild(tr);
+      let data = state.anulaciones.filter(item => {
+        const processed = isAnulacionProcessed(item);
+        return state.anulacionesView === 'pendientes' ? !processed : processed;
       });
 
-      if (!el.anulacionesTableBody.children.length) {
-        el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones para esa búsqueda.</td></tr>`;
+      data = data.filter(item =>
+        rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.comentario, item.canal, item.estado, item.fechaAnulacion, item.verificacion, item.createdBy, item.lastUpdatedBy], el.anulacionesSearch)
+      );
+
+      if (state.anulacionesView === 'pendientes') {
+        if (!data.length) {
+          el.anulacionesTableBody.innerHTML = `<tr><td colspan="15" class="empty-cell">No hay anulaciones pendientes para esa búsqueda.</td></tr>`;
+          updateMetrics();
+          return;
+        }
+
+        data.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = courierClass(item.courier);
+          tr.innerHTML = `
+            <td><input type="checkbox" class="anulacion-check" data-id="${item.id}" ${state.selectedAnulaciones.has(item.id) ? 'checked' : ''}></td>
+            ${tdWithTitle(item.guia || '')}
+            ${tdWithTitle(item.orden || '')}
+            ${tdWithTitle(item.codigo || '')}
+            ${tdWithTitle(item.nombre || '')}
+            ${tdWithTitle(item.celular || '')}
+            ${tdWithTitle(item.puntoEnvio || '')}
+            ${tdWithTitle(item.courier || '')}
+            ${tdWithTitle(item.fechaDespacho || '')}
+            <td><input class="mini-input anulacion-comment" data-id="${item.id}" title="${escapeHtml([item.comentario || '', auditTitle(item)].filter(Boolean).join(' | '))}" value="${inputValueWithTitle(item.comentario || '')}"></td>
+            ${tdWithTitle(item.canal || '')}
+            <td><input class="mini-input anulacion-estado" data-id="${item.id}" list="estadoAnulacionList" title="${escapeHtml(item.estado || '')}" value="${inputValueWithTitle(item.estado || '')}"></td>
+            ${tdWithTitle(item.fechaAnulacion || '')}
+            <td title="${escapeHtml(item.verificacion || '')}">${verificacionBadge(item.verificacion || '')}</td>
+            <td>
+              <div class="actions">
+                ${auditEmoji(item)}
+                <button class="btn-ghost mini-btn back-canales" data-id="${item.id}" title="Regresar a Canales">↩️</button>
+                <button class="btn-danger mini-btn delete-anulacion" data-id="${item.id}" title="Eliminar anulación">Del</button>
+              </div>
+            </td>
+          `;
+          el.anulacionesTableBody.appendChild(tr);
+        });
+      } else {
+        if (!data.length) {
+          el.anulacionesHistoryTableBody.innerHTML = `<tr><td colspan="13" class="empty-cell">No hay historial de anulaciones para esa búsqueda.</td></tr>`;
+          updateMetrics();
+          return;
+        }
+
+        data.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = courierClass(item.courier);
+          tr.innerHTML = `
+            ${tdWithTitle(item.guia || '', auditTitle(item) || '')}
+            ${tdWithTitle(item.orden || '')}
+            ${tdWithTitle(item.codigo || '')}
+            ${tdWithTitle(item.nombre || '')}
+            ${tdWithTitle(item.celular || '')}
+            ${tdWithTitle(item.puntoEnvio || '')}
+            ${tdWithTitle(item.courier || '')}
+            ${tdWithTitle(item.fechaDespacho || '')}
+            ${tdWithTitle(item.comentario || '')}
+            ${tdWithTitle(item.canal || '')}
+            ${tdWithTitle(item.estado || '')}
+            ${tdWithTitle(item.fechaAnulacion || '')}
+            <td title="${escapeHtml(item.verificacion || '')}">${verificacionBadge(item.verificacion || '')}</td>
+          `;
+          el.anulacionesHistoryTableBody.appendChild(tr);
+        });
       }
       updateMetrics();
     }
@@ -2556,7 +2747,6 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
     function renderClaimsTable() {
       el.claimsTableBody.innerHTML = '';
       el.claimsHistoryTableBody.innerHTML = '';
-      updateMetrics();
 
       if (!state.reclamos.length) {
         if (state.claimsView === 'pendientes') {
@@ -2573,7 +2763,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       });
 
       data = data.filter(item =>
-        rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.gestion, item.comentario], el.claimsSearch)
+        rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.comentario, item.gestion], el.claimsSearch)
       );
 
       if (state.claimsView === 'pendientes') {
@@ -2591,8 +2781,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             <td><input class="mini-input claim-producto" data-id="${item.id}" title="${escapeHtml(item.producto || '')}" value="${escapeHtml(item.producto || '')}"></td>
             <td><input class="mini-input claim-unidad" data-id="${item.id}" title="${escapeHtml(item.unidad || '')}" value="${escapeHtml(item.unidad || '')}"></td>
             <td><input class="mini-input claim-estado" data-id="${item.id}" list="estadoReclamosList" title="${escapeHtml(item.estado || '')}" value="${escapeHtml(item.estado || '')}"></td>
-            <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" title="${escapeHtml(item.gestion || '')}" value="${escapeHtml(item.gestion || '')}"></td>
             <td><input class="mini-input claim-comentario" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}"></td>
+            <td><input class="mini-input claim-gestion" data-id="${item.id}" list="gestionReclamosList" title="${escapeHtml(item.gestion || '')}" value="${escapeHtml(item.gestion || '')}"></td>
             <td><div class="actions" style="justify-content:center;">${auditEmoji(item)}<button class="btn-danger mini-btn delete-claim" data-id="${item.id}">Eliminar</button></div></td>
           `;
           el.claimsTableBody.appendChild(tr);
@@ -2612,8 +2802,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             ${tdWithTitle(item.producto || '')}
             ${tdWithTitle(item.unidad || '')}
             ${tdWithTitle(item.estado || '')}
-            ${tdWithTitle(item.gestion || '')}
             ${tdWithTitle(item.comentario || '')}
+            ${tdWithTitle(item.gestion || '')}
           `;
           el.claimsHistoryTableBody.appendChild(tr);
         });
@@ -2829,6 +3019,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
             canal: item.canal || '',
             estado: '',
             fechaAnulacion: '',
+            verificacion: '',
             createdAt: serverTimestamp(),
             createdBy: currentUser() || 'Sistema',
             createdAtDisplay: nowES(),
@@ -2842,6 +3033,34 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       setStatus(el.canalesStatus, `${ids.length} registro(s) movidos a ${collectionName}.`, 'success');
     }
 
+    function parseTc3Orders(text) {
+      const lines = (text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const orders = new Set();
+      for (const line of lines) {
+        const delimiter = detectDelimiter(line);
+        const cells = line.split(delimiter).map(c => c.trim()).filter(Boolean);
+        if (!cells.length) continue;
+        const order = normalizeNumericLike(cells[0]);
+        if (/^\d+$/.test(order)) orders.add(order);
+      }
+      return orders;
+    }
+
+    async function verifyAnulacionesWithTc3() {
+      const ordersSet = parseTc3Orders(el.tc3Input.value);
+      if (!ordersSet.size) {
+        setStatus(el.anulacionesStatus, 'No se detectaron órdenes válidas en el TC III pegado.', 'error');
+        return;
+      }
+      saveLocal(STORAGE_KEYS.tc3, el.tc3Input.value);
+      const updates = state.anulaciones.map(item => {
+        const order = normalizeNumericLike(item.orden);
+        const verificacion = !order ? 'Sin verificar' : ordersSet.has(order) ? 'No anulada' : 'Anulada';
+        return updateDoc(doc(db, 'anulaciones', item.id), { verificacion });
+      });
+      await Promise.all(updates);
+      setStatus(el.anulacionesStatus, `Verificación ejecutada sobre ${state.anulaciones.length} registro(s).`, 'success');
+    }
 
     function initTabs() {
       el.tabs.forEach(btn => {
@@ -2899,8 +3118,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
 
             document.getElementById('processBtn').addEventListener('click', processDailyFlow);
       el.sendToCanalesBtn.addEventListener('click', sendProcessedRowsToCanales);
-      document.getElementById('copyProcessBtn').addEventListener('click', () => copyText(state.processTSV, 'Resultado copiado para Excel.'));
-      document.getElementById('exportProcessBtn').addEventListener('click', () => exportTableToExcel('processTable', 'Gestion diaria', 'gestion_diaria.xlsx'));
+      if (el.completeReenviosAndSendBtn) el.completeReenviosAndSendBtn.addEventListener('click', completeFromReenviosAndSend);
+      document.getElementById('copyProcessBtn').addEventListener('click', () => copyText(state.processTSV || tableToTSV(document.getElementById('processTable')), 'Resultado copiado.'));
 
       document.getElementById('saveAlertBtn').addEventListener('click', async () => {
         const payload = {
@@ -3063,6 +3282,14 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         showToast('Reenvío eliminado.', 'success');
       });
 
+      document.getElementById('verifyTc3Btn').addEventListener('click', verifyAnulacionesWithTc3);
+      document.getElementById('clearTc3Btn').addEventListener('click', () => {
+        el.tc3Input.value = '';
+        localStorage.removeItem(STORAGE_KEYS.tc3);
+        setStatus(el.anulacionesStatus, 'TC III limpiado localmente.', 'success');
+      });
+      el.tc3Input.addEventListener('input', () => saveLocal(STORAGE_KEYS.tc3, el.tc3Input.value));
+
       document.getElementById('applyEstadoBulkBtn').addEventListener('click', async () => {
         const ids = [...state.selectedAnulaciones];
         if (!ids.length) return alert('Selecciona al menos una fila.');
@@ -3072,22 +3299,24 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         setStatus(el.anulacionesStatus, `Estado aplicado a ${ids.length} fila(s).`, 'success');
       });
 
-      document.getElementById('copyAnulacionesBtn').addEventListener('click', () => copyText(tableToTSV(document.getElementById('anulacionesTable')), 'Anulaciones copiado.'));
-      document.getElementById('exportAnulacionesBtn').addEventListener('click', () => exportTableToExcel('anulacionesTable', 'Anulaciones', 'anulaciones.xlsx'));
+      document.getElementById('copyAnulacionesBtn').addEventListener('click', () => {
+        const tableId = state.anulacionesView === 'pendientes' ? 'anulacionesTable' : 'anulacionesHistoryTable';
+        const label = state.anulacionesView === 'pendientes' ? 'Anulaciones pendientes copiado.' : 'Historial de anulaciones copiado.';
+        copyText(tableToTSV(document.getElementById(tableId)), label);
+      });
+      document.getElementById('exportAnulacionesBtn').addEventListener('click', () => {
+        const tableId = state.anulacionesView === 'pendientes' ? 'anulacionesTable' : 'anulacionesHistoryTable';
+        const filename = state.anulacionesView === 'pendientes' ? 'anulaciones_pendientes.xlsx' : 'historial_anulaciones.xlsx';
+        const sheetName = state.anulacionesView === 'pendientes' ? 'Anulaciones pendientes' : 'Historial anulaciones';
+        exportTableToExcel(tableId, sheetName, filename);
+      });
 
       el.selectAllAnulaciones.addEventListener('change', e => {
-        if (e.target.checked) {
-          state.anulaciones
-            .filter(item => state.anulacionesView === 'pendientes' ? !isAnulacionProcessed(item) : isAnulacionProcessed(item))
-            .filter(item => rowMatchesSearch([
-              item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio,
-              item.courier, item.fechaDespacho, item.comentario, item.canal, item.estado,
-              item.fechaAnulacion, item.createdBy, item.lastUpdatedBy
-            ], el.anulacionesSearch))
-            .forEach(item => state.selectedAnulaciones.add(item.id));
-        } else {
-          state.selectedAnulaciones.clear();
-        }
+        const visibles = state.anulaciones.filter(item => !isAnulacionProcessed(item)).filter(item =>
+          rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.comentario, item.canal, item.estado, item.fechaAnulacion, item.verificacion, item.createdBy, item.lastUpdatedBy], el.anulacionesSearch)
+        );
+        if (e.target.checked) visibles.forEach(item => state.selectedAnulaciones.add(item.id));
+        else state.selectedAnulaciones.clear();
         renderAnulacionesTable();
       });
 
@@ -3100,6 +3329,8 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
         }
         const comment = e.target.closest('.anulacion-comment');
         if (comment) { await updateDoc(doc(db, 'anulaciones', comment.dataset.id), buildAuditMeta({ comentario: comment.value })); return; }
+        const cruce = e.target.closest('.anulacion-cruce');
+        if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), buildAuditMeta({ cruceAmpliacion: cruce.value })); return; }
         const estado = e.target.closest('.anulacion-estado');
         if (estado) {
           const value = estado.value.trim();
@@ -3275,6 +3506,7 @@ sendToCanalesBtn: document.getElementById('sendToCanalesBtn'),
       attachSnapshots();
       el.guidesInput.value = loadLocal(STORAGE_KEYS.guides);
       el.dataInput.value = loadLocal(STORAGE_KEYS.data);
+      el.tc3Input.value = loadLocal(STORAGE_KEYS.tc3);
       el.claimDate.value = isoToday();
       if (el.manualReenvioFecha) el.manualReenvioFecha.value = todayES();
       if (el.guidesInput.value) setStatus(el.guidesStatus, 'Se recuperaron guías guardadas localmente.', 'success');
