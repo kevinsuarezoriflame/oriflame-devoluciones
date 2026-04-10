@@ -2512,7 +2512,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           <td>${item.aviso ? `<span class="badge badge-amber">${escapeHtml(item.aviso)}</span>` : ''}</td>
           <td>
             ${item.duplicate ? '<div style="margin-bottom:6px;"><span class="badge badge-red">Duplicado detectado</span></div>' : ''}
-            <input class="mini-input canal-comment" data-id="${item.id}" title="${escapeHtml(auditTitle(item) || item.comentario || '')}" value="${escapeHtml(item.comentario || '')}">
+            <input class="mini-input canal-comment" data-id="${item.id}" title="${escapeHtml(item.comentario || '')}" value="${escapeHtml(item.comentario || '')}">
           </td>
           <td>
             <select class="mini-select canal-select" data-id="${item.id}">
