@@ -1875,16 +1875,9 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
     }
 
     function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      el.toastWrap.appendChild(toast);
-      requestAnimationFrame(() => toast.classList.add('show'));
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 180);
-      }, 2600);
-    }
+  // 🔕 DESACTIVADO: evitar spam de notificaciones en Canales
+  return;
+}
 
     function currentUser() {
       return state.activeUser || loadLocal(STORAGE_KEYS.activeUser) || '';
