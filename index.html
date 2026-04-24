@@ -546,6 +546,32 @@ table {
   white-space: nowrap;
 }
 
+
+
+/* ORDENAMIENTO POR DOBLE CLICK - CANALES */
+#canalesTable thead th.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+}
+
+#canalesTable thead th.sortable-th::after {
+  content: ' ⇅';
+  font-size: .72rem;
+  opacity: .75;
+}
+
+#canalesTable thead th.sortable-th.sort-asc::after {
+  content: ' ↑';
+  opacity: 1;
+}
+
+#canalesTable thead th.sortable-th.sort-desc::after {
+  content: ' ↓';
+  opacity: 1;
+}
+
+
     tbody td {
   border: 1px solid #e3e8e0;
   padding: 4px 6px;
@@ -1648,6 +1674,7 @@ table {
     const state = {
       alerts: [],
       canales: [],
+      canalesSort: { field: '', direction: 'asc' },
       reenvios: [],
       reenviosView: 'pendientes',
       alertsView: 'pendientes',
@@ -2487,14 +2514,97 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       updateMetrics();
     }
 
+
+
+    const CANALES_SORT_FIELDS = {
+      1: null,
+      2: 'fecha',
+      3: 'guia',
+      4: 'orden',
+      5: 'codigo',
+      6: 'nombre',
+      7: 'celular',
+      8: 'puntoEnvio',
+      9: 'courier',
+      10: 'fechaDespacho',
+      11: 'aviso',
+      12: 'comentario',
+      13: 'canal',
+      14: null
+    };
+
+    function parseDateForSort(value) {
+      const text = (value || '').toString().trim();
+      const match = text.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+      if (!match) return null;
+      const day = Number(match[1]);
+      const month = Number(match[2]) - 1;
+      const year = Number(match[3].length === 2 ? `20${match[3]}` : match[3]);
+      const time = new Date(year, month, day).getTime();
+      return Number.isNaN(time) ? null : time;
+    }
+
+    function canalesSortValue(item, field) {
+      const raw = (item?.[field] ?? '').toString().trim();
+      const dateValue = field.toLowerCase().includes('fecha') ? parseDateForSort(raw) : null;
+      if (dateValue !== null) return dateValue;
+      const numeric = raw.replace(/,/g, '').match(/^\d+(\.\d+)?$/) ? Number(raw.replace(/,/g, '')) : null;
+      if (numeric !== null) return numeric;
+      return normalizeText(raw);
+    }
+
+    function getSortedCanalesRows() {
+      const { field, direction } = state.canalesSort || {};
+      const rows = [...state.canales];
+      if (!field) return rows;
+      const factor = direction === 'desc' ? -1 : 1;
+      return rows.sort((a, b) => {
+        const av = canalesSortValue(a, field);
+        const bv = canalesSortValue(b, field);
+        if (av < bv) return -1 * factor;
+        if (av > bv) return 1 * factor;
+        return 0;
+      });
+    }
+
+    function updateCanalesSortHeaders() {
+      document.querySelectorAll('#canalesTable thead th').forEach((th, idx) => {
+        const field = CANALES_SORT_FIELDS[idx + 1];
+        th.classList.toggle('sortable-th', !!field);
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (field && state.canalesSort.field === field) {
+          th.classList.add(state.canalesSort.direction === 'desc' ? 'sort-desc' : 'sort-asc');
+        }
+      });
+    }
+
+    function initCanalesSorting() {
+      document.querySelectorAll('#canalesTable thead th').forEach((th, idx) => {
+        const field = CANALES_SORT_FIELDS[idx + 1];
+        if (!field) return;
+        th.title = 'Doble click para ordenar ascendente / descendente';
+        th.addEventListener('dblclick', () => {
+          const current = state.canalesSort || { field: '', direction: 'asc' };
+          state.canalesSort = {
+            field,
+            direction: current.field === field && current.direction === 'asc' ? 'desc' : 'asc'
+          };
+          renderCanalesTable();
+        });
+      });
+      updateCanalesSortHeaders();
+    }
+
+
     function renderCanalesTable() {
+      updateCanalesSortHeaders();
       el.canalesTableBody.innerHTML = '';
       if (!state.canales.length) {
         el.canalesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay registros en Canales.</td></tr>`;
         updateMetrics();
         return;
       }
-      state.canales.forEach(item => {
+      getSortedCanalesRows().forEach(item => {
         if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.aviso, item.comentario, item.canal, item.createdBy, item.lastUpdatedBy], el.canalesSearch)) return;
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
@@ -3450,6 +3560,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       setCanalOptionLists();
       initTabs();
       initLoginUi();
+      initCanalesSorting();
       bindStaticEvents();
       attachSnapshots();
       el.guidesInput.value = loadLocal(STORAGE_KEYS.guides);
