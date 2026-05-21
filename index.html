@@ -986,6 +986,115 @@ table {
       margin-left: auto;
     }
 
+
+
+    /* BOTONES Y MODAL DE MÉTRICAS OPERATIVAS */
+    .kpi-icon-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 6px;
+    }
+    .kpi-icon-btn {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 1px solid #d5e4cf;
+      box-shadow: 0 3px 8px rgba(37, 55, 42, .06);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .kpi-icon-btn:hover { background: #eef7ed; transform: translateY(-1px); }
+
+    .ops-modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(24, 36, 25, .48);
+      z-index: 9997;
+      padding: 18px;
+    }
+    .ops-modal-overlay.active { display: flex; }
+    .ops-modal {
+      width: min(920px, 96vw);
+      max-height: 88vh;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 24px 55px rgba(20, 34, 22, .22);
+    }
+    .ops-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f6fbf4 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .ops-modal-title { margin: 0; color: #2e6731; font-size: 1.05rem; font-weight: 900; }
+    .ops-modal-body { padding: 16px; overflow: auto; max-height: calc(88vh - 64px); }
+    .ops-chart-filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfdfb;
+    }
+    .ops-chart-box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+    }
+    #opsMetricCanvas { width: 100%; height: 360px; display: block; }
+    .ops-chart-summary {
+      margin-top: 10px;
+      font-size: .86rem;
+      color: var(--muted);
+    }
+    .metric-table-actions { display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; }
+
+    @keyframes opsPulse {
+      0% { box-shadow: inset 0 0 0 0 rgba(211,86,86,.0), 0 0 0 0 rgba(211,86,86,.28); }
+      50% { box-shadow: inset 0 0 0 999px rgba(255,232,122,.38), 0 0 0 5px rgba(211,86,86,.12); }
+      100% { box-shadow: inset 0 0 0 0 rgba(211,86,86,.0), 0 0 0 0 rgba(211,86,86,.28); }
+    }
+    .alert-pulse-cell {
+      position: relative;
+      animation: opsPulse 1.25s ease-in-out infinite;
+      font-weight: 900;
+      color: #7a3c00;
+      border-color: #e4b74d !important;
+    }
+    .alert-pulse-cell::after {
+      content: '🚨';
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: .75rem;
+    }
+    .alert-pulse-row td:nth-child(11) .badge,
+    .alert-pulse-row td:nth-child(12) input { animation: opsPulse 1.25s ease-in-out infinite; }
+
+    @media (max-width: 760px) {
+      .ops-chart-filters { grid-template-columns: 1fr; }
+      #opsMetricCanvas { height: 280px; }
+    }
+
     @media (max-width: 1100px) {
       .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
@@ -1599,6 +1708,52 @@ table {
     </section>
   </div>
 
+
+  <div id="opsMetricModal" class="ops-modal-overlay" aria-hidden="true">
+    <div class="ops-modal" role="dialog" aria-modal="true">
+      <div class="ops-modal-head">
+        <h3 id="opsMetricTitle" class="ops-modal-title">Métrica operativa</h3>
+        <button id="opsMetricCloseBtn" class="btn-secondary" type="button">Cerrar</button>
+      </div>
+      <div class="ops-modal-body">
+        <div class="ops-chart-filters">
+          <div>
+            <label for="opsMetricFrom">Desde</label>
+            <input type="date" id="opsMetricFrom" />
+          </div>
+          <div>
+            <label for="opsMetricTo">Hasta</label>
+            <input type="date" id="opsMetricTo" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button id="opsMetricFilterBtn" class="btn-primary" type="button">🔍 Filtrar</button>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button id="opsMetricAllBtn" class="btn-secondary" type="button">🌐 General</button>
+          </div>
+        </div>
+        <div id="opsMetricChartView" class="ops-chart-box">
+          <canvas id="opsMetricCanvas" width="880" height="360"></canvas>
+          <div id="opsMetricSummary" class="ops-chart-summary"></div>
+        </div>
+        <div id="opsMetricTableView" style="display:none;">
+          <div class="metric-table-actions">
+            <button id="opsMetricCopyBtn" class="btn-secondary" type="button">Copiar tabla</button>
+            <button id="opsMetricExportBtn" class="btn-secondary" type="button">Exportar Excel</button>
+          </div>
+          <div class="table-wrap" style="max-height:420px;">
+            <table id="opsMetricTable">
+              <thead><tr><th>Fecha</th><th>Cantidad</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <datalist id="canalesList"></datalist>
   <datalist id="estadoAnulacionList">
     <option value="Pendiente de anular"></option>
@@ -1658,7 +1813,8 @@ table {
       reenvios: collection(db, 'reenvios'),
       anulaciones: collection(db, 'anulaciones'),
       reclamos: collection(db, 'reclamos_procesados'),
-      centros: collection(db, 'lista_centros')
+      centros: collection(db, 'lista_centros'),
+      canalesMetricas: collection(db, 'canales_metricas')
     };
 
     const STORAGE_KEYS = {
@@ -1684,6 +1840,8 @@ table {
       anulaciones: [],
       reclamos: [],
       centros: [],
+      canalesMetricas: [],
+      currentMetric: null,
 processRows: [],
 processTSV: '',
       
@@ -1792,7 +1950,21 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       loginStatus: document.getElementById('loginStatus'),
       activeUserChip: document.getElementById('activeUserChip'),
       logoutBtn: document.getElementById('logoutBtn'),
-      toastWrap: document.getElementById('toastWrap')
+      toastWrap: document.getElementById('toastWrap'),
+      opsMetricModal: document.getElementById('opsMetricModal'),
+      opsMetricTitle: document.getElementById('opsMetricTitle'),
+      opsMetricCloseBtn: document.getElementById('opsMetricCloseBtn'),
+      opsMetricFrom: document.getElementById('opsMetricFrom'),
+      opsMetricTo: document.getElementById('opsMetricTo'),
+      opsMetricFilterBtn: document.getElementById('opsMetricFilterBtn'),
+      opsMetricAllBtn: document.getElementById('opsMetricAllBtn'),
+      opsMetricChartView: document.getElementById('opsMetricChartView'),
+      opsMetricTableView: document.getElementById('opsMetricTableView'),
+      opsMetricCanvas: document.getElementById('opsMetricCanvas'),
+      opsMetricSummary: document.getElementById('opsMetricSummary'),
+      opsMetricTableBody: document.querySelector('#opsMetricTable tbody'),
+      opsMetricCopyBtn: document.getElementById('opsMetricCopyBtn'),
+      opsMetricExportBtn: document.getElementById('opsMetricExportBtn')
     };
 
     const viewPendientesBtn = document.getElementById('viewPendientesBtn');
@@ -1996,6 +2168,33 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
     function nowES() { return new Date().toLocaleString('es-ES'); }
     function isoToday() { return new Date().toISOString().slice(0, 10); }
 
+    function dateToISOFromAny(value) {
+      const raw = (value || '').toString().trim();
+      if (!raw) return '';
+      const clean = raw.split(' ')[0].replace(/\./g, '/').replace(/-/g, '/');
+      if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(clean)) {
+        const [y,m,d] = clean.split('/');
+        return `${y.padStart(4,'0')}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+      }
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(clean)) {
+        const [d,m,y] = clean.split('/');
+        return `${y.padStart(4,'0')}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+      const parsed = new Date(raw);
+      if (!Number.isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 10);
+      return '';
+    }
+
+    function isoToDisplay(iso) {
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso || '';
+      const [y,m,d] = iso.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function escapeAttr(value) { return escapeHtml(value || ''); }
+
+
     function saveLocal(key, value) { localStorage.setItem(key, value); }
     function loadLocal(key) { return localStorage.getItem(key) || ''; }
 
@@ -2138,19 +2337,26 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       }
     }
 
-    function processMatchAlert(rowData) {
+    function getAlertMatchDetails(rowData) {
       const resultGuide = normalizeNumericLike(rowData.guia);
       const resultOrder = normalizeNumericLike(rowData.orden);
       const resultCode = normalizeNumericLike(rowData.codigo);
       const resultName = normalizeText(rowData.nombre);
+
       for (const alert of state.alerts) {
         if (normalizeText(alert.estadoAviso) === 'PROCESADO') continue;
-        if (alert.guia && normalizeNumericLike(alert.guia) === resultGuide && resultGuide) return { alert, matchBy: 'Guía' };
-        if (alert.orden && normalizeNumericLike(alert.orden) === resultOrder && resultOrder) return { alert, matchBy: 'Orden' };
-        if (alert.codigo && normalizeNumericLike(alert.codigo) === resultCode && resultCode) return { alert, matchBy: 'Código' };
-        if (alert.nombre && normalizeText(alert.nombre) === resultName && resultName) return { alert, matchBy: 'Nombre' };
+        const matchFields = [];
+        if (alert.guia && normalizeNumericLike(alert.guia) === resultGuide && resultGuide) matchFields.push('Guía');
+        if (alert.orden && normalizeNumericLike(alert.orden) === resultOrder && resultOrder) matchFields.push('Orden');
+        if (alert.codigo && normalizeNumericLike(alert.codigo) === resultCode && resultCode) matchFields.push('Código');
+        if (alert.nombre && normalizeText(alert.nombre) === resultName && resultName) matchFields.push('Nombre');
+        if (matchFields.length) return { alert, matchBy: matchFields.join(', '), matchFields };
       }
       return null;
+    }
+
+    function processMatchAlert(rowData) {
+      return getAlertMatchDetails(rowData);
     }
 
     function formatFsDate(fechaRegistro, createdAt) {
@@ -2225,6 +2431,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           const match = processMatchAlert({ guia: result.guia, orden: result.orden, codigo: result.codigo, nombre: result.nombre });
           if (match) {
             result.alertMatchId = match.alert.id || '';
+            result.alertMatchFields = match.matchFields || [match.matchBy];
             foundAlerts++;
             result.aviso = 'Ya llegó pedido registrado';
             result.comentario = [
@@ -2367,6 +2574,15 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         for (const row of rowsToSend) {
           const key = canalKey(row);
           const duplicate = existingKeys.has(key);
+          const liveMatch = getAlertMatchDetails(row);
+          if (liveMatch) {
+            row.alertMatchId = liveMatch.alert.id || row.alertMatchId || '';
+            row.alertMatchFields = liveMatch.matchFields || row.alertMatchFields || [];
+            row.aviso = row.aviso || 'Ya llegó pedido registrado';
+            const alertComment = liveMatch.alert.comentario ? `Comentario aviso: ${liveMatch.alert.comentario}` : '';
+            const matchText = `Coincidencia por ${liveMatch.matchBy}`;
+            row.comentario = [matchText, alertComment, row.comentario || ''].filter(Boolean).join(' | ');
+          }
 
           if (!duplicate) {
             const payload = {
@@ -2381,6 +2597,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
               fechaDespacho: row.fechaDespacho || '',
               aviso: row.aviso || '',
               comentario: row.comentario || '',
+              alertMatchFields: row.alertMatchFields || [],
+              alertMatchId: row.alertMatchId || '',
               canal: '',
               duplicate: false,
               createdAt: serverTimestamp(),
@@ -2391,6 +2609,17 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
             };
 
             await addDoc(refs.canales, payload);
+            await addDoc(refs.canalesMetricas, {
+              fecha: payload.fecha || todayES(),
+              fechaISO: dateToISOFromAny(payload.fecha || todayES()) || isoToday(),
+              guia: payload.guia || '',
+              orden: payload.orden || '',
+              codigo: payload.codigo || '',
+              nombre: payload.nombre || '',
+              createdAt: serverTimestamp(),
+              createdBy: currentUser() || 'Sistema',
+              source: 'gestion-diaria'
+            });
             inserted++;
             existingKeys.add(key);
           } else {
@@ -2589,6 +2818,12 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
     }
 
 
+    function metricAlertCell(item, field, value) {
+      const fields = Array.isArray(item.alertMatchFields) ? item.alertMatchFields : [];
+      const hit = fields.map(normalizeText).includes(normalizeText(field));
+      return `<td class="${hit ? 'alert-pulse-cell' : ''}" title="${escapeAttr(hit ? 'Match con Avisos por ' + field + ' | ' + (item.comentario || '') : value)}">${escapeHtml(value || '')}</td>`;
+    }
+
     function renderCanalesTable() {
       updateCanalesSortHeaders();
       el.canalesTableBody.innerHTML = '';
@@ -2601,13 +2836,14 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (!rowMatchesSearch([item.fecha, item.guia, item.orden, item.codigo, item.nombre, item.celular, item.puntoEnvio, item.courier, item.fechaDespacho, item.aviso, item.comentario, item.canal, item.createdBy, item.lastUpdatedBy], el.canalesSearch)) return;
         const tr = document.createElement('tr');
         tr.className = courierClass(item.courier);
+        if ((item.alertMatchFields || []).length || item.alertMatchId) tr.classList.add('alert-pulse-row');
         tr.innerHTML = `
           <td><input type="checkbox" class="canal-check" data-id="${item.id}" ${state.selectedCanales.has(item.id) ? 'checked' : ''}></td>
           <td>${escapeHtml(item.fecha || '')}</td>
-          <td>${escapeHtml(item.guia || '')}</td>
-          <td>${escapeHtml(item.orden || '')}</td>
-          <td>${escapeHtml(item.codigo || '')}</td>
-          <td>${escapeHtml(item.nombre || '')}</td>
+          ${metricAlertCell(item, 'Guía', item.guia || '')}
+          ${metricAlertCell(item, 'Orden', item.orden || '')}
+          ${metricAlertCell(item, 'Código', item.codigo || '')}
+          ${metricAlertCell(item, 'Nombre', item.nombre || '')}
           <td>${escapeHtml(item.celular || '')}</td>
           <td>${escapeHtml(item.puntoEnvio || '')}</td>
           <td>${escapeHtml(item.courier || '')}</td>
@@ -3121,6 +3357,177 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       setStatus(el.canalesStatus, `${ids.length} registro(s) movidos a ${collectionName}.`, 'success');
     }
 
+
+
+    function injectMetricButtons() {
+      const configs = [
+        ['canales', 'Canales de Ransa'],
+        ['reenvios', 'Reenvíos'],
+        ['anulaciones', 'Anulaciones'],
+        ['reclamos', 'Reclamos Físicos']
+      ];
+      configs.forEach(([module, label]) => {
+        const title = document.querySelector(`#panel-${module} .section-title`);
+        if (!title || title.dataset.metricsReady === '1') return;
+        title.dataset.metricsReady = '1';
+        const wrap = document.createElement('span');
+        wrap.className = 'kpi-icon-actions';
+        wrap.innerHTML = `
+          <button class="kpi-icon-btn metric-open" data-module="${module}" data-view="chart" title="Ver gráfico lineal de ${label}">📈</button>
+          <button class="kpi-icon-btn metric-open" data-module="${module}" data-view="table" title="Ver tabla de datos de ${label}">📋</button>
+        `;
+        title.insertAdjacentElement('afterend', wrap);
+      });
+    }
+
+    function metricConfig(module) {
+      const configs = {
+        canales: { title: 'Canales de Ransa | ingresos diarios', rows: () => state.canalesMetricas, dateField: 'fecha', isoField: 'fechaISO' },
+        reenvios: { title: 'Reenvíos | historial por fecha de envío', rows: () => state.reenvios.filter(r => normalizeText(r.guiaNueva)), dateField: 'fechaEnvio' },
+        anulaciones: { title: 'Anulaciones | historial por fecha de anulación', rows: () => state.anulaciones.filter(isAnulacionProcessed), dateField: 'fechaAnulacion' },
+        reclamos: { title: 'Reclamos Físicos | historial por fecha', rows: () => state.reclamos.filter(isClaimProcessed), dateField: 'fecha' }
+      };
+      return configs[module];
+    }
+
+    function buildMetricRows(module) {
+      const cfg = metricConfig(module);
+      if (!cfg) return [];
+      const counts = new Map();
+      cfg.rows().forEach(item => {
+        const iso = cfg.isoField && item[cfg.isoField] ? item[cfg.isoField] : dateToISOFromAny(item[cfg.dateField]);
+        if (!iso) return;
+        counts.set(iso, (counts.get(iso) || 0) + 1);
+      });
+      return [...counts.entries()].sort(([a],[b]) => a.localeCompare(b)).map(([iso, cantidad]) => ({ iso, fecha: isoToDisplay(iso), cantidad }));
+    }
+
+    function getFilteredMetricRows() {
+      if (!state.currentMetric) return [];
+      const from = el.opsMetricFrom.value || '';
+      const to = el.opsMetricTo.value || '';
+      return buildMetricRows(state.currentMetric.module).filter(row => (!from || row.iso >= from) && (!to || row.iso <= to));
+    }
+
+    function drawMetricChart(rows) {
+      const canvas = el.opsMetricCanvas;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#fbfdfb';
+      ctx.fillRect(0, 0, width, height);
+
+      const padL = 54, padR = 24, padT = 24, padB = 54;
+      const chartW = width - padL - padR;
+      const chartH = height - padT - padB;
+      ctx.strokeStyle = '#dfe8da';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, padT);
+      ctx.lineTo(padL, height - padB);
+      ctx.lineTo(width - padR, height - padB);
+      ctx.stroke();
+
+      if (!rows.length) {
+        ctx.fillStyle = '#6a766b';
+        ctx.font = '16px Segoe UI, sans-serif';
+        ctx.fillText('Sin datos para el filtro seleccionado.', padL + 20, padT + 50);
+        el.opsMetricSummary.textContent = 'Total: 0 registros.';
+        return;
+      }
+
+      const maxVal = Math.max(...rows.map(r => r.cantidad), 1);
+      const points = rows.map((r, i) => {
+        const x = rows.length === 1 ? padL + chartW / 2 : padL + (i * chartW / (rows.length - 1));
+        const y = padT + chartH - (r.cantidad / maxVal) * chartH;
+        return { x, y, ...r };
+      });
+
+      ctx.strokeStyle = '#e3ece0';
+      ctx.fillStyle = '#6a766b';
+      ctx.font = '12px Segoe UI, sans-serif';
+      for (let i=0; i<=4; i++) {
+        const y = padT + (chartH * i / 4);
+        const value = Math.round(maxVal - (maxVal * i / 4));
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(width - padR, y);
+        ctx.stroke();
+        ctx.fillText(String(value), 12, y + 4);
+      }
+
+      ctx.beginPath();
+      points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.strokeStyle = '#4b9144';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      points.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#4b9144';
+        ctx.fill();
+        if (rows.length <= 14 || i === 0 || i === points.length - 1) {
+          ctx.fillStyle = '#243127';
+          ctx.font = '12px Segoe UI, sans-serif';
+          ctx.fillText(String(p.cantidad), p.x - 4, p.y - 10);
+          ctx.save();
+          ctx.translate(p.x - 18, height - 22);
+          ctx.rotate(-Math.PI / 5);
+          ctx.fillStyle = '#6a766b';
+          ctx.fillText(p.fecha.slice(0,5), 0, 0);
+          ctx.restore();
+        }
+      });
+      const total = rows.reduce((a,b) => a + b.cantidad, 0);
+      el.opsMetricSummary.textContent = `Total: ${total} registros | Días con movimiento: ${rows.length}.`;
+    }
+
+    function renderMetricTable(rows) {
+      el.opsMetricTableBody.innerHTML = '';
+      if (!rows.length) {
+        el.opsMetricTableBody.innerHTML = '<tr><td colspan="2" class="empty-cell">Sin datos para mostrar.</td></tr>';
+        return;
+      }
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(row.fecha)}</td><td>${escapeHtml(row.cantidad)}</td>`;
+        el.opsMetricTableBody.appendChild(tr);
+      });
+    }
+
+    function refreshMetricView() {
+      const rows = getFilteredMetricRows();
+      drawMetricChart(rows);
+      renderMetricTable(rows);
+    }
+
+    function openMetricModal(module, view = 'chart') {
+      const cfg = metricConfig(module);
+      if (!cfg) return;
+      state.currentMetric = { module, view };
+      el.opsMetricTitle.textContent = cfg.title;
+      el.opsMetricChartView.style.display = view === 'chart' ? 'block' : 'none';
+      el.opsMetricTableView.style.display = view === 'table' ? 'block' : 'none';
+      el.opsMetricModal.classList.add('active');
+      refreshMetricView();
+    }
+
+    function bindMetricEvents() {
+      document.addEventListener('click', e => {
+        const btn = e.target.closest('.metric-open');
+        if (!btn) return;
+        openMetricModal(btn.dataset.module, btn.dataset.view);
+      });
+      el.opsMetricCloseBtn.addEventListener('click', () => el.opsMetricModal.classList.remove('active'));
+      el.opsMetricModal.addEventListener('click', e => { if (e.target === el.opsMetricModal) el.opsMetricModal.classList.remove('active'); });
+      el.opsMetricFilterBtn.addEventListener('click', refreshMetricView);
+      el.opsMetricAllBtn.addEventListener('click', () => { el.opsMetricFrom.value = ''; el.opsMetricTo.value = ''; refreshMetricView(); });
+      el.opsMetricCopyBtn.addEventListener('click', () => copyText(tableToTSV(document.getElementById('opsMetricTable')), 'Tabla de métrica copiada.'));
+      el.opsMetricExportBtn.addEventListener('click', () => exportTableToExcel('opsMetricTable', 'Metrica', 'metrica_operativa.xlsx'));
+    }
+
     function initTabs() {
       el.tabs.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -3369,6 +3776,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (e.target.checked) visibles.forEach(item => state.selectedAnulaciones.add(item.id));
         else state.selectedAnulaciones.clear();
         renderAnulacionesTable();
+        if (state.currentMetric && state.currentMetric.module === 'anulaciones') refreshMetricView();
       });
 
       el.anulacionesTableBody.addEventListener('change', async e => {
@@ -3531,6 +3939,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       onSnapshot(query(refs.reenvios, orderBy('createdAt', 'desc')), snapshot => {
         state.reenvios = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderReenviosTable();
+        if (state.currentMetric && state.currentMetric.module === 'reenvios') refreshMetricView();
       });
 
       onSnapshot(query(refs.anulaciones, orderBy('createdAt', 'desc')), snapshot => {
@@ -3541,11 +3950,17 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       onSnapshot(query(refs.reclamos, orderBy('createdAt', 'desc')), snapshot => {
         state.reclamos = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderClaimsTable();
+        if (state.currentMetric && state.currentMetric.module === 'reclamos') refreshMetricView();
       });
 
       onSnapshot(query(refs.centros, orderBy('createdAt', 'desc')), snapshot => {
         state.centros = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderCentersTable();
+      });
+
+      onSnapshot(query(refs.canalesMetricas, orderBy('createdAt', 'desc')), snapshot => {
+        state.canalesMetricas = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (state.currentMetric && state.currentMetric.module === 'canales') refreshMetricView();
       });
     }
 
@@ -3554,6 +3969,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       initTabs();
       initLoginUi();
       initCanalesSorting();
+      injectMetricButtons();
+      bindMetricEvents();
       bindStaticEvents();
       attachSnapshots();
       el.guidesInput.value = loadLocal(STORAGE_KEYS.guides);
