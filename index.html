@@ -583,6 +583,16 @@ table {
     tbody tr:nth-child(even) td { background: #fbfcfb; }
     tbody tr.alert-found td { background: #fff8e4 !important; }
     tbody tr.not-found td { background: #ffe9e9 !important; }
+    tbody tr.duplicate-alert-hit td {
+      background: #fff1bf !important;
+      animation: duplicateAlertPulse 1.15s ease-in-out 4;
+      font-weight: 800;
+    }
+    @keyframes duplicateAlertPulse {
+      0% { box-shadow: inset 0 0 0 0 rgba(211,86,86,0); }
+      50% { box-shadow: inset 0 0 0 999px rgba(255,232,122,.45); }
+      100% { box-shadow: inset 0 0 0 0 rgba(211,86,86,0); }
+    }
 
     .row-courier-servientrega td { background: #e5f4e2 !important; }
 .row-courier-urbano td { background: #fbe3e3 !important; }
@@ -1518,6 +1528,7 @@ table {
                   <th>Canales</th>
                   <th>Estado</th>
                   <th>Fecha de anulación</th>
+                  <th title="Responsable">👤</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -1613,6 +1624,7 @@ table {
                   <th>Estado</th>
                   <th>Comentario</th>
                   <th>Gestión</th>
+                  <th title="Responsable">👤</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -1834,6 +1846,7 @@ table {
       reenvios: [],
       reenviosView: 'pendientes',
       alertsView: 'pendientes',
+      highlightedAlertId: '',
       claimsView: 'pendientes',
       anulacionesView: 'pendientes',
       activeUser: '',
@@ -2084,6 +2097,15 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
     function auditEmoji(item = {}) {
       const tip = auditTitle(item) || 'Sin trazabilidad registrada.';
       return `<span class="audit-emoji" title="${escapeHtml(tip)}">👤</span>`;
+    }
+
+    function responsibleUser(item = {}) {
+      return item.procesadoPor || item.lastUpdatedBy || item.createdBy || 'Sistema';
+    }
+
+    function responsibleCell(item = {}) {
+      const user = responsibleUser(item);
+      return `<td title="${escapeHtml(auditTitle(item) || user)}"><span class="audit-emoji">👤</span> ${escapeHtml(user)}</td>`;
     }
 
     function initLoginUi() {
@@ -2704,6 +2726,71 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       return normalizeText(textParts.filter(Boolean).join(' ')).includes(term);
     }
 
+
+    function alertDuplicateFieldsFromForm() {
+      return {
+        guia: el.alertGuide.value.trim(),
+        orden: el.alertOrder.value.trim(),
+        codigo: el.alertCode.value.trim(),
+        nombre: el.alertName.value.trim()
+      };
+    }
+
+    function findDuplicateAlertCandidate(fields = alertDuplicateFieldsFromForm()) {
+      const checks = [
+        ['guia', 'Guía'],
+        ['orden', 'Orden'],
+        ['codigo', 'Código'],
+        ['nombre', 'Nombre']
+      ];
+      for (const item of state.alerts) {
+        if (normalizeText(item.estadoAviso) === 'PROCESADO') continue;
+        const matches = checks
+          .filter(([key]) => normalizeText(fields[key]) && normalizeText(fields[key]) === normalizeText(item[key]))
+          .map(([, label]) => label);
+        if (matches.length) return { item, matches };
+      }
+      return null;
+    }
+
+    function focusPossibleDuplicateAlert(match, options = {}) {
+      if (!match?.item) return;
+      state.alertsView = 'pendientes';
+      setAlertsViewButtons();
+      const searchValue = match.item.guia || match.item.orden || match.item.codigo || match.item.nombre || '';
+      el.alertsSearch.value = searchValue;
+      state.highlightedAlertId = match.item.id;
+      renderAlertsTable();
+      const row = el.alertsTableBody.querySelector(`[data-alert-id="${match.item.id}"]`);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const msg = `⚠️ Este aviso parece duplicado por ${match.matches.join(', ')}. Revisa la fila resaltada antes de guardar.`;
+      setStatus(el.alertStatus, msg, 'error');
+      if (!options.keepHighlight) {
+        setTimeout(() => { state.highlightedAlertId = ''; renderAlertsTable(); }, 7000);
+      }
+    }
+
+    function validateAlertDuplicateLive() {
+      const fields = alertDuplicateFieldsFromForm();
+      if (!Object.values(fields).some(Boolean)) {
+        state.highlightedAlertId = '';
+        setStatus(el.alertStatus, '', 'success');
+        renderAlertsTable();
+        return null;
+      }
+      const match = findDuplicateAlertCandidate(fields);
+      if (match) {
+        focusPossibleDuplicateAlert(match, { keepHighlight: true });
+        return match;
+      }
+      if (state.highlightedAlertId) {
+        state.highlightedAlertId = '';
+        renderAlertsTable();
+      }
+      setStatus(el.alertStatus, 'Sin coincidencias en avisos pendientes.', 'success');
+      return null;
+    }
+
     function renderAlertsTable() {
       el.alertsTableBody.innerHTML = '';
       const data = state.alerts.filter(item => {
@@ -2718,6 +2805,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       data.forEach(item => {
         if (!rowMatchesSearch([item.guia, item.orden, item.codigo, item.nombre, item.comentario, item.createdBy, item.procesadoPor], el.alertsSearch)) return;
         const tr = document.createElement('tr');
+        tr.dataset.alertId = item.id;
+        if (state.highlightedAlertId === item.id) tr.classList.add('duplicate-alert-hit');
         const commentTitle = [item.comentario || '', auditTitle(item), item.estadoAviso === 'procesado' ? `Vinculado a Canales: ${item.procesadoPor || ''}` : ''].filter(Boolean).join(' | ');
         tr.innerHTML = `
           <td title="${escapeHtml(auditTitle(item) || formatFsDate(item.fechaRegistro, item.createdAt))}">${escapeHtml(formatFsDate(item.fechaRegistro, item.createdAt) || '')}</td>
@@ -2987,7 +3076,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (state.anulacionesView === 'pendientes') {
           el.anulacionesTableBody.innerHTML = `<tr><td colspan="14" class="empty-cell">No hay anulaciones registradas.</td></tr>`;
         } else {
-          el.anulacionesHistoryTableBody.innerHTML = `<tr><td colspan="12" class="empty-cell">No hay historial de anulaciones.</td></tr>`;
+          el.anulacionesHistoryTableBody.innerHTML = `<tr><td colspan="13" class="empty-cell">No hay historial de anulaciones.</td></tr>`;
         }
         updateMetrics();
         return;
@@ -3038,7 +3127,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         });
       } else {
         if (!data.length) {
-          el.anulacionesHistoryTableBody.innerHTML = `<tr><td colspan="12" class="empty-cell">No hay historial de anulaciones para esa búsqueda.</td></tr>`;
+          el.anulacionesHistoryTableBody.innerHTML = `<tr><td colspan="13" class="empty-cell">No hay historial de anulaciones para esa búsqueda.</td></tr>`;
           updateMetrics();
           return;
         }
@@ -3059,6 +3148,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
             ${tdWithTitle(item.canal || '')}
             ${tdWithTitle(item.estado || '')}
             ${tdWithTitle(item.fechaAnulacion || '')}
+            ${responsibleCell(item)}
           `;
           el.anulacionesHistoryTableBody.appendChild(tr);
         });
@@ -3074,7 +3164,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (state.claimsView === 'pendientes') {
           el.claimsTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay reclamos físicos cargados.</td></tr>`;
         } else {
-          el.claimsHistoryTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay historial de reclamos.</td></tr>`;
+          el.claimsHistoryTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay historial de reclamos.</td></tr>`;
         }
         updateMetrics();
         return;
@@ -3086,7 +3176,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       });
 
       data = data.filter(item =>
-        rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.comentario, item.gestion], el.claimsSearch)
+        rowMatchesSearch([item.fecha, item.socio, item.guia, item.producto, item.unidad, item.estado, item.comentario, item.gestion, item.createdBy, item.lastUpdatedBy, item.procesadoPor], el.claimsSearch)
       );
 
       if (state.claimsView === 'pendientes') {
@@ -3112,7 +3202,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         });
       } else {
         if (!data.length) {
-          el.claimsHistoryTableBody.innerHTML = `<tr><td colspan="8" class="empty-cell">No hay historial de reclamos para esa búsqueda.</td></tr>`;
+          el.claimsHistoryTableBody.innerHTML = `<tr><td colspan="9" class="empty-cell">No hay historial de reclamos para esa búsqueda.</td></tr>`;
           return;
         }
 
@@ -3127,6 +3217,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
             ${tdWithTitle(item.estado || '')}
             ${tdWithTitle(item.comentario || '')}
             ${tdWithTitle(item.gestion || '')}
+            ${responsibleCell(item)}
           `;
           el.claimsHistoryTableBody.appendChild(tr);
         });
@@ -3605,6 +3696,12 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           setStatus(el.alertStatus, 'Debes llenar al menos un dato.', 'error');
           return;
         }
+        const duplicate = findDuplicateAlertCandidate(payload);
+        if (duplicate) {
+          focusPossibleDuplicateAlert(duplicate, { keepHighlight: true });
+          const proceed = confirm(`Este aviso parece duplicado por ${duplicate.matches.join(', ')}. ¿Deseas guardarlo de todas formas?`);
+          if (!proceed) return;
+        }
         await addDoc(refs.avisos, payload);
         [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertComment].forEach(i => i.value = '');
         setStatus(el.alertStatus, 'Aviso guardado correctamente.', 'success');
@@ -3613,7 +3710,15 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
 
       document.getElementById('clearAlertFormBtn').addEventListener('click', () => {
         [el.alertGuide, el.alertOrder, el.alertCode, el.alertName, el.alertComment].forEach(i => i.value = '');
+        state.highlightedAlertId = '';
+        el.alertsSearch.value = '';
+        renderAlertsTable();
         setStatus(el.alertStatus, 'Formulario limpiado.', 'success');
+      });
+
+      [el.alertGuide, el.alertOrder, el.alertCode, el.alertName].forEach(input => {
+        input.addEventListener('input', validateAlertDuplicateLive);
+        input.addEventListener('change', validateAlertDuplicateLive);
       });
 
       el.alertsTableBody.addEventListener('click', async e => {
@@ -3753,7 +3858,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (!ids.length) return alert('Selecciona al menos una fila.');
         const estado = el.bulkEstadoSelect.value.trim();
         if (!estado) return alert('Escribe o selecciona un estado.');
-        await Promise.all(ids.map(id => updateDoc(doc(db, 'anulaciones', id), { estado, fechaAnulacion: todayES() })));
+        await Promise.all(ids.map(id => updateDoc(doc(db, 'anulaciones', id), buildAuditMeta({ estado, fechaAnulacion: todayES(), procesadoPor: currentUser() || 'Sistema', procesadoEn: nowES() }))));
         setStatus(el.anulacionesStatus, `Estado aplicado a ${ids.length} fila(s).`, 'success');
       });
 
@@ -3793,7 +3898,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         const estado = e.target.closest('.anulacion-estado');
         if (estado) {
           const value = estado.value.trim();
-          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), buildAuditMeta({ estado: value, fechaAnulacion: value ? todayES() : '' }));
+          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), buildAuditMeta({ estado: value, fechaAnulacion: value ? todayES() : '', procesadoPor: value ? (currentUser() || 'Sistema') : '', procesadoEn: value ? nowES() : '' }));
           return;
         }
       });
@@ -3867,7 +3972,12 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (e.target.classList.contains('claim-gestion')) field = 'gestion';
         if (e.target.classList.contains('claim-comentario')) field = 'comentario';
         if (!field) return;
-        await updateDoc(doc(db, 'reclamos_procesados', id), buildAuditMeta({ [field]: e.target.value }));
+        const updatePayload = { [field]: e.target.value };
+        if (field === 'gestion' && isClaimProcessed(updatePayload)) {
+          updatePayload.procesadoPor = currentUser() || 'Sistema';
+          updatePayload.procesadoEn = nowES();
+        }
+        await updateDoc(doc(db, 'reclamos_procesados', id), buildAuditMeta(updatePayload));
       });
 
       el.claimsTableBody.addEventListener('click', async e => {
