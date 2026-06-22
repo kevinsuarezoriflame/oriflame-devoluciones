@@ -1802,6 +1802,7 @@ table {
       query,
       orderBy,
       serverTimestamp,
+      arrayUnion,
       updateDoc,
       writeBatch,
       getDocs
@@ -2074,24 +2075,62 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       el.activeUserChip.textContent = user ? `Usuario activo: ${user}` : 'Usuario activo: Sin iniciar';
     }
 
-    function buildAuditMeta(base = {}) {
+    function compactDate(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return todayES();
+      if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+        const [y, m, d] = raw.slice(0, 10).split('-');
+        return `${d}/${m}/${y}`;
+      }
+      return raw.split(',')[0].trim();
+    }
+
+    function makeAuditEntry(action = 'Cambio', module = '') {
+      return {
+        accion: action,
+        usuario: currentUser() || 'Sistema',
+        fecha: todayES(),
+        modulo: module || ''
+      };
+    }
+
+    function buildAuditMeta(base = {}, action = 'Cambio', module = '') {
       const user = currentUser() || 'Sistema';
       return {
         ...base,
         lastUpdatedBy: user,
-        lastUpdatedAtDisplay: nowES()
+        lastUpdatedAtDisplay: todayES(),
+        auditLog: arrayUnion(makeAuditEntry(action, module))
       };
     }
 
+    function appendAuditLog(item = {}, action = 'Cambio', module = '') {
+      const current = Array.isArray(item.auditLog) ? item.auditLog : [];
+      return [...current, makeAuditEntry(action, module)];
+    }
+
+    function auditLine(action, user, date, module = '') {
+      const moduleText = module ? ` en ${module}` : '';
+      return `${action}${moduleText}: ${user || 'Sistema'} — ${compactDate(date)}`;
+    }
+
     function auditTitle(item = {}) {
-      const parts = [];
-      if (item.createdBy) parts.push(`Creado por: ${item.createdBy}`);
-      if (item.createdAtDisplay) parts.push(`Fecha creación: ${item.createdAtDisplay}`);
-      if (item.lastUpdatedBy) parts.push(`Último cambio: ${item.lastUpdatedBy}`);
-      if (item.lastUpdatedAtDisplay) parts.push(`Fecha cambio: ${item.lastUpdatedAtDisplay}`);
-      if (item.procesadoPor) parts.push(`Procesado por: ${item.procesadoPor}`);
-      if (item.procesadoEn) parts.push(`Fecha proceso: ${item.procesadoEn}`);
-      return parts.join(' | ');
+      const lines = [];
+      if (item.createdBy) lines.push(auditLine('Creado', item.createdBy, item.createdAtDisplay || item.fechaRegistro || item.fecha));
+
+      const log = Array.isArray(item.auditLog) ? item.auditLog : [];
+      log.forEach(entry => {
+        const action = entry.accion || entry.action || 'Cambio';
+        if (normalizeText(action) === 'creado' && item.createdBy) return;
+        lines.push(auditLine(action, entry.usuario || entry.user, entry.fecha || entry.date, entry.modulo || entry.module));
+      });
+
+      if (!log.length) {
+        if (item.procesadoPor) lines.push(auditLine('Procesado', item.procesadoPor, item.procesadoEn));
+        if (item.lastUpdatedBy) lines.push(auditLine('Últ. cambio', item.lastUpdatedBy, item.lastUpdatedAtDisplay));
+      }
+
+      return lines.filter(Boolean).slice(-8).join('\\n');
     }
 
     function auditEmoji(item = {}) {
@@ -2100,12 +2139,14 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
     }
 
     function responsibleUser(item = {}) {
-      return item.procesadoPor || item.lastUpdatedBy || item.createdBy || 'Sistema';
+      const log = Array.isArray(item.auditLog) ? item.auditLog : [];
+      const last = log.length ? log[log.length - 1] : null;
+      return (last && (last.usuario || last.user)) || item.procesadoPor || item.lastUpdatedBy || item.createdBy || 'Sistema';
     }
 
     function responsibleCell(item = {}) {
       const user = responsibleUser(item);
-      return `<td title="${escapeHtml(auditTitle(item) || user)}"><span class="audit-emoji">👤</span> ${escapeHtml(user)}</td>`;
+      return `<td title="${escapeHtml(auditTitle(item) || user)}">${auditEmoji(item)} ${escapeHtml(user)}</td>`;
     }
 
     function initLoginUi() {
@@ -2626,7 +2667,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
               createdAt: serverTimestamp(),
               createdBy: currentUser() || 'Sistema',
               createdAtDisplay: nowES(),
-              ...buildAuditMeta(),
+              ...buildAuditMeta({}, 'Creado', 'Canales'),
               source: 'gestion-diaria'
             };
 
@@ -2657,7 +2698,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
             estadoAviso: 'procesado',
             procesadoEn: nowES(),
             procesadoPor: currentUser() || 'Sistema',
-            ...buildAuditMeta()
+            ...buildAuditMeta({}, 'Procesó aviso', 'Avisos')
           });
         }
 
@@ -2991,7 +3032,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         createdAt: serverTimestamp(),
         createdBy: currentUser() || 'Sistema',
         createdAtDisplay: nowES(),
-        ...buildAuditMeta(),
+        ...buildAuditMeta({}, tipo === 'historial' ? 'Reenvió' : 'Creado', 'Reenvíos'),
         source: 'manual'
       };
     }
@@ -3356,7 +3397,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           createdAt: serverTimestamp(),
           createdBy: currentUser() || 'Sistema',
           createdAtDisplay: nowES(),
-          ...buildAuditMeta(),
+          ...buildAuditMeta({}, 'Regresó a Canales', 'Reenvíos'),
+          auditLog: appendAuditLog(item, 'Regresó a Canales', 'Reenvíos'),
           source: 'back-from-reenvios'
         };
       }
@@ -3381,7 +3423,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           createdAt: serverTimestamp(),
           createdBy: currentUser() || 'Sistema',
           createdAtDisplay: nowES(),
-          ...buildAuditMeta(),
+          ...buildAuditMeta({}, 'Regresó a Canales', 'Anulaciones'),
+          auditLog: appendAuditLog(item, 'Regresó a Canales', 'Anulaciones'),
           source: 'back-from-anulaciones'
         };
       }
@@ -3417,7 +3460,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
             createdAt: serverTimestamp(),
             createdBy: currentUser() || 'Sistema',
             createdAtDisplay: nowES(),
-            ...buildAuditMeta()
+            ...buildAuditMeta({}, 'Movió a Reenvíos', 'Reenvíos'),
+            auditLog: appendAuditLog(item, 'Movió a Reenvíos', 'Reenvíos')
           }));
         } else {
           writes.push(addDoc(refs.anulaciones, {
@@ -3438,7 +3482,8 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
             createdAt: serverTimestamp(),
             createdBy: currentUser() || 'Sistema',
             createdAtDisplay: nowES(),
-            ...buildAuditMeta()
+            ...buildAuditMeta({}, 'Movió a Anulaciones', 'Anulaciones'),
+            auditLog: appendAuditLog(item, 'Movió a Anulaciones', 'Anulaciones')
           }));
         }
         writes.push(deleteDoc(doc(db, 'canales_ransa', id)));
@@ -3690,7 +3735,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           createdAt: serverTimestamp(),
           createdBy: currentUser() || 'Sistema',
           createdAtDisplay: nowES(),
-          ...buildAuditMeta()
+          ...buildAuditMeta({}, 'Creado', 'Avisos')
         };
         if (!(payload.guia || payload.orden || payload.codigo || payload.nombre || payload.comentario)) {
           setStatus(el.alertStatus, 'Debes llenar al menos un dato.', 'error');
@@ -3736,7 +3781,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         const updates = ids.map(id => updateDoc(doc(db, 'canales_ransa', id), buildAuditMeta({
           ...(canal ? { canal } : {}),
           ...(comment ? { comentario: comment } : {})
-        })));
+        }, 'Actualización masiva', 'Canales')));
         await Promise.all(updates);
         setStatus(el.canalesStatus, `Actualización masiva aplicada a ${ids.length} fila(s).`, 'success');
         showToast(`Actualización masiva registrada por ${currentUser() || 'Sistema'}.`, 'success');
@@ -3773,9 +3818,9 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           return;
         }
         const comment = e.target.closest('.canal-comment');
-        if (comment) { await updateDoc(doc(db, 'canales_ransa', comment.dataset.id), buildAuditMeta({ comentario: comment.value })); return; }
+        if (comment) { await updateDoc(doc(db, 'canales_ransa', comment.dataset.id), buildAuditMeta({ comentario: comment.value }, 'Cambió comentario', 'Canales')); return; }
         const select = e.target.closest('.canal-select');
-        if (select) { await updateDoc(doc(db, 'canales_ransa', select.dataset.id), buildAuditMeta({ canal: select.value })); return; }
+        if (select) { await updateDoc(doc(db, 'canales_ransa', select.dataset.id), buildAuditMeta({ canal: select.value }, 'Cambió canal', 'Canales')); return; }
       });
 
       el.canalesTableBody.addEventListener('click', async e => {
@@ -3820,20 +3865,20 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         const id = e.target.dataset.id;
         if (!id) return;
         if (e.target.classList.contains('reenvio-celular')) {
-          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ celular: e.target.value }));
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ celular: e.target.value }, 'Actualizó celular', 'Reenvíos'));
           return;
         }
         if (e.target.classList.contains('reenvio-punto')) {
-          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ puntoEnvioActual: e.target.value }));
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ puntoEnvioActual: e.target.value }, 'Actualizó punto', 'Reenvíos'));
           return;
         }
         if (e.target.classList.contains('reenvio-comment')) {
-          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ comentario: e.target.value }));
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ comentario: e.target.value }, 'Cambió comentario', 'Reenvíos'));
           return;
         }
         if (e.target.classList.contains('reenvio-guianueva')) {
           const value = e.target.value.trim();
-          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ guiaNueva: value, fechaEnvio: value ? todayES() : '' }));
+          await updateDoc(doc(db, 'reenvios', id), buildAuditMeta({ guiaNueva: value, fechaEnvio: value ? todayES() : '' }, value ? 'Reenvió' : 'Quitó guía nueva', 'Reenvíos'));
           return;
         }
       });
@@ -3858,7 +3903,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         if (!ids.length) return alert('Selecciona al menos una fila.');
         const estado = el.bulkEstadoSelect.value.trim();
         if (!estado) return alert('Escribe o selecciona un estado.');
-        await Promise.all(ids.map(id => updateDoc(doc(db, 'anulaciones', id), buildAuditMeta({ estado, fechaAnulacion: todayES(), procesadoPor: currentUser() || 'Sistema', procesadoEn: nowES() }))));
+        await Promise.all(ids.map(id => updateDoc(doc(db, 'anulaciones', id), buildAuditMeta({ estado, fechaAnulacion: todayES(), procesadoPor: currentUser() || 'Sistema', procesadoEn: todayES() }, 'Anuló', 'Anulaciones'))));
         setStatus(el.anulacionesStatus, `Estado aplicado a ${ids.length} fila(s).`, 'success');
       });
 
@@ -3892,13 +3937,13 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           return;
         }
         const comment = e.target.closest('.anulacion-comment');
-        if (comment) { await updateDoc(doc(db, 'anulaciones', comment.dataset.id), buildAuditMeta({ comentario: comment.value })); return; }
+        if (comment) { await updateDoc(doc(db, 'anulaciones', comment.dataset.id), buildAuditMeta({ comentario: comment.value }, 'Cambió comentario', 'Anulaciones')); return; }
         const cruce = e.target.closest('.anulacion-cruce');
-        if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), buildAuditMeta({ cruceAmpliacion: cruce.value })); return; }
+        if (cruce) { await updateDoc(doc(db, 'anulaciones', cruce.dataset.id), buildAuditMeta({ cruceAmpliacion: cruce.value }, 'Cambió cruce', 'Anulaciones')); return; }
         const estado = e.target.closest('.anulacion-estado');
         if (estado) {
           const value = estado.value.trim();
-          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), buildAuditMeta({ estado: value, fechaAnulacion: value ? todayES() : '', procesadoPor: value ? (currentUser() || 'Sistema') : '', procesadoEn: value ? nowES() : '' }));
+          await updateDoc(doc(db, 'anulaciones', estado.dataset.id), buildAuditMeta({ estado: value, fechaAnulacion: value ? todayES() : '', procesadoPor: value ? (currentUser() || 'Sistema') : '', procesadoEn: value ? todayES() : '' }, value ? 'Anuló' : 'Quitó anulación', 'Anulaciones'));
           return;
         }
       });
@@ -3930,7 +3975,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
           createdAt: serverTimestamp(),
           createdBy: currentUser() || 'Sistema',
           createdAtDisplay: nowES(),
-          ...buildAuditMeta()
+          ...buildAuditMeta({}, 'Creado', 'Reclamos')
         };
         if (!(payload.socio || payload.guia || payload.producto || payload.unidad || payload.estado || payload.gestion || payload.comentario)) {
           setStatus(el.claimsStatus, 'Debes llenar al menos un campo operativo.', 'error');
@@ -3975,9 +4020,9 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
         const updatePayload = { [field]: e.target.value };
         if (field === 'gestion' && isClaimProcessed(updatePayload)) {
           updatePayload.procesadoPor = currentUser() || 'Sistema';
-          updatePayload.procesadoEn = nowES();
+          updatePayload.procesadoEn = todayES();
         }
-        await updateDoc(doc(db, 'reclamos_procesados', id), buildAuditMeta(updatePayload));
+        await updateDoc(doc(db, 'reclamos_procesados', id), buildAuditMeta(updatePayload, field === 'gestion' && isClaimProcessed(updatePayload) ? 'Procesó reclamo' : `Cambió ${field}`, 'Reclamos'));
       });
 
       el.claimsTableBody.addEventListener('click', async e => {
