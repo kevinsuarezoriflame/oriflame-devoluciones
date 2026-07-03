@@ -624,8 +624,184 @@ table {
       justify-content:center;
       min-width:22px;
       height:22px;
-      cursor:help;
       font-size:.9rem;
+    }
+
+    .audit-side-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 42px;
+      height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #cfe0cc;
+      background: #ffffff;
+      color: #315f34;
+      font-size: .72rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 2px 6px rgba(37, 55, 42, .06);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .audit-side-btn:hover {
+      background: #eef7ed;
+      transform: translateY(-1px);
+    }
+
+    .audit-side-btn .audit-count {
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #edf5ff;
+      color: #2b63a9;
+      font-size: .66rem;
+      font-weight: 900;
+    }
+
+    .audit-drawer-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: flex-end;
+      background: rgba(24, 36, 25, .30);
+      z-index: 9999;
+    }
+
+    .audit-drawer-overlay.active { display: flex; }
+
+    .audit-drawer {
+      width: min(430px, 94vw);
+      height: 100%;
+      background: #ffffff;
+      border-left: 1px solid var(--line);
+      box-shadow: -18px 0 40px rgba(20, 34, 22, .18);
+      display: flex;
+      flex-direction: column;
+      animation: auditDrawerIn .18s ease-out;
+    }
+
+    @keyframes auditDrawerIn {
+      from { transform: translateX(28px); opacity: .7; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .audit-drawer-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff 0%, #f6fbf4 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .audit-drawer-title {
+      margin: 0;
+      color: #2e6731;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .audit-drawer-subtitle {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.35;
+    }
+
+    .audit-drawer-close {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #ced8c9;
+      color: #425044;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .audit-drawer-body {
+      padding: 16px 18px 22px;
+      overflow: auto;
+      flex: 1;
+    }
+
+    .audit-timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .audit-event {
+      position: relative;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .audit-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef7ed;
+      border: 1px solid #cfe0cc;
+      box-shadow: 0 2px 8px rgba(37,55,42,.08);
+      font-size: .92rem;
+    }
+
+    .audit-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfdfb;
+      padding: 10px 12px;
+    }
+
+    .audit-action {
+      color: #263328;
+      font-weight: 900;
+      font-size: .9rem;
+      margin-bottom: 5px;
+    }
+
+    .audit-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    .audit-module {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #edf5ff;
+      color: #2b63a9;
+      font-weight: 800;
+    }
+
+    .audit-empty {
+      border: 1px dashed #d6e4d1;
+      border-radius: 14px;
+      background: #fbfdfb;
+      padding: 16px;
+      color: var(--muted);
+      font-size: .9rem;
+      text-align: center;
     }
 
 
@@ -1721,6 +1897,19 @@ table {
   </div>
 
 
+  <div id="auditDrawerOverlay" class="audit-drawer-overlay" aria-hidden="true">
+    <aside class="audit-drawer" role="dialog" aria-modal="true" aria-label="Historial de cambios">
+      <div class="audit-drawer-head">
+        <div>
+          <h3 class="audit-drawer-title">Historial de cambios</h3>
+          <div id="auditDrawerSubtitle" class="audit-drawer-subtitle">Selecciona un registro para ver su trazabilidad.</div>
+        </div>
+        <button id="auditDrawerClose" class="audit-drawer-close" type="button" title="Cerrar">×</button>
+      </div>
+      <div id="auditDrawerBody" class="audit-drawer-body"></div>
+    </aside>
+  </div>
+
   <div id="opsMetricModal" class="ops-modal-overlay" aria-hidden="true">
     <div class="ops-modal" role="dialog" aria-modal="true">
       <div class="ops-modal-head">
@@ -2133,9 +2322,114 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
       return lines.filter(Boolean).slice(-8).join('\\n');
     }
 
+    function auditEntries(item = {}) {
+      const entries = [];
+      if (item.createdBy) {
+        entries.push({
+          accion: 'Creado',
+          usuario: item.createdBy,
+          fecha: item.createdAtDisplay || item.fechaRegistro || item.fecha,
+          modulo: item.source || ''
+        });
+      }
+
+      const log = Array.isArray(item.auditLog) ? item.auditLog : [];
+      log.forEach(entry => {
+        const action = entry.accion || entry.action || 'Cambio';
+        if (normalizeText(action) === 'creado' && item.createdBy) return;
+        entries.push({
+          accion: action,
+          usuario: entry.usuario || entry.user || 'Sistema',
+          fecha: entry.fecha || entry.date || '',
+          modulo: entry.modulo || entry.module || ''
+        });
+      });
+
+      if (!log.length) {
+        if (item.procesadoPor) entries.push({ accion: 'Procesado', usuario: item.procesadoPor, fecha: item.procesadoEn || '', modulo: '' });
+        if (item.lastUpdatedBy) entries.push({ accion: 'Últ. cambio', usuario: item.lastUpdatedBy, fecha: item.lastUpdatedAtDisplay || '', modulo: '' });
+      }
+      return entries.filter(x => x.accion || x.usuario || x.fecha);
+    }
+
     function auditEmoji(item = {}) {
-      const tip = auditTitle(item) || 'Sin trazabilidad registrada.';
-      return `<span class="audit-emoji" title="${escapeHtml(tip)}">👤</span>`;
+      const count = auditEntries(item).length;
+      const label = count || 0;
+      return `
+        <button class="audit-side-btn" type="button" data-audit-id="${escapeAttr(item.id || '')}" title="Ver historial de cambios">
+          📜 <span class="audit-count">${label}</span>
+        </button>
+      `;
+    }
+
+    function auditIcon(action = '') {
+      const text = normalizeText(action);
+      if (text.includes('cre')) return '🟢';
+      if (text.includes('coment')) return '🟠';
+      if (text.includes('canal')) return '🔵';
+      if (text.includes('reenv')) return '🟣';
+      if (text.includes('anul')) return '🔴';
+      if (text.includes('guia') || text.includes('envio')) return '🚚';
+      if (text.includes('celular') || text.includes('punto')) return '✏️';
+      return '⚙️';
+    }
+
+    function findAuditItemById(id = '') {
+      if (!id) return null;
+      const sources = [state.alerts, state.canales, state.reenvios, state.anulaciones, state.reclamos];
+      for (const list of sources) {
+        const found = (Array.isArray(list) ? list : []).find(item => item.id === id);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    function openAuditDrawer(item = {}) {
+      const overlay = document.getElementById('auditDrawerOverlay');
+      const subtitle = document.getElementById('auditDrawerSubtitle');
+      const body = document.getElementById('auditDrawerBody');
+      if (!overlay || !subtitle || !body) return;
+
+      const headerBits = [
+        item.guia ? `Guía: ${item.guia}` : '',
+        item.orden ? `Orden: ${item.orden}` : '',
+        item.codigo ? `Código: ${item.codigo}` : '',
+        item.nombre ? `Nombre: ${item.nombre}` : ''
+      ].filter(Boolean);
+      subtitle.textContent = headerBits.length ? headerBits.join(' · ') : 'Registro sin datos principales.';
+
+      const entries = auditEntries(item);
+      if (!entries.length) {
+        body.innerHTML = '<div class="audit-empty">Sin trazabilidad registrada todavía.</div>';
+      } else {
+        body.innerHTML = `
+          <div class="audit-timeline">
+            ${entries.map(entry => `
+              <div class="audit-event">
+                <div class="audit-dot">${auditIcon(entry.accion)}</div>
+                <div class="audit-card">
+                  <div class="audit-action">${escapeHtml(entry.accion || 'Cambio')}</div>
+                  <div class="audit-meta">
+                    <span>👤 ${escapeHtml(entry.usuario || 'Sistema')}</span>
+                    <span>🕒 ${escapeHtml(compactDate(entry.fecha || ''))}</span>
+                    ${entry.modulo ? `<span class="audit-module">${escapeHtml(entry.modulo)}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeAuditDrawer() {
+      const overlay = document.getElementById('auditDrawerOverlay');
+      if (!overlay) return;
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
     }
 
     function responsibleUser(item = {}) {
@@ -2146,7 +2440,7 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
 
     function responsibleCell(item = {}) {
       const user = responsibleUser(item);
-      return `<td title="${escapeHtml(auditTitle(item) || user)}">${auditEmoji(item)} ${escapeHtml(user)}</td>`;
+      return `<td>${auditEmoji(item)} ${escapeHtml(user)}</td>`;
     }
 
     function initLoginUi() {
@@ -3677,6 +3971,22 @@ completeReenviosAndSendBtn: document.getElementById('completeReenviosAndSendBtn'
     }
 
     function bindStaticEvents() {
+      document.addEventListener('click', e => {
+        const auditBtn = e.target.closest('.audit-side-btn');
+        if (auditBtn) {
+          const item = findAuditItemById(auditBtn.dataset.auditId);
+          if (item) openAuditDrawer(item);
+          return;
+        }
+        if (e.target.id === 'auditDrawerOverlay' || e.target.closest('#auditDrawerClose')) {
+          closeAuditDrawer();
+        }
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeAuditDrawer();
+      });
+
       document.getElementById('loginBtn').addEventListener('click', () => {
         const user = el.loginUser.value;
         const password = el.loginPassword.value;
